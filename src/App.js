@@ -12,8 +12,13 @@ import Membership from './pages/Membership';
 import './App.css';
 
 function App() {
+  // Detect if hosted on GitHub Pages or Netlify
+  // GitHub Pages: arsh-2004.github.io/maunas-parivar
+  // Netlify: maunas.netlify.app
+  const basename = window.location.hostname.includes('github.io') ? '/maunas-parivar' : '/';
+
   return (
-    <Router basename="/maunas-parivar">
+    <Router basename={basename}>
       <div className="App">
         <Header />
         <main>
