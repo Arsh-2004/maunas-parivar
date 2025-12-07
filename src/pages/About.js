@@ -7,8 +7,8 @@ const About = () => {
       {/* Page Header */}
       <section className="page-header">
         <div className="container">
-          <h1>About Kshatriya Maunas Parivar</h1>
-          <p>Preserving Heritage | Empowering Community</p>
+          <h1>क्षत्रिय मौना परिवार के बारे में</h1>
+          <p>विरासत को संरक्षित करें | समुदाय को सशक्त करें</p>
         </div>
       </section>
 
@@ -18,22 +18,16 @@ const About = () => {
           <div className="mv-grid">
             <div className="mv-card">
               <div className="mv-icon">🎯</div>
-              <h2>Our Mission</h2>
+              <h2>हमारा लक्ष्य</h2>
               <p>
-                To unite and empower the Maunas Kshatriya community by preserving our 
-                rich cultural heritage, promoting social welfare, and providing opportunities 
-                for educational and economic advancement while upholding our traditional 
-                values of courage, honor, and integrity.
+                क्षत्रिय मौना समुदाय को संयुक्त और सशक्त करना, हमारी समृद्ध सांस्कृतिक विरासत को संरक्षित करना, सामाजिक कल्याण को बढ़ावा देना, और शैक्षणिक एवं आर्थिक उन्नति के लिए अवसर प्रदान करना।
               </p>
             </div>
             <div className="mv-card">
               <div className="mv-icon">👁️</div>
-              <h2>Our Vision</h2>
+              <h2>हमारा दृष्टिकोण</h2>
               <p>
-                To create a progressive and united Maunas Kshatriya community that honors 
-                its glorious past while embracing modern development, ensuring every member 
-                has access to opportunities for growth and contributing meaningfully to 
-                society at large.
+                एक प्रगतिशील क्षत्रिय मौना समुदाय बनाना जो अपने गौरवशाली अतीत को सम्मानित करता है और आधुनिक विकास को अपनाता है, हर सदस्य के लिए विकास के अवसर सुनिश्चित करता है।
               </p>
             </div>
           </div>
@@ -44,34 +38,26 @@ const About = () => {
       <section className="history-section">
         <div className="container">
           <div className="section-header">
-            <h2>Our Heritage</h2>
+            <h2>हमारी विरासत</h2>
             <div className="underline"></div>
           </div>
           <div className="history-content">
             <div className="history-text">
-              <h3>The Legacy of Maunas Kshatriyas</h3>
+              <h3>मौना क्षत्रियों की परंपरा</h3>
               <p>
-                The Maunas Kshatriya community has a proud and distinguished history dating 
-                back centuries. Known for their valor, administrative skills, and dedication 
-                to protecting dharma, the Maunas Kshatriyas have played significant roles in 
-                various kingdoms and regions throughout Indian history.
+                क्षत्रिय मौना समुदाय का एक गौरवशाली और प्रतिष्ठित इतिहास है जो सदियों पुरानी परंपराओं में निहित है। वीरता, प्रशासनिक कौशल और धर्म की रक्षा के लिए समर्पण के लिए जाने जाते हैं, मौना क्षत्रियों ने भारतीय इतिहास में विभिन्न राज्यों और क्षेत्रों में महत्वपूर्ण भूमिका निभाई है।
               </p>
               <p>
-                Our ancestors were renowned warriors, administrators, and protectors of their 
-                people. They upheld the highest standards of honor, duty, and service. The 
-                Maunas Kshatriya community has contributed significantly to the cultural and 
-                social fabric of Rajasthan and beyond.
+                हमारे पूर्वज प्रसिद्ध योद्धा, प्रशासक और अपने लोगों की रक्षकर्ता थे। उन्होंने सम्मान, कर्तव्य और सेवा के सर्वोच्च मानदंड को बनाए रखा। मौना क्षत्रिय समुदाय ने राजस्थान और उससे आगे की सांस्कृतिक और सामाजिक संरचना में महत्वपूर्ण योगदान दिया है।
               </p>
               <p>
-                Today, while we honor these traditions, our community has evolved to embrace 
-                modern education, business, and various professional fields, continuing our 
-                legacy of excellence in new ways.
+                आज, जबकि हम इन परंपराओं को सम्मानित करते हैं, हमारा समुदाय आधुनिक शिक्षा, व्यवसाय और विभिन्न व्यावसायिक क्षेत्रों को अपनाने के लिए विकसित हुआ है।
               </p>
             </div>
             <div className="history-image">
               <div className="image-placeholder">
                 <span>🏛️</span>
-                <p>Centuries of Heritage</p>
+                <p>सदियों की विरासत</p>
               </div>
             </div>
           </div>
@@ -82,39 +68,39 @@ const About = () => {
       <section className="values-section">
         <div className="container">
           <div className="section-header">
-            <h2>Our Core Values</h2>
+            <h2>हमारे मूल मूल्य</h2>
             <div className="underline"></div>
           </div>
           <div className="values-grid">
             <div className="value-card">
               <div className="value-icon">⚔️</div>
-              <h3>Courage</h3>
-              <p>Facing challenges with bravery and determination</p>
+              <h3>साहस</h3>
+              <p>चुनौतियों का सामना करना और निर्भयता से आगे बढ़ना</p>
             </div>
             <div className="value-card">
               <div className="value-icon">🤝</div>
-              <h3>Unity</h3>
-              <p>Standing together as one strong community</p>
+              <h3>एकता</h3>
+              <p>एक मजबूत समुदाय के रूप में एक साथ खड़े होना</p>
             </div>
             <div className="value-card">
               <div className="value-icon">💎</div>
-              <h3>Integrity</h3>
-              <p>Upholding honesty and moral principles</p>
+              <h3>सততा</h3>
+              <p>ईमानदारी और नैतिक सिद्धांतों को बनाए रखना</p>
             </div>
             <div className="value-card">
               <div className="value-icon">🎓</div>
-              <h3>Progress</h3>
-              <p>Embracing education and modern development</p>
+              <h3>प्रगति</h3>
+              <p>शिक्षा और आधुनिक विकास को अपनाना</p>
             </div>
             <div className="value-card">
               <div className="value-icon">🙏</div>
-              <h3>Tradition</h3>
-              <p>Preserving our cultural heritage and customs</p>
+              <h3>परंपरा</h3>
+              <p>हमारी सांस्कृतिक विरासत और रीति-रिवाजों को संरक्षित करना</p>
             </div>
             <div className="value-card">
               <div className="value-icon">❤️</div>
-              <h3>Service</h3>
-              <p>Serving our community and society</p>
+              <h3>सेवा</h3>
+              <p>अपने समुदाय और समाज की सेवा करना</p>
             </div>
           </div>
         </div>
@@ -124,7 +110,7 @@ const About = () => {
       <section className="president-message">
         <div className="container">
           <div className="section-header">
-            <h2>President's Message</h2>
+            <h2>अध्यक्ष का संदेश</h2>
             <div className="underline"></div>
           </div>
           <div className="message-content">
@@ -132,32 +118,24 @@ const About = () => {
               <div className="image-placeholder">
                 <span>👤</span>
               </div>
-              <h3>President Name</h3>
-              <p>National President</p>
+              <h3>अध्यक्ष</h3>
+              <p>राष्ट्रीय अध्यक्ष</p>
             </div>
             <div className="message-text">
               <p className="quote-mark">"</p>
               <p>
-                Dear Members and Well-wishers,
+                प्रिय सदस्यों और शुभचिंतकों को नमस्कार,
               </p>
               <p>
-                It is with great pride and humility that I address you as the President of 
-                Kshatriya Maunas Parivar. Our organization stands as a testament to the 
-                enduring spirit of our community, built on centuries of tradition, valor, 
-                and dedication to dharma.
+                यह गर्व के साथ कि मैं क्षत्रिय मौना परिवार के अध्यक्ष के रूप में आपसे बात कर रहा हूं। हमारा संगठन सदियों की परंपरा, वीरता और धर्म के प्रति समर्पण पर बना हमारे समुदाय की स्थायी भावना का प्रमाण है।
               </p>
               <p>
-                In these modern times, while we honor our glorious past, we must also embrace 
-                progress and unity. Our mission is to ensure that every member of our community 
-                has access to opportunities for growth, education, and prosperity. Together, we 
-                can preserve our heritage while building a brighter future for generations to come.
+                इन आधुनिक समय में, जबकि हम अपने गौरवशाली अतीत को सम्मानित करते हैं, हमें प्रगति और एकता को भी अपनाना चाहिए। हमारा मिशन यह सुनिश्चित करना है कि हमारे समुदाय के हर सदस्य को विकास, शिक्षा और समृद्धि के अवसर मिलें।
               </p>
               <p>
-                I invite each of you to actively participate in our initiatives, events, and 
-                programs. Let us work hand in hand to strengthen our bonds, support one another, 
-                and make our community a beacon of excellence and tradition.
+                मैं प्रत्येक आपको हमारी पहलों, कार्यक्रमों और संचालन में सक्रिय रूप से भाग लेने के लिए आमंत्रित करता हूं। हम एक साथ मिलकर अपने बंधनों को मजबूत कर सकते हैं और अपने समुदाय को एक बेहतर भविष्य की ओर ले जा सकते हैं।
               </p>
-              <p className="signature">With warm regards,<br/><strong>President Name</strong></p>
+              <p className="signature">शुभकामनाओं सहित,<br/><strong>राष्ट्रीय अध्यक्ष</strong></p>
             </div>
           </div>
         </div>
@@ -167,25 +145,25 @@ const About = () => {
       <section className="achievements-section">
         <div className="container">
           <div className="section-header">
-            <h2>Our Impact</h2>
+            <h2>हमारा प्रभाव</h2>
             <div className="underline"></div>
           </div>
           <div className="achievements-grid">
             <div className="achievement-card">
               <div className="achievement-number">5000+</div>
-              <div className="achievement-label">Active Members</div>
+              <div className="achievement-label">सक्रिय सदस्य</div>
             </div>
             <div className="achievement-card">
               <div className="achievement-number">50+</div>
-              <div className="achievement-label">Events Organized</div>
+              <div className="achievement-label">आयोजित कार्यक्रम</div>
             </div>
             <div className="achievement-card">
               <div className="achievement-number">200+</div>
-              <div className="achievement-label">Scholarships Awarded</div>
+              <div className="achievement-label">छात्रवृत्ति प्रदान की गई</div>
             </div>
             <div className="achievement-card">
               <div className="achievement-number">15+</div>
-              <div className="achievement-label">Cities Connected</div>
+              <div className="achievement-label">शहर जुड़े हुए</div>
             </div>
           </div>
         </div>
