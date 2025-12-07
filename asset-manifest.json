@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/maunas-parivar/static/css/main.05472200.css",
+    "main.js": "/maunas-parivar/static/js/main.0f3c0d9a.js",
+    "static/js/453.35cae224.chunk.js": "/maunas-parivar/static/js/453.35cae224.chunk.js",
+    "index.html": "/maunas-parivar/index.html",
+    "main.05472200.css.map": "/maunas-parivar/static/css/main.05472200.css.map",
+    "main.0f3c0d9a.js.map": "/maunas-parivar/static/js/main.0f3c0d9a.js.map",
+    "453.35cae224.chunk.js.map": "/maunas-parivar/static/js/453.35cae224.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.05472200.css",
+    "static/js/main.0f3c0d9a.js"
+  ]
+}
