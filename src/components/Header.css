@@ -53,10 +53,35 @@
   margin-left: 15px;
   text-decoration: none;
   transition: opacity 0.3s;
+  padding: 5px 10px;
+  border-radius: 4px;
 }
 
 .social-links a:hover {
   opacity: 0.8;
+}
+
+.language-toggle {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-left: 15px;
+  transition: all 0.3s ease;
+  min-width: 50px;
+}
+
+.language-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.language-toggle:active {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .navbar {

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 import './Header.css';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { language, toggleLanguage } = useLanguage();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -24,6 +26,14 @@ const Header = () => {
                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="हमारे फेसबुक पेज पर जाएं">फेसबुक</a>
                 <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="हमारे ट्विटर प्रोफाइल पर जाएं">ट्विटर</a>
                 <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="हमारे इंस्टाग्राम प्रोफाइल पर जाएं">इंस्टाग्राम</a>
+                <button 
+                  className="language-toggle" 
+                  onClick={toggleLanguage}
+                  aria-label="Toggle language"
+                  title={language === 'en' ? 'Switch to English' : 'हिंदी में बदलें'}
+                >
+                  {language === 'en' ? 'हिंदी' : 'EN'}
+                </button>
               </div>
             </div>
           </div>

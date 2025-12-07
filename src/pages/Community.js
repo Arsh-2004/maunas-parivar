@@ -1,25 +1,37 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslation } from '../translations';
 import './Community.css';
 
 const Community = () => {
+  const { language } = useLanguage();
+  const t = (path) => getTranslation(language, path);
+
   const managementTeam = [
-    { name: 'Rajendra Singh', position: 'National President', icon: '👤' },
-    { name: 'Mahendra Singh', position: 'National Vice President', icon: '👤' },
-    { name: 'Vikram Singh', position: 'General Secretary', icon: '👤' },
-    { name: 'Pradeep Singh', position: 'National Treasurer', icon: '👤' },
-    { name: 'Suresh Kumar', position: 'Cultural Secretary', icon: '👤' },
-    { name: 'Amit Singh', position: 'Youth Wing President', icon: '👤' },
+    { name: language === 'en' ? 'Rajendra Singh' : 'राजेंद्र सिंह', position: language === 'en' ? 'National President' : 'राष्ट्रीय अध्यक्ष', icon: '👤' },
+    { name: language === 'en' ? 'Mahendra Singh' : 'महेंद्र सिंह', position: language === 'en' ? 'National Vice President' : 'राष्ट्रीय उपाध्यक्ष', icon: '👤' },
+    { name: language === 'en' ? 'Vikram Singh' : 'विक्रम सिंह', position: language === 'en' ? 'General Secretary' : 'महासचिव', icon: '👤' },
+    { name: language === 'en' ? 'Pradeep Singh' : 'प्रदीप सिंह', position: language === 'en' ? 'National Treasurer' : 'राष्ट्रीय कोषाध्यक्ष', icon: '👤' },
+    { name: language === 'en' ? 'Suresh Kumar' : 'सुरेश कुमार', position: language === 'en' ? 'Cultural Secretary' : 'सांस्कृतिक सचिव', icon: '👤' },
+    { name: language === 'en' ? 'Amit Singh' : 'अमित सिंह', position: language === 'en' ? 'Youth Wing President' : 'युवा विंग अध्यक्ष', icon: '👤' },
   ];
 
   const members = [
-    { name: 'Ramesh Singh', location: 'Jaipur', memberSince: '2023', icon: '👤' },
-    { name: 'Sunil Kumar', location: 'Ajmer', memberSince: '2023', icon: '👤' },
-    { name: 'Prakash Singh', location: 'Jodhpur', memberSince: '2024', icon: '👤' },
-    { name: 'Dinesh Sharma', location: 'Udaipur', memberSince: '2024', icon: '👤' },
-    { name: 'Rajesh Kumar', location: 'Kota', memberSince: '2023', icon: '👤' },
-    { name: 'Anil Singh', location: 'Bikaner', memberSince: '2024', icon: '👤' },
-    { name: 'Mohan Singh', location: 'Alwar', memberSince: '2023', icon: '👤' },
-    { name: 'Vijay Kumar', location: 'Sikar', memberSince: '2024', icon: '👤' },
+    { name: language === 'en' ? 'Ramesh Singh' : 'रमेश सिंह', location: language === 'en' ? 'Jaipur' : 'जयपुर', memberSince: '2023', icon: '👤' },
+    { name: language === 'en' ? 'Sunil Kumar' : 'सुनील कुमार', location: language === 'en' ? 'Ajmer' : 'अजमेर', memberSince: '2023', icon: '👤' },
+    { name: language === 'en' ? 'Prakash Singh' : 'प्रकाश सिंह', location: language === 'en' ? 'Jodhpur' : 'जोधपुर', memberSince: '2024', icon: '👤' },
+    { name: language === 'en' ? 'Dinesh Sharma' : 'दिनेश शर्मा', location: language === 'en' ? 'Udaipur' : 'उदयपुर', memberSince: '2024', icon: '👤' },
+    { name: language === 'en' ? 'Rajesh Kumar' : 'राजेश कुमार', location: language === 'en' ? 'Kota' : 'कोटा', memberSince: '2023', icon: '👤' },
+    { name: language === 'en' ? 'Anil Singh' : 'अनिल सिंह', location: language === 'en' ? 'Bikaner' : 'बीकानेर', memberSince: '2024', icon: '👤' },
+    { name: language === 'en' ? 'Mohan Singh' : 'मोहन सिंह', location: language === 'en' ? 'Alwar' : 'अलवर', memberSince: '2023', icon: '👤' },
+    { name: language === 'en' ? 'Vijay Kumar' : 'विजय कुमार', location: language === 'en' ? 'Sikar' : 'सीकर', memberSince: '2024', icon: '👤' },
+  ];
+
+  const stats = [
+    { label: t('community.stats.members'), value: '5000+' },
+    { label: t('community.stats.cities'), value: '15+' },
+    { label: t('community.stats.events'), value: '100+' },
+    { label: t('community.stats.scholarships'), value: '500+' },
   ];
 
   return (
@@ -27,8 +39,22 @@ const Community = () => {
       {/* Page Header */}
       <section className="page-header">
         <div className="container">
-          <h1>Our Community</h1>
-          <p>United in Heritage | Strong Together</p>
+          <h1>{t('community.title')}</h1>
+          <p>{t('community.subtitle')}</p>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="stats-section">
+        <div className="container">
+          <div className="stats-grid">
+            {stats.map(stat => (
+              <div key={stat.label} className="stat-card">
+                <div className="stat-number">{stat.value}</div>
+                <div className="stat-label">{stat.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -36,9 +62,8 @@ const Community = () => {
       <section className="management-section">
         <div className="container">
           <div className="section-header">
-            <h2>Management Team</h2>
+            <h2>{t('community.managementTeam')}</h2>
             <div className="underline"></div>
-            <p className="section-subtitle">Leading our community with dedication and vision</p>
           </div>
           <div className="team-grid">
             {managementTeam.map((member, index) => (
@@ -48,10 +73,7 @@ const Community = () => {
                 </div>
                 <div className="member-info">
                   <h3>{member.name}</h3>
-                  <p className="position">{member.position}</p>
-                  <div className="member-contact">
-                    <button className="contact-btn">📧 Contact</button>
-                  </div>
+                  <p className="member-position">{member.position}</p>
                 </div>
               </div>
             ))}
@@ -59,85 +81,22 @@ const Community = () => {
         </div>
       </section>
 
-      {/* Community Stats */}
-      <section className="stats-section">
-        <div className="container">
-          <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-icon">👥</div>
-              <div className="stat-number">5000+</div>
-              <div className="stat-label">Total Members</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon">🏙️</div>
-              <div className="stat-number">15+</div>
-              <div className="stat-label">Cities</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon">🎉</div>
-              <div className="stat-number">50+</div>
-              <div className="stat-label">Events/Year</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon">🤝</div>
-              <div className="stat-number">100%</div>
-              <div className="stat-label">Commitment</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Members Section */}
+      {/* Members Directory */}
       <section className="members-section">
         <div className="container">
           <div className="section-header">
-            <h2>Our Members</h2>
+            <h2>{t('community.memberDirectory')}</h2>
             <div className="underline"></div>
-            <p className="section-subtitle">Proud members of Kshatriya Maunas Parivar</p>
           </div>
           <div className="members-grid">
             {members.map((member, index) => (
               <div key={index} className="member-card">
-                <div className="member-avatar">
-                  <div className="avatar-placeholder">{member.icon}</div>
-                </div>
-                <h4>{member.name}</h4>
-                <p className="member-location">📍 {member.location}</p>
-                <p className="member-since">Member since {member.memberSince}</p>
+                <div className="member-avatar">{member.icon}</div>
+                <h3>{member.name}</h3>
+                <p className="city">📍 {member.location}</p>
+                <p className="since">{language === 'en' ? 'Member Since' : 'सदस्य बने'}: {member.memberSince}</p>
               </div>
             ))}
-          </div>
-          <div className="text-center" style={{ marginTop: '40px' }}>
-            <a href="#membership" className="btn btn-primary">View All Members</a>
-          </div>
-        </div>
-      </section>
-
-      {/* Join Community */}
-      <section className="join-section">
-        <div className="container">
-          <div className="join-content">
-            <h2>Become Part of Our Family</h2>
-            <p>Join thousands of proud Maunas Kshatriyas in preserving our heritage and building our future</p>
-            <div className="join-benefits">
-              <div className="benefit">
-                <span className="benefit-icon">✓</span>
-                <span>Connect with community members</span>
-              </div>
-              <div className="benefit">
-                <span className="benefit-icon">✓</span>
-                <span>Access to exclusive events</span>
-              </div>
-              <div className="benefit">
-                <span className="benefit-icon">✓</span>
-                <span>Networking opportunities</span>
-              </div>
-              <div className="benefit">
-                <span className="benefit-icon">✓</span>
-                <span>Community support & welfare</span>
-              </div>
-            </div>
-            <a href="#membership" className="btn btn-large">Register Now</a>
           </div>
         </div>
       </section>

@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslation } from '../translations';
 import './Contact.css';
 
 const Contact = () => {
+  const { language } = useLanguage();
+  const t = (path) => getTranslation(language, path);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,30 +24,30 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert('Thank you for contacting us! We will get back to you soon.');
+    const thankYouMsg = language === 'en' 
+      ? 'Thank you for contacting us! We will get back to you soon.' 
+      : 'हमसे संपर्क करने के लिए धन्यवाद! हम जल्द ही आपसे संपर्क करेंगे।';
+    alert(thankYouMsg);
     setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
   };
 
   return (
     <div className="contact-page">
-      {/* Page Header */}
       <section className="page-header">
         <div className="container">
-          <h1>Contact Us</h1>
-          <p>We'd Love to Hear From You</p>
+          <h1>{t('contact.title')}</h1>
+          <p>{t('contact.subtitle')}</p>
         </div>
       </section>
 
-      {/* Contact Section */}
       <section className="contact-section">
         <div className="container">
           <div className="contact-grid">
-            {/* Contact Form */}
             <div className="contact-form-wrapper">
-              <h2>Send Us a Message</h2>
+              <h2>{t('contact.sendMessage')}</h2>
               <form onSubmit={handleSubmit} className="contact-form">
                 <div className="form-group">
-                  <label htmlFor="name">Full Name *</label>
+                  <label htmlFor="name">{t('contact.fullName')}</label>
                   <input
                     type="text"
                     id="name"
@@ -50,12 +55,12 @@ const Contact = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    placeholder="Enter your full name"
+                    placeholder={language === 'en' ? 'Enter your full name' : 'अपना पूरा नाम दर्ज करें'}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="email">Email Address *</label>
+                  <label htmlFor="email">{t('contact.email')}</label>
                   <input
                     type="email"
                     id="email"
@@ -63,24 +68,24 @@ const Contact = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    placeholder="Enter your email"
+                    placeholder={language === 'en' ? 'Enter your email' : 'अपना ईमेल दर्ज करें'}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="phone">Phone Number</label>
+                  <label htmlFor="phone">{t('contact.phone')}</label>
                   <input
                     type="tel"
                     id="phone"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="Enter your phone number"
+                    placeholder={language === 'en' ? 'Enter your phone number' : 'अपना फोन नंबर दर्ज करें'}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="subject">Subject *</label>
+                  <label htmlFor="subject">{t('contact.subject')}</label>
                   <input
                     type="text"
                     id="subject"
@@ -88,12 +93,12 @@ const Contact = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    placeholder="Enter subject"
+                    placeholder={language === 'en' ? 'Enter subject' : 'विषय दर्ज करें'}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="message">Message *</label>
+                  <label htmlFor="message">{t('contact.message')}</label>
                   <textarea
                     id="message"
                     name="message"
@@ -101,60 +106,59 @@ const Contact = () => {
                     onChange={handleChange}
                     required
                     rows="5"
-                    placeholder="Enter your message"
+                    placeholder={language === 'en' ? 'Enter your message' : 'अपना संदेश दर्ज करें'}
                   ></textarea>
                 </div>
 
-                <button type="submit" className="submit-btn">Send Message</button>
+                <button type="submit" className="submit-btn">{t('contact.sendBtn')}</button>
               </form>
             </div>
 
-            {/* Contact Information */}
             <div className="contact-info-wrapper">
-              <h2>Get In Touch</h2>
+              <h2>{t('contact.getInTouch')}</h2>
               <div className="contact-cards">
                 <div className="info-card">
                   <div className="info-icon">📍</div>
-                  <h3>Address</h3>
-                  <p>Rajasthan, India</p>
+                  <h3>{t('contact.address')}</h3>
+                  <p>{language === 'en' ? 'Rajasthan, India' : 'राजस्थान, भारत'}</p>
                 </div>
 
                 <div className="info-card">
                   <div className="info-icon">📧</div>
-                  <h3>Email</h3>
+                  <h3>{t('contact.email')}</h3>
                   <p>info@maunasparivar.com</p>
                   <p>support@maunasparivar.com</p>
                 </div>
 
                 <div className="info-card">
                   <div className="info-icon">📞</div>
-                  <h3>Phone</h3>
+                  <h3>{t('contact.phone')}</h3>
                   <p>+91 9876543210</p>
                   <p>+91 9876543211</p>
                 </div>
 
                 <div className="info-card">
                   <div className="info-icon">🕐</div>
-                  <h3>Office Hours</h3>
-                  <p>Monday - Saturday</p>
+                  <h3>{t('contact.officeHours')}</h3>
+                  <p>{language === 'en' ? 'Monday - Saturday' : 'सोमवार - शनिवार'}</p>
                   <p>9:00 AM - 6:00 PM</p>
                 </div>
               </div>
 
               <div className="social-connect">
-                <h3>Connect With Us</h3>
+                <h3>{t('contact.connectUs')}</h3>
                 <div className="social-icons">
                   <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon">
-                    📘 Facebook
+                    Facebook
                   </a>
                   <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="social-icon">
-                    🐦 Twitter
+                    Twitter
                   </a>
                   <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-icon">
-                    📸 Instagram
+                    Instagram
                   </a>
                   <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="social-icon">
-                    📺 YouTube
+                    YouTube
                   </a>
                 </div>
               </div>
