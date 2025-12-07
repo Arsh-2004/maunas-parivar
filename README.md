@@ -1,6 +1,34 @@
-# Getting Started with Create React App
+# Kshatriya Maunas Parivar Website
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, responsive React website for the Kshatriya Maunas Parivar community, designed to preserve heritage, empower members, and build a connected community.
+
+## Features
+
+- **Home Page**: Hero section, about preview, objectives, recent activities, and leadership team
+- **About Us**: Mission, vision, heritage, core values, president's message, and community impact
+- **Community**: Management team, member directory, and community statistics
+- **Events**: Upcoming events, past events gallery, and event types
+- **Gallery**: Photo gallery of community activities and celebrations
+- **Contact**: Contact form, office information, and social media links
+- **Membership**: Registration form with benefits showcase
+
+## Design Highlights
+
+- Modern gradient design with orange (#FF6B35) and golden (#F7931E) theme colors
+- Fully responsive layout for mobile, tablet, and desktop
+- Smooth animations and transitions
+- Interactive hover effects
+- Clean and intuitive navigation
+- Accessible and user-friendly interface
+
+## Technology Stack
+
+- React 18
+- React Router DOM for navigation
+- CSS3 with modern features
+- Mobile-first responsive design
+
+## Getting Started
 
 ## Available Scripts
 
