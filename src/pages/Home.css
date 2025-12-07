@@ -27,18 +27,24 @@
 }
 
 .hero-title {
-  font-size: 3.5rem;
+  font-size: clamp(1.8rem, 5vw, 3.5rem);
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   word-wrap: break-word;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .hero-subtitle {
-  font-size: 1.5rem;
-  margin-bottom: 40px;
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  margin-bottom: 2.5rem;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   word-wrap: break-word;
+  line-height: 1.5;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero-buttons {
@@ -49,12 +55,17 @@
 }
 
 .btn {
-  padding: 15px 40px;
+  padding: 1rem 2.5rem;
   border-radius: 30px;
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.3s;
-  display: inline-block;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-primary {
@@ -65,6 +76,11 @@
 .btn-primary:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:active {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 }
 
 .btn-secondary {
@@ -94,9 +110,11 @@ section {
 }
 
 .section-header h2 {
-  font-size: 2.5rem;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
   color: #333;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .underline {
@@ -166,20 +184,32 @@ section {
 
 .objective-card {
   background: white;
-  padding: 40px 30px;
-  border-radius: 15px;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
   text-align: center;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
 .objective-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(255, 107, 53, 0.15);
+  border-color: rgba(255, 107, 53, 0.2);
+}
+
+.objective-card:focus-within {
+  outline: 2px solid #FF6B35;
+  outline-offset: 2px;
 }
 
 .objective-card .icon {
   font-size: 4rem;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.objective-card:hover .icon {
+  transform: scale(1.1) rotate(5deg);
   margin-bottom: 20px;
 }
 
@@ -207,14 +237,16 @@ section {
 
 .activity-card {
   background: white;
-  border-radius: 15px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
 .activity-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(255, 107, 53, 0.15);
 }
 
 .activity-image .image-placeholder {
@@ -257,15 +289,18 @@ section {
 
 .team-card {
   background: white;
-  padding: 30px;
-  border-radius: 15px;
+  padding: 2rem;
+  border-radius: 16px;
   text-align: center;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
 .team-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(255, 107, 53, 0.15);
+  border-color: rgba(255, 107, 53, 0.2);
 }
 
 .team-image .image-placeholder {
