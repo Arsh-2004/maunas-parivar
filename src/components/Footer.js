@@ -9,10 +9,9 @@ const Footer = () => {
         <div className="container">
           <div className="footer-grid">
             <div className="footer-section">
-              <h3>🏰 Kshatriya Maunas Parivar</h3>
+              <h3>🏰 क्षत्रिय मौना परिवार</h3>
               <p>
-                Dedicated to preserving our rich heritage and empowering the 
-                Maunas Kshatriya community through unity, tradition, and progress.
+                हमारी समृद्ध विरासत को संरक्षित करने और मौना क्षत्रिय समुदाय को एकता, परंपरा और प्रगति के माध्यम से सशक्त बनाने के लिए समर्पित।
               </p>
               <div className="social-icons">
                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">📘</a>
@@ -23,34 +22,34 @@ const Footer = () => {
             </div>
 
             <div className="footer-section">
-              <h4>Quick Links</h4>
+              <h4>त्वरित लिंक</h4>
               <ul>
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/about">About Us</Link></li>
-                <li><Link to="/community">Community</Link></li>
-                <li><Link to="/events">Events</Link></li>
-                <li><Link to="/gallery">Gallery</Link></li>
+                <li><Link to="/">होम</Link></li>
+                <li><Link to="/about">हमारे बारे में</Link></li>
+                <li><Link to="/community">समुदाय</Link></li>
+                <li><Link to="/events">घटनाएं</Link></li>
+                <li><Link to="/gallery">गैलरी</Link></li>
               </ul>
             </div>
 
             <div className="footer-section">
-              <h4>Get Involved</h4>
+              <h4>शामिल हों</h4>
               <ul>
-                <li><Link to="/membership">Member Registration</Link></li>
-                <li><Link to="/events">Upcoming Events</Link></li>
-                <li><Link to="/donate">Donate</Link></li>
-                <li><Link to="/volunteer">Volunteer</Link></li>
-                <li><Link to="/contact">Contact Us</Link></li>
+                <li><Link to="/membership">सदस्य पंजीकरण</Link></li>
+                <li><Link to="/events">आने वाली घटनाएं</Link></li>
+                <li><Link to="/donate">दान करें</Link></li>
+                <li><Link to="/volunteer">स्वयंसेवक</Link></li>
+                <li><Link to="/contact">हमसे संपर्क करें</Link></li>
               </ul>
             </div>
 
             <div className="footer-section">
-              <h4>Contact Info</h4>
+              <h4>संपर्क जानकारी</h4>
               <div className="contact-details">
-                <p>📍 Rajasthan, India</p>
+                <p>📍 राजस्थान, भारत</p>
                 <p>📧 info@maunasparivar.com</p>
                 <p>📞 +91 9876543210</p>
-                <p>🕐 Mon - Sat: 9:00 AM - 6:00 PM</p>
+                <p>🕐 सोम - शनि: 9:00 AM - 6:00 PM</p>
               </div>
             </div>
           </div>
@@ -60,10 +59,10 @@ const Footer = () => {
       <div className="footer-bottom">
         <div className="container">
           <div className="footer-bottom-content">
-            <p>&copy; 2024 Kshatriya Maunas Parivar. All Rights Reserved.</p>
+            <p>&copy; 2024 क्षत्रिय मौना परिवार। सर्वाधिकार सुरक्षित।</p>
             <div className="footer-links">
-              <Link to="/privacy">Privacy Policy</Link>
-              <Link to="/terms">Terms & Conditions</Link>
+              <Link to="/privacy">गोपनीयता नीति</Link>
+              <Link to="/terms">शर्तें और शर्तें</Link>
             </div>
           </div>
         </div>

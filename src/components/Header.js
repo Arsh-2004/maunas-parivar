@@ -11,7 +11,7 @@ const Header = () => {
 
   return (
     <>
-      <a href="#main-content" className="skip-link">Skip to main content</a>
+      <a href="#main-content" className="skip-link">मुख्य सामग्री पर जाएं</a>
       <header className="header">
         <div className="top-bar">
           <div className="container">
@@ -21,9 +21,9 @@ const Header = () => {
                 <span>📞 +91 9876543210</span>
               </div>
               <div className="social-links">
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Visit our Facebook page">Facebook</a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Visit our Twitter profile">Twitter</a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Visit our Instagram profile">Instagram</a>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="हमारे फेसबुक पेज पर जाएं">फेसबुक</a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="हमारे ट्विटर प्रोफाइल पर जाएं">ट्विटर</a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="हमारे इंस्टाग्राम प्रोफाइल पर जाएं">इंस्टाग्राम</a>
               </div>
             </div>
           </div>
@@ -32,23 +32,21 @@ const Header = () => {
         <nav className="navbar" role="navigation" aria-label="Main navigation">
           <div className="container">
             <div className="nav-content">
-              <Link to="/" className="logo">
-                <h2>🏰 Kshatriya Maunas Parivar</h2>
+            <Link to="/" className="logo">
+              <h2>🏰 क्षत्रिय मौना परिवार</h2>
+            </Link>
+            
+            <div id="nav-menu" className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
+              <Link to="/" onClick={() => setIsMenuOpen(false)}>होम</Link>
+              <Link to="/about" onClick={() => setIsMenuOpen(false)}>हमारे बारे में</Link>
+              <Link to="/community" onClick={() => setIsMenuOpen(false)}>समुदाय</Link>
+              <Link to="/events" onClick={() => setIsMenuOpen(false)}>घटनाएं</Link>
+              <Link to="/gallery" onClick={() => setIsMenuOpen(false)}>गैलरी</Link>
+              <Link to="/contact" onClick={() => setIsMenuOpen(false)}>संपर्क करें</Link>
+              <Link to="/membership" className="btn-primary" onClick={() => setIsMenuOpen(false)}>
+                हमसे जुड़ें
               </Link>
-              
-              <div id="nav-menu" className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
-                <Link to="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
-                <Link to="/about" onClick={() => setIsMenuOpen(false)}>About Us</Link>
-                <Link to="/community" onClick={() => setIsMenuOpen(false)}>Community</Link>
-                <Link to="/events" onClick={() => setIsMenuOpen(false)}>Events</Link>
-                <Link to="/gallery" onClick={() => setIsMenuOpen(false)}>Gallery</Link>
-                <Link to="/contact" onClick={() => setIsMenuOpen(false)}>Contact</Link>
-                <Link to="/membership" className="btn-primary" onClick={() => setIsMenuOpen(false)}>
-                  Join Us
-                </Link>
-              </div>
-              
-              <button 
+            </div>              <button 
                 className="menu-toggle" 
                 onClick={toggleMenu}
                 aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}

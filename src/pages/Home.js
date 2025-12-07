@@ -10,13 +10,13 @@ const Home = () => {
         <div className="hero-overlay">
           <div className="container">
             <div className="hero-content">
-              <h1 className="hero-title">Welcome to Kshatriya Maunas Parivar</h1>
+              <h1 className="hero-title">क्षत्रिय मौना परिवार में आपका स्वागत है</h1>
               <p className="hero-subtitle">
-                Preserving Our Heritage | Empowering Our Community | Building Our Future
+                हमारी विरासत को संरक्षित करें | हमारे समुदाय को सशक्त बनाएं | हमारा भविष्य बनाएं
               </p>
               <div className="hero-buttons">
-                <Link to="/membership" className="btn btn-primary">Join Our Community</Link>
-                <Link to="/about" className="btn btn-secondary">Learn More</Link>
+                <Link to="/membership" className="btn btn-primary">हमारे समुदाय से जुड़ें</Link>
+                <Link to="/about" className="btn btn-secondary">अधिक जानें</Link>
               </div>
             </div>
           </div>
@@ -27,28 +27,23 @@ const Home = () => {
       <section className="about-section">
         <div className="container">
           <div className="section-header">
-            <h2>About Kshatriya Maunas Parivar</h2>
+            <h2>क्षत्रिय मौना परिवार के बारे में</h2>
             <div className="underline"></div>
           </div>
           <div className="about-content">
             <div className="about-text">
               <p>
-                Kshatriya Maunas Parivar is dedicated to preserving the rich heritage and 
-                traditions of the Maunas Kshatriya community. We are committed to fostering 
-                unity, providing support, and empowering our members through various social, 
-                cultural, and educational initiatives.
+                क्षत्रिय मौना परिवार मौना क्षत्रिय समुदाय की समृद्ध विरासत और परंपराओं को संरक्षित करने के लिए समर्पित है। हम विभिन्न सामाजिक, सांस्कृतिक और शैक्षिक पहलों के माध्यम से एकता को बढ़ावा देने, सहायता प्रदान करने और अपने सदस्यों को सशक्त बनाने के लिए प्रतिबद्ध हैं।
               </p>
               <p>
-                Our mission is to create a strong network of Maunas Kshatriyas who work 
-                together for the betterment of our community while honoring our ancestors 
-                and upholding our values of courage, honor, and integrity.
+                हमारा मिशन मौना क्षत्रियों का एक मजबूत नेटवर्क बनाना है जो अपने समुदाय के कल्याण के लिए एक साथ काम करते हैं, जबकि अपने पूर्वजों का सम्मान करते हैं और साहस, सम्मान और ईमानदारी के अपने मूल्यों को बनाए रखते हैं।
               </p>
-              <Link to="/about" className="read-more">Read More →</Link>
+              <Link to="/about" className="read-more">अधिक पढ़ें →</Link>
             </div>
             <div className="about-image">
               <div className="image-placeholder">
                 <span>🏰</span>
-                <p>Heritage & Tradition</p>
+                <p>विरासत और परंपरा</p>
               </div>
             </div>
           </div>
@@ -59,29 +54,29 @@ const Home = () => {
       <section className="objectives-section">
         <div className="container">
           <div className="section-header">
-            <h2>Our Objectives</h2>
+            <h2>हमारे उद्देश्य</h2>
             <div className="underline"></div>
           </div>
           <div className="objectives-grid">
             <div className="objective-card">
               <div className="icon">🤝</div>
-              <h3>Social Welfare</h3>
-              <p>Promoting social harmony and providing assistance to community members in need</p>
+              <h3>सामाजिक कल्याण</h3>
+              <p>सामाजिक सद्भावना को बढ़ावा देना और जरूरतमंद सदस्यों को सहायता प्रदान करना</p>
             </div>
             <div className="objective-card">
               <div className="icon">📚</div>
-              <h3>Education & Training</h3>
-              <p>Supporting educational initiatives and skill development programs</p>
+              <h3>शिक्षा और प्रशिक्षण</h3>
+              <p>शैक्षिक पहलों और कौशल विकास कार्यक्रमों का समर्थन करना</p>
             </div>
             <div className="objective-card">
               <div className="icon">🎭</div>
-              <h3>Cultural Heritage</h3>
-              <p>Preserving and promoting our rich cultural traditions and values</p>
+              <h3>सांस्कृतिक विरासत</h3>
+              <p>हमारी समृद्ध सांस्कृतिक परंपराओं और मूल्यों को संरक्षित और प्रचारित करना</p>
             </div>
             <div className="objective-card">
               <div className="icon">💪</div>
-              <h3>Community Empowerment</h3>
-              <p>Empowering members through networking and collaborative opportunities</p>
+              <h3>सामुदायिक सशक्तिकरण</h3>
+              <p>नेटवर्किंग और सहयोगी अवसरों के माध्यम से सदस्यों को सशक्त बनाना</p>
             </div>
           </div>
         </div>
@@ -91,7 +86,7 @@ const Home = () => {
       <section className="activities-section">
         <div className="container">
           <div className="section-header">
-            <h2>Recent Activities</h2>
+            <h2>हाल की गतिविधियां</h2>
             <div className="underline"></div>
           </div>
           <div className="activities-grid">
@@ -100,9 +95,9 @@ const Home = () => {
                 <div className="image-placeholder">📅</div>
               </div>
               <div className="activity-content">
-                <h3>Annual Community Gathering</h3>
-                <p className="date">November 15, 2024</p>
-                <p>Successful organization of our annual community gathering with participation from over 500 members.</p>
+                <h3>वार्षिक सामुदायिक समारोह</h3>
+                <p className="date">15 नवंबर, 2024</p>
+                <p>500 से अधिक सदस्यों की भागीदारी के साथ हमारा वार्षिक सामुदायिक समारोह सफलतापूर्वक आयोजित किया गया।</p>
               </div>
             </div>
             <div className="activity-card">
@@ -110,9 +105,9 @@ const Home = () => {
                 <div className="image-placeholder">🎓</div>
               </div>
               <div className="activity-content">
-                <h3>Scholarship Distribution</h3>
-                <p className="date">October 20, 2024</p>
-                <p>Distributed scholarships to 50 meritorious students from our community.</p>
+                <h3>छात्रवृत्ति वितरण</h3>
+                <p className="date">20 अक्टूबर, 2024</p>
+                <p>हमारे समुदाय से 50 मेधावी छात्रों को छात्रवृत्ति वितरित की गई।</p>
               </div>
             </div>
             <div className="activity-card">
@@ -120,14 +115,14 @@ const Home = () => {
                 <div className="image-placeholder">🎉</div>
               </div>
               <div className="activity-content">
-                <h3>Cultural Festival</h3>
-                <p className="date">September 10, 2024</p>
-                <p>Celebrated our heritage with traditional performances, exhibitions, and community bonding.</p>
+                <h3>सांस्कृतिक समारोह</h3>
+                <p className="date">10 सितंबर, 2024</p>
+                <p>पारंपरिक प्रदर्शन, प्रदर्शनियों और सामुदायिक बंधन के साथ हमारी विरासत का उत्सव।</p>
               </div>
             </div>
           </div>
           <div className="text-center" style={{ marginTop: '30px' }}>
-            <Link to="/events" className="btn btn-primary">View All Events</Link>
+            <Link to="/events" className="btn btn-primary">सभी घटनाएं देखें</Link>
           </div>
         </div>
       </section>
@@ -136,7 +131,7 @@ const Home = () => {
       <section className="team-section">
         <div className="container">
           <div className="section-header">
-            <h2>Our Leadership</h2>
+            <h2>हमारी नेतृत्व</h2>
             <div className="underline"></div>
           </div>
           <div className="team-grid">
@@ -144,33 +139,33 @@ const Home = () => {
               <div className="team-image">
                 <div className="image-placeholder">👤</div>
               </div>
-              <h3>President</h3>
-              <p className="designation">National President</p>
+              <h3>राष्ट्रीय अध्यक्ष</h3>
+              <p className="designation">राष्ट्रीय अध्यक्ष</p>
             </div>
             <div className="team-card">
               <div className="team-image">
                 <div className="image-placeholder">👤</div>
               </div>
-              <h3>Vice President</h3>
-              <p className="designation">National Vice President</p>
+              <h3>उपाध्यक्ष</h3>
+              <p className="designation">राष्ट्रीय उपाध्यक्ष</p>
             </div>
             <div className="team-card">
               <div className="team-image">
                 <div className="image-placeholder">👤</div>
               </div>
-              <h3>General Secretary</h3>
-              <p className="designation">National Secretary</p>
+              <h3>महासचिव</h3>
+              <p className="designation">राष्ट्रीय सचिव</p>
             </div>
             <div className="team-card">
               <div className="team-image">
                 <div className="image-placeholder">👤</div>
               </div>
-              <h3>Treasurer</h3>
-              <p className="designation">National Treasurer</p>
+              <h3>कोषाध्यक्ष</h3>
+              <p className="designation">राष्ट्रीय कोषाध्यक्ष</p>
             </div>
           </div>
           <div className="text-center" style={{ marginTop: '30px' }}>
-            <Link to="/community" className="btn btn-primary">View All Members</Link>
+            <Link to="/community" className="btn btn-primary">सभी सदस्यों को देखें</Link>
           </div>
         </div>
       </section>
@@ -179,9 +174,9 @@ const Home = () => {
       <section className="cta-section">
         <div className="container">
           <div className="cta-content">
-            <h2>Join Our Community Today</h2>
-            <p>Be part of our growing family and contribute to the preservation of our heritage</p>
-            <Link to="/membership" className="btn btn-large">Register Now</Link>
+            <h2>आज हमारे समुदाय से जुड़ें</h2>
+            <p>हमारे बढ़ते परिवार का हिस्सा बनें और हमारी विरासत के संरक्षण में योगदान दें</p>
+            <Link to="/membership" className="btn btn-large">अभी पंजीकरण करें</Link>
           </div>
         </div>
       </section>
