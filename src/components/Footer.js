@@ -14,11 +14,11 @@ const Footer = () => {
         <div className="container">
           <div className="footer-grid">
             <div className="footer-section">
-              <h3>🏰 {language === 'en' ? 'Kshatriya Maunas Parivar' : 'क्षत्रिय मौना परिवार'}</h3>
+              <h3>🏰 {language === 'en' ? 'Kshatriya Maunas Parivar' : 'क्षत्रिय मौनास परिवार'}</h3>
               <p>
                 {language === 'en' 
                   ? 'Dedicated to preserving our rich heritage and empowering the Maunas Kshatriya community through unity, tradition, and progress.'
-                  : 'हमारी समृद्ध विरासत को संरक्षित करने और मौना क्षत्रिय समुदाय को एकता, परंपरा और प्रगति के माध्यम से सशक्त बनाने के लिए समर्पित।'}
+                  : 'हमारी समृद्ध विरासत को संरक्षित करने और मौनास क्षत्रिय समुदाय को एकता, परंपरा और प्रगति के माध्यम से सशक्त बनाने के लिए समर्पित।'}
               </p>
               <div className="social-icons">
                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">📘</a>
@@ -66,7 +66,7 @@ const Footer = () => {
       <div className="footer-bottom">
         <div className="container">
           <div className="footer-bottom-content">
-            <p>&copy; 2024 {language === 'en' ? 'Kshatriya Maunas Parivar. All rights reserved.' : 'क्षत्रिय मौना परिवार। सर्वाधिकार सुरक्षित।'}</p>
+            <p>&copy; 2024 {language === 'en' ? 'Kshatriya Maunas Parivar. All rights reserved.' : 'क्षत्रिय मौनास परिवार। सर्वाधिकार सुरक्षित।'}</p>
             <div className="footer-links">
               <Link to="/">{language === 'en' ? 'Privacy Policy' : 'गोपनीयता नीति'}</Link>
               <Link to="/">{language === 'en' ? 'Terms & Conditions' : 'शर्तें और शर्तें'}</Link>
