@@ -2,7 +2,7 @@
   "name": "maunas-parivar",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Arsh-2004.github.io/maunas-parivar",
+  "homepage": "./",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
