@@ -13,7 +13,7 @@ import './App.css';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/maunas-parivar">
       <div className="App">
         <Header />
         <main>
