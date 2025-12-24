@@ -49,14 +49,17 @@
 }
 
 .hero-subtitle {
-  font-size: clamp(1rem, 3vw, 1.5rem);
+  font-size: clamp(0.8rem, 2.2vw, 1.1rem);
   margin-bottom: 2.5rem;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   word-wrap: break-word;
-  line-height: 1.5;
-  max-width: 800px;
+  line-height: 1.2;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .hero-buttons {
@@ -147,6 +150,7 @@ section {
   grid-template-columns: 1fr 1fr;
   gap: 60px;
   align-items: center;
+  text-align: justify;
 }
 
 .about-text p {
@@ -154,6 +158,7 @@ section {
   line-height: 1.8;
   color: #666;
   margin-bottom: 20px;
+  text-align: justify;
 }
 
 .read-more {
