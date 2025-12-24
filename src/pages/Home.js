@@ -13,9 +13,17 @@ const Home = () => {
         <div className="hero-overlay">
           <div className="container">
             <div className="hero-content">
+              <div className="hero-emblem">
+                <img
+                  src="/assets/ram.png"
+                  alt="भगवान श्री राम"
+                  className="hero-emblem-image"
+                  loading="lazy"
+                />
+              </div>
               <h1 className="hero-title">{language === 'en' ? 'Welcome to Kshatriya Maunas Parivar' : 'क्षत्रिय मौनस परिवार में आपका स्वागत है'}</h1>
               <p className="hero-subtitle">
-                {language === 'en' ? 'Preserve Our Heritage | Empower Our Community | Build Our Future' : 'हमारी विरासत को संरक्षित करें | हमारे समुदाय को सशक्त बनाएं | हमारा भविष्य बनाएं'}
+                {language === 'en' ? 'Preserve Our Heritage | Empower Our Community | Build Our Future' : 'अपने विरासत को संरक्षित करें | अपने परिवार को सशक्त बनाएं | अपना भविष्य उज्ज्वल बनाएं'}
               </p>
               <div className="hero-buttons">
                 <Link to="/membership" className="btn btn-primary">{language === 'en' ? 'Join Our Community' : 'हमारे समुदाय से जुड़ें'}</Link>

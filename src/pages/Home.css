@@ -26,6 +26,18 @@
   padding: 0 15px;
 }
 
+.hero-emblem {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.hero-emblem-image {
+  max-width: min(220px, 40vw);
+  height: auto;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.25));
+}
+
 .hero-title {
   font-size: clamp(1.8rem, 5vw, 3.5rem);
   font-weight: bold;

@@ -44,8 +44,17 @@ const Header = () => {
         <nav className="navbar" role="navigation" aria-label="Main navigation">
           <div className="container">
             <div className="nav-content">
-            <Link to="/" className="logo">
-              <h2>🏰 {language === 'en' ? 'Kshatriya Maunas Parivar' : 'क्षत्रिय मौनस परिवार'}</h2>
+            <Link to="/" className="logo" aria-label={language === 'en' ? 'Kshatriya Maunas Parivar home' : 'क्षत्रिय मौनस परिवार मुखपृष्ठ'}>
+              <img
+                src="/assets/ram.png"
+                alt=""
+                className="logo-image"
+                loading="lazy"
+                aria-hidden="true"
+              />
+              <div className="logo-text">
+                <span className="logo-title">{language === 'en' ? 'Kshatriya Maunas Parivar' : 'क्षत्रिय मौनस परिवार'}</span>
+              </div>
             </Link>
             
             <div id="nav-menu" className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
