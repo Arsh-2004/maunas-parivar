@@ -10,7 +10,7 @@ const About = () => {
       {/* Page Header */}
       <section className="page-header">
         <div className="container">
-          <h1>{language === 'en' ? 'About Kshatriya Maunas Parivar' : 'क्षत्रिय मौनास परिवार के बारे में'}</h1>
+          <h1>{language === 'en' ? 'About Kshatriya Maunas Parivar' : 'क्षत्रिय मौनस परिवार के बारे में'}</h1>
           <p>{language === 'en' ? 'Preserve Heritage | Empower Community' : 'विरासत को संरक्षित करें | समुदाय को सशक्त करें'}</p>
         </div>
       </section>
@@ -25,7 +25,7 @@ const About = () => {
               <p>
                 {language === 'en'
                   ? 'To unite and empower the Kshatriya Maunas community, preserve our rich cultural heritage, promote social welfare, and provide opportunities for educational and economic advancement.'
-                  : 'क्षत्रिय मौनास समुदाय को संयुक्त और सशक्त करना, हमारी समृद्ध सांस्कृतिक विरासत को संरक्षित करना, सामाजिक कल्याण को बढ़ावा देना, और शैक्षणिक एवं आर्थिक उन्नति के लिए अवसर प्रदान करना।'}
+                  : 'क्षत्रिय मौनस समुदाय को संयुक्त और सशक्त करना, हमारी समृद्ध सांस्कृतिक विरासत को संरक्षित करना, सामाजिक कल्याण को बढ़ावा देना, और शैक्षणिक एवं आर्थिक उन्नति के लिए अवसर प्रदान करना।'}
               </p>
             </div>
             <div className="mv-card">
@@ -34,7 +34,7 @@ const About = () => {
               <p>
                 {language === 'en'
                   ? 'To build a progressive Kshatriya Maunas community that honors its glorious past and embraces modern development, ensuring growth opportunities for every member.'
-                  : 'एक प्रगतिशील क्षत्रिय मौनास समुदाय बनाना जो अपने गौरवशाली अतीत को सम्मानित करता है और आधुनिक विकास को अपनाता है, हर सदस्य के लिए विकास के अवसर सुनिश्चित करता है।'}
+                  : 'एक प्रगतिशील क्षत्रिय मौनस समुदाय बनाना जो अपने गौरवशाली अतीत को सम्मानित करता है और आधुनिक विकास को अपनाता है, हर सदस्य के लिए विकास के अवसर सुनिश्चित करता है।'}
               </p>
             </div>
           </div>
@@ -50,16 +50,16 @@ const About = () => {
           </div>
           <div className="history-content">
             <div className="history-text">
-              <h3>{language === 'en' ? 'Maunas Kshatriya Traditions' : 'मौनास क्षत्रियों की परंपरा'}</h3>
+              <h3>{language === 'en' ? 'Maunas Kshatriya Traditions' : 'मौनस क्षत्रियों की परंपरा'}</h3>
               <p>
                 {language === 'en'
                   ? 'The Kshatriya Maunas community has a glorious and prestigious history rooted in centuries-old traditions. Known for valor, administrative skills, and dedication to protecting righteousness, Maunas Kshatriyas have played significant roles in various kingdoms and regions throughout Indian history.'
-                  : 'क्षत्रिय मौनास समुदाय का एक गौरवशाली और प्रतिष्ठित इतिहास है जो सदियों पुरानी परंपराओं में निहित है। वीरता, प्रशासनिक कौशल और धर्म की रक्षा के लिए समर्पण के लिए जाने जाते हैं, मौनास क्षत्रियों ने भारतीय इतिहास में विभिन्न राज्यों और क्षेत्रों में महत्वपूर्ण भूमिका निभाई है।'}
+                  : 'क्षत्रिय मौनस समुदाय का एक गौरवशाली और प्रतिष्ठित इतिहास है जो सदियों पुरानी परंपराओं में निहित है। वीरता, प्रशासनिक कौशल और धर्म की रक्षा के लिए समर्पण के लिए जाने जाते हैं, मौनस क्षत्रियों ने भारतीय इतिहास में विभिन्न राज्यों और क्षेत्रों में महत्वपूर्ण भूमिका निभाई है।'}
               </p>
               <p>
                 {language === 'en'
                   ? 'Our ancestors were renowned warriors, administrators, and protectors of our people. They maintained the highest standards of honor, duty, and service. The Maunas Kshatriya community has made significant contributions to the cultural and social fabric of Rajasthan and beyond.'
-                  : 'हमारे पूर्वज प्रसिद्ध योद्धा, प्रशासक और अपने लोगों की रक्षकर्ता थे। उन्होंने सम्मान, कर्तव्य और सेवा के सर्वोच्च मानदंड को बनाए रखा। मौनास क्षत्रिय समुदाय ने राजस्थान और उससे आगे की सांस्कृतिक और सामाजिक संरचना में महत्वपूर्ण योगदान दिया है।'}
+                  : 'हमारे पूर्वज प्रसिद्ध योद्धा, प्रशासक और अपने लोगों की रक्षकर्ता थे। उन्होंने सम्मान, कर्तव्य और सेवा के सर्वोच्च मानदंड को बनाए रखा। मौनस क्षत्रिय समुदाय ने राजस्थान और उससे आगे की सांस्कृतिक और सामाजिक संरचना में महत्वपूर्ण योगदान दिया है।'}
               </p>
               <p>
                 {language === 'en'
@@ -144,7 +144,7 @@ const About = () => {
               <p>
                 {language === 'en'
                   ? 'It is with great pride that I speak to you as the President of the Kshatriya Maunas family. Our organization stands as a testament to the enduring spirit of our community, built upon centuries of tradition, valor, and dedication to righteousness.'
-                  : 'यह गर्व के साथ कि मैं क्षत्रिय मौनास परिवार के अध्यक्ष के रूप में आपसे बात कर रहा हूं। हमारा संगठन सदियों की परंपरा, वीरता और धर्म के प्रति समर्पण पर बना हमारे समुदाय की स्थायी भावना का प्रमाण है।'}
+                  : 'यह गर्व के साथ कि मैं क्षत्रिय मौनस परिवार के अध्यक्ष के रूप में आपसे बात कर रहा हूं। हमारा संगठन सदियों की परंपरा, वीरता और धर्म के प्रति समर्पण पर बना हमारे समुदाय की स्थायी भावना का प्रमाण है।'}
               </p>
               <p>
                 {language === 'en'

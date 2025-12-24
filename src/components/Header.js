@@ -45,7 +45,7 @@ const Header = () => {
           <div className="container">
             <div className="nav-content">
             <Link to="/" className="logo">
-              <h2>🏰 {language === 'en' ? 'Kshatriya Maunas Parivar' : 'क्षत्रिय मौनास परिवार'}</h2>
+              <h2>🏰 {language === 'en' ? 'Kshatriya Maunas Parivar' : 'क्षत्रिय मौनस परिवार'}</h2>
             </Link>
             
             <div id="nav-menu" className={`nav-links ${isMenuOpen ? 'active' : ''}`}>

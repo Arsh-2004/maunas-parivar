@@ -13,7 +13,7 @@ const Home = () => {
         <div className="hero-overlay">
           <div className="container">
             <div className="hero-content">
-              <h1 className="hero-title">{language === 'en' ? 'Welcome to Kshatriya Maunas Parivar' : 'क्षत्रिय मौनास परिवार में आपका स्वागत है'}</h1>
+              <h1 className="hero-title">{language === 'en' ? 'Welcome to Kshatriya Maunas Parivar' : 'क्षत्रिय मौनस परिवार में आपका स्वागत है'}</h1>
               <p className="hero-subtitle">
                 {language === 'en' ? 'Preserve Our Heritage | Empower Our Community | Build Our Future' : 'हमारी विरासत को संरक्षित करें | हमारे समुदाय को सशक्त बनाएं | हमारा भविष्य बनाएं'}
               </p>
@@ -30,7 +30,7 @@ const Home = () => {
       <section className="about-section">
         <div className="container">
           <div className="section-header">
-            <h2>{language === 'en' ? 'About Kshatriya Maunas Parivar' : 'क्षत्रिय मौनास परिवार के बारे में'}</h2>
+            <h2>{language === 'en' ? 'About Kshatriya Maunas Parivar' : 'क्षत्रिय मौनस परिवार के बारे में'}</h2>
             <div className="underline"></div>
           </div>
           <div className="about-content">
@@ -38,13 +38,13 @@ const Home = () => {
               <p>
                 {language === 'en' 
                   ? 'Kshatriya Maunas Parivar is dedicated to preserving the rich heritage and traditions of the Maunas Kshatriya community. We are committed to fostering unity, providing support, and empowering our members through various social, cultural, and educational initiatives.'
-                  : 'क्षत्रिय मौनास परिवार मौनास क्षत्रिय समुदाय की समृद्ध विरासत और परंपराओं को संरक्षित करने के लिए समर्पित है। हम विभिन्न सामाजिक, सांस्कृतिक और शैक्षिक पहलों के माध्यम से एकता को बढ़ावा देने, सहायता प्रदान करने और अपने सदस्यों को सशक्त बनाने के लिए प्रतिबद्ध हैं।'
+                  : 'क्षत्रिय मौनस परिवार मौनस क्षत्रिय समुदाय की समृद्ध विरासत और परंपराओं को संरक्षित करने के लिए समर्पित है। हम विभिन्न सामाजिक, सांस्कृतिक और शैक्षिक पहलों के माध्यम से एकता को बढ़ावा देने, सहायता प्रदान करने और अपने सदस्यों को सशक्त बनाने के लिए प्रतिबद्ध हैं।'
                 }
               </p>
               <p>
                 {language === 'en'
                   ? 'Our mission is to build a strong network of Maunas Kshatriyas working together for the welfare of our community, while honoring our ancestors and maintaining our values of courage, honor, and integrity.'
-                  : 'हमारा मिशन मौनास क्षत्रियों का एक मजबूत नेटवर्क बनाना है जो अपने समुदाय के कल्याण के लिए एक साथ काम करते हैं, जबकि अपने पूर्वजों का सम्मान करते हैं और साहस, सम्मान और ईमानदारी के अपने मूल्यों को बनाए रखते हैं।'
+                  : 'हमारा मिशन मौनस क्षत्रियों का एक मजबूत नेटवर्क बनाना है जो अपने समुदाय के कल्याण के लिए एक साथ काम करते हैं, जबकि अपने पूर्वजों का सम्मान करते हैं और साहस, सम्मान और ईमानदारी के अपने मूल्यों को बनाए रखते हैं।'
                 }
               </p>
               <Link to="/about" className="read-more">{language === 'en' ? 'Read More →' : 'अधिक पढ़ें →'}</Link>
