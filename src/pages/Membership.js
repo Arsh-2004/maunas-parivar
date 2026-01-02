@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { getTranslation } from '../translations';
 import './Membership.css';
@@ -28,6 +28,18 @@ const Membership = () => {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+
+  // Scroll to registration form if hash is present
+  useEffect(() => {
+    if (window.location.hash === '#registration-form') {
+      setTimeout(() => {
+        const element = document.getElementById('registration-form');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
