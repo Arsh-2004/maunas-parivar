@@ -164,6 +164,34 @@
   background: white;
 }
 
+/* File Input Styling */
+.file-input {
+  padding: 12px;
+  border: 2px dashed #e0e0e0;
+  border-radius: 10px;
+  background: #fafafa;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.file-input:hover {
+  border-color: #FF6B35;
+  background: #fff5f2;
+}
+
+.file-input:focus {
+  outline: none;
+  border-color: #FF6B35;
+}
+
+.file-hint {
+  display: block;
+  margin-top: 8px;
+  color: #888;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
 .form-actions {
   text-align: center;
   margin-top: 20px;

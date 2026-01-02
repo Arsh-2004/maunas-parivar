@@ -19,7 +19,9 @@ const Membership = () => {
     state: '',
     pincode: '',
     occupation: '',
-    education: ''
+    education: '',
+    idProof: null,
+    donationDocument: null
   });
 
   const handleChange = (e) => {
@@ -27,6 +29,19 @@ const Membership = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      setFormData({
+        ...formData,
+        [e.target.name]: file
+      });
+    } else if (file) {
+      alert(language === 'en' ? 'Please upload a PDF file only' : 'कृपया केवल पीडीएफ फाइल अपलोड करें');
+      e.target.value = '';
+    }
   };
 
   const handleSubmit = (e) => {
@@ -37,7 +52,8 @@ const Membership = () => {
     alert(thankYouMsg);
     setFormData({
       fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '',
-      phone: '', address: '', city: '', state: '', pincode: '', occupation: '', education: ''
+      phone: '', address: '', city: '', state: '', pincode: '', occupation: '', education: '',
+      idProof: null, donationDocument: null
     });
   };
 
@@ -263,6 +279,43 @@ const Membership = () => {
                     required
                     placeholder={language === 'en' ? 'Enter education qualification' : 'शैक्षणिक योग्यता दर्ज करें'}
                   />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="idProof">
+                    {language === 'en' ? 'ID Valid Proof (PDF) *' : 'पहचान प्रमाण (पीडीएफ) *'}
+                  </label>
+                  <input
+                    type="file"
+                    id="idProof"
+                    name="idProof"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
+                    required
+                    className="file-input"
+                  />
+                  <small className="file-hint">
+                    {language === 'en' ? 'Upload a valid ID proof in PDF format (Aadhar, PAN, Voter ID, etc.)' : 'पीडीएफ प्रारूप में एक वैध पहचान प्रमाण अपलोड करें (आधार, पैन, वोटर आईडी, आदि)'}
+                  </small>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="donationDocument">
+                    {language === 'en' ? 'Donation Towards Community (PDF)' : 'समुदाय के लिए दान (पीडीएफ)'}
+                  </label>
+                  <input
+                    type="file"
+                    id="donationDocument"
+                    name="donationDocument"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
+                    className="file-input"
+                  />
+                  <small className="file-hint">
+                    {language === 'en' ? 'Optional: Upload donation receipt or document in PDF format' : 'वैकल्पिक: पीडीएफ प्रारूप में दान रसीद या दस्तावेज अपलोड करें'}
+                  </small>
                 </div>
               </div>
 
