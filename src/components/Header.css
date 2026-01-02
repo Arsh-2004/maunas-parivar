@@ -124,20 +124,26 @@
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 20px;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-links button {
   text-decoration: none;
   color: #333;
   font-weight: 500;
   transition: color 0.2s ease, transform 0.2s ease;
-  padding: 8px 12px;
+  padding: 8px 15px;
   border-radius: 4px;
   position: relative;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
+  white-space: nowrap;
+}
+
+.nav-links .user-name {
+  padding: 8px 10px;
 }
 
 .nav-links a::after {
@@ -312,5 +318,62 @@
   .social-links a {
     font-size: 0.8rem;
     margin-left: 8px;
+  }
+}
+
+/* Login & Logout Buttons */
+.btn-login {
+  background: transparent;
+  color: #FF6B35 !important;
+  padding: 8px 20px !important;
+  border: 2px solid #FF6B35;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-login:hover {
+  background: #FF6B35;
+  color: white !important;
+}
+
+.btn-login::after {
+  display: none;
+}
+
+.btn-logout {
+  background: #e74c3c;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-logout:hover {
+  background: #c0392b;
+}
+
+.user-name {
+  color: #333;
+  font-weight: 500;
+  padding: 8px 12px;
+}
+
+@media (max-width: 992px) {
+  .btn-login,
+  .btn-logout {
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+  }
+
+  .user-name {
+    width: 100%;
+    text-align: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
   }
 }

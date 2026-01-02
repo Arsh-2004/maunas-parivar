@@ -3,6 +3,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { getTranslation } from '../translations';
 import './Membership.css';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 const Membership = () => {
   const { language } = useLanguage();
   const t = (path) => getTranslation(language, path);
@@ -24,6 +26,9 @@ const Membership = () => {
     donationDocument: null
   });
 
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -44,17 +49,73 @@ const Membership = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const thankYouMsg = language === 'en' 
-      ? 'Thank you for registering! We will review your application and contact you soon.' 
-      : 'पंजीकरण के लिए धन्यवाद! हम आपकी आवेदन की समीक्षा करेंगे और जल्द ही संपर्क करेंगे।';
-    alert(thankYouMsg);
-    setFormData({
-      fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '',
-      phone: '', address: '', city: '', state: '', pincode: '', occupation: '', education: '',
-      idProof: null, donationDocument: null
-    });
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      // Create FormData for file upload
+      const submitData = new FormData();
+      submitData.append('fullName', formData.fullName);
+      submitData.append('fatherName', formData.fatherName);
+      submitData.append('dateOfBirth', formData.dateOfBirth);
+      submitData.append('gender', formData.gender);
+      submitData.append('email', formData.email);
+      submitData.append('phone', formData.phone);
+      submitData.append('address', formData.address);
+      submitData.append('city', formData.city);
+      submitData.append('state', formData.state);
+      submitData.append('pincode', formData.pincode);
+      submitData.append('occupation', formData.occupation);
+      submitData.append('education', formData.education);
+      
+      if (formData.idProof) {
+        submitData.append('idProof', formData.idProof);
+      }
+      if (formData.donationDocument) {
+        submitData.append('donationDocument', formData.donationDocument);
+      }
+
+      const response = await fetch(`${API_URL}/users/register`, {
+        method: 'POST',
+        body: submitData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setMessage({
+          type: 'success',
+          text: language === 'en' 
+            ? 'Registration successful! Your application is pending approval. You will be notified once approved.' 
+            : 'पंजीकरण सफल! आपका आवेदन अनुमोदन के लिए लंबित है। अनुमोदित होने पर आपको सूचित किया जाएगा।'
+        });
+        setFormData({
+          fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '',
+          phone: '', address: '', city: '', state: '', pincode: '', occupation: '', education: '',
+          idProof: null, donationDocument: null
+        });
+        // Reset file inputs
+        document.getElementById('idProof').value = '';
+        const donationInput = document.getElementById('donationDocument');
+        if (donationInput) donationInput.value = '';
+      } else {
+        setMessage({
+          type: 'error',
+          text: data.message || (language === 'en' ? 'Registration failed. Please try again.' : 'पंजीकरण विफल। कृपया पुन: प्रयास करें।')
+        });
+      }
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: language === 'en' 
+          ? 'Connection error. Please check if the server is running.' 
+          : 'कनेक्शन त्रुटि। कृपया जांचें कि सर्वर चल रहा है।'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -107,11 +168,17 @@ const Membership = () => {
         </div>
       </section>
 
-      <section className="registration-section">
+      <section className="registration-section" id="registration-form">
         <div className="container">
           <div className="form-container">
             <h2>{t('membership.registrationForm')}</h2>
             <p className="form-description">{t('membership.formDescription')}</p>
+            
+            {message.text && (
+              <div className={`form-message ${message.type}`}>
+                {message.text}
+              </div>
+            )}
             
             <form onSubmit={handleSubmit} className="registration-form">
               <div className="form-row">
@@ -320,7 +387,12 @@ const Membership = () => {
               </div>
 
               <div className="form-actions">
-                <button type="submit" className="submit-btn">{t('membership.submitBtn')}</button>
+                <button type="submit" className="submit-btn" disabled={loading}>
+                  {loading 
+                    ? (language === 'en' ? 'Submitting...' : 'जमा हो रहा है...')
+                    : t('membership.submitBtn')
+                  }
+                </button>
               </div>
             </form>
           </div>

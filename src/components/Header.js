@@ -1,16 +1,28 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import { getTranslation } from '../translations';
 import './Header.css';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { language, toggleLanguage } = useLanguage();
+  const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const t = (path) => getTranslation(language, path);
+
+  const isAdminPage = location.pathname === '/admin';
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsMenuOpen(false);
+    navigate('/');
   };
 
   return (
@@ -60,13 +72,35 @@ const Header = () => {
             <div id="nav-menu" className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
               <Link to="/" onClick={() => setIsMenuOpen(false)}>{t('header.home')}</Link>
               <Link to="/about" onClick={() => setIsMenuOpen(false)}>{t('header.about')}</Link>
-              <Link to="/community" onClick={() => setIsMenuOpen(false)}>{t('header.community')}</Link>
-              <Link to="/events" onClick={() => setIsMenuOpen(false)}>{t('header.events')}</Link>
-              <Link to="/gallery" onClick={() => setIsMenuOpen(false)}>{t('header.gallery')}</Link>
+              {isAuthenticated() && !isAdminPage && (
+                <>
+                  <Link to="/community" onClick={() => setIsMenuOpen(false)}>{t('header.community')}</Link>
+                  <Link to="/events" onClick={() => setIsMenuOpen(false)}>{t('header.events')}</Link>
+                  <Link to="/gallery" onClick={() => setIsMenuOpen(false)}>{t('header.gallery')}</Link>
+                </>
+              )}
               <Link to="/contact" onClick={() => setIsMenuOpen(false)}>{t('header.contact')}</Link>
-              <Link to="/membership" className="btn-primary" onClick={() => setIsMenuOpen(false)}>
-                {t('header.joinUs')}
-              </Link>
+              {!isAdminPage && (
+                <>
+                  {isAuthenticated() ? (
+                    <>
+                      <span className="user-name">👤 {user?.fullName?.split(' ')[0]}</span>
+                      <button className="btn-logout" onClick={handleLogout}>
+                        {language === 'en' ? 'Logout' : 'लॉगआउट'}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/login" className="btn-login" onClick={() => setIsMenuOpen(false)}>
+                        {language === 'en' ? 'Login' : 'लॉगिन'}
+                      </Link>
+                      <Link to="/membership" className="btn-primary" onClick={() => setIsMenuOpen(false)}>
+                        {t('header.joinUs')}
+                      </Link>
+                    </>
+                  )}
+                </>
+              )}
             </div>              <button 
                 className="menu-toggle" 
                 onClick={toggleMenu}
