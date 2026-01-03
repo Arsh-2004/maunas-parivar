@@ -32,9 +32,9 @@
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 30px;
 }
 
 .top-bar-content {
@@ -123,7 +123,7 @@
 
 .navbar {
   background: white;
-  padding: 15px 0;
+  padding: 18px 0;
 }
 
 .nav-content {
@@ -154,16 +154,16 @@
 
 .logo-title {
   color: #FF6B35;
-  font-size: 1.5rem;
-  font-weight: 800;
+  font-size: 1.3rem;
+  font-weight: 700;
   white-space: nowrap;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 25px;
+  gap: 35px;
 }
 
 .nav-links a,
@@ -171,8 +171,9 @@
   text-decoration: none;
   color: #333;
   font-weight: 500;
+  font-size: 0.95rem;
   transition: color 0.2s ease, transform 0.2s ease;
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-radius: 4px;
   position: relative;
   min-height: 44px;
