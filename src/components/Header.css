@@ -293,22 +293,32 @@
     text-align: center;
   }
 
+  .logo {
+    gap: 8px;
+  }
+
   .logo-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
   }
 
   .logo-image {
-    width: 38px;
+    width: 36px;
+    flex-shrink: 0;
   }
 }
 
 @media (max-width: 480px) {
   .logo-title {
-    font-size: 1rem;
+    font-size: 0.9rem;
+    max-width: 150px;
   }
 
   .logo-image {
-    width: 34px;
+    width: 32px;
   }
 
   .contact-info span {
