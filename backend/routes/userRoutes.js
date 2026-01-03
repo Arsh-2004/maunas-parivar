@@ -131,10 +131,20 @@ router.post('/login', async (req, res) => {
       success: true, 
       message: 'Login successful!',
       user: {
-        id: user._id,
+        _id: user._id,
         fullName: user.fullName,
+        fatherName: user.fatherName,
+        dateOfBirth: user.dateOfBirth,
+        gender: user.gender,
         phone: user.phone,
         email: user.email,
+        address: user.address,
+        city: user.city,
+        state: user.state,
+        pincode: user.pincode,
+        occupation: user.occupation,
+        education: user.education,
+        photoPath: user.photoPath,
         status: user.status
       }
     });
@@ -180,6 +190,64 @@ router.get('/profile/:phone', async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Failed to fetch profile' 
+    });
+  }
+});
+
+// Update user profile
+router.put('/update-profile/:id', upload.single('photo'), async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+
+    // Update fields
+    user.email = req.body.email || user.email;
+    user.phone = req.body.phone || user.phone;
+    user.address = req.body.address || user.address;
+    user.city = req.body.city || user.city;
+    user.state = req.body.state || user.state;
+    user.pincode = req.body.pincode || user.pincode;
+    user.occupation = req.body.occupation || user.occupation;
+
+    // Update photo if new one uploaded
+    if (req.file) {
+      user.photoPath = req.file.filename;
+    }
+
+    await user.save();
+
+    res.json({ 
+      success: true, 
+      message: 'Profile updated successfully',
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        fatherName: user.fatherName,
+        dateOfBirth: user.dateOfBirth,
+        gender: user.gender,
+        phone: user.phone,
+        email: user.email,
+        address: user.address,
+        city: user.city,
+        state: user.state,
+        pincode: user.pincode,
+        occupation: user.occupation,
+        education: user.education,
+        photoPath: user.photoPath,
+        status: user.status
+      }
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to update profile' 
     });
   }
 });

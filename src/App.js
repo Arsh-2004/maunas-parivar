@@ -13,6 +13,7 @@ import Gallery from './pages/Gallery';
 import Contact from './pages/Contact';
 import Membership from './pages/Membership';
 import Login from './pages/Login';
+import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
 
@@ -45,6 +46,11 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/membership" element={<Membership />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } />
                 <Route path="/admin" element={<AdminDashboard />} />
               </Routes>
             </main>

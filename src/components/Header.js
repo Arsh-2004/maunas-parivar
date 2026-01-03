@@ -84,7 +84,9 @@ const Header = () => {
                 <>
                   {isAuthenticated() ? (
                     <>
-                      <span className="user-name">👤 {user?.fullName?.split(' ')[0]}</span>
+                      <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
+                        👤 {language === 'en' ? 'My Profile' : 'मेरी प्रोफ़ाइल'}
+                      </Link>
                       <button className="btn-logout" onClick={handleLogout}>
                         {language === 'en' ? 'Logout' : 'लॉगआउट'}
                       </button>

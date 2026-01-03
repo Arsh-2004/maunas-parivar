@@ -376,6 +376,7 @@ const Membership = () => {
                       required
                       minLength="6"
                       placeholder={language === 'en' ? 'Re-enter password' : 'पासवर्ड फिर से दर्ज करें'}
+                      className={formData.confirmPassword && formData.password !== formData.confirmPassword ? 'password-mismatch' : ''}
                     />
                     <button 
                       type="button" 
@@ -386,6 +387,16 @@ const Membership = () => {
                       {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
                     </button>
                   </div>
+                  {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                    <small className="password-error">
+                      {language === 'en' ? '❌ Passwords do not match' : '❌ पासवर्ड मेल नहीं खाते'}
+                    </small>
+                  )}
+                  {formData.confirmPassword && formData.password === formData.confirmPassword && (
+                    <small className="password-match">
+                      {language === 'en' ? '✅ Passwords match' : '✅ पासवर्ड मेल खाते हैं'}
+                    </small>
+                  )}
                 </div>
               </div>
 

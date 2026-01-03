@@ -44,11 +44,19 @@ export const AuthProvider = ({ children }) => {
     return user !== null && user.status === 'approved';
   };
 
+  // Update user data
+  const updateUser = (updatedData) => {
+    const updatedUser = { ...user, ...updatedData };
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
   const value = {
     user,
     login,
     logout,
     isAuthenticated,
+    updateUser,
     loading
   };
 
