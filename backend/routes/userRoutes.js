@@ -6,6 +6,8 @@ const upload = require('../middleware/upload');
 // Register new user
 router.post('/register', upload.fields([
   { name: 'idProof', maxCount: 1 },
+  { name: 'addressProof', maxCount: 1 },
+  { name: 'photo', maxCount: 1 },
   { name: 'donationDocument', maxCount: 1 }
 ]), async (req, res) => {
   try {
@@ -18,11 +20,23 @@ router.post('/register', upload.fields([
       });
     }
 
-    // Check if ID proof was uploaded
+    // Check if required files were uploaded
     if (!req.files || !req.files.idProof) {
       return res.status(400).json({ 
         success: false, 
         message: 'ID proof document is required' 
+      });
+    }
+    if (!req.files.addressProof) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Address proof document is required' 
+      });
+    }
+    if (!req.files.photo) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Photo is required' 
       });
     }
 
@@ -34,6 +48,7 @@ router.post('/register', upload.fields([
       gender: req.body.gender,
       email: req.body.email,
       phone: req.body.phone,
+      password: req.body.password,
       address: req.body.address,
       city: req.body.city,
       state: req.body.state,
@@ -41,6 +56,8 @@ router.post('/register', upload.fields([
       occupation: req.body.occupation,
       education: req.body.education,
       idProofPath: req.files.idProof[0].filename,
+      addressProofPath: req.files.addressProof[0].filename,
+      photoPath: req.files.photo[0].filename,
       donationDocumentPath: req.files.donationDocument ? req.files.donationDocument[0].filename : null,
       status: 'pending'
     };
@@ -62,15 +79,15 @@ router.post('/register', upload.fields([
   }
 });
 
-// Login with phone number
+// Login with phone number and password
 router.post('/login', async (req, res) => {
   try {
-    const { phone } = req.body;
+    const { phone, password } = req.body;
 
-    if (!phone) {
+    if (!phone || !password) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Phone number is required' 
+        message: 'Phone number and password are required' 
       });
     }
 
@@ -81,6 +98,15 @@ router.post('/login', async (req, res) => {
         success: false, 
         message: 'Phone number not registered. Please register first.',
         code: 'NOT_REGISTERED'
+      });
+    }
+
+    // Check password
+    if (user.password !== password) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid password',
+        code: 'INVALID_PASSWORD'
       });
     }
 

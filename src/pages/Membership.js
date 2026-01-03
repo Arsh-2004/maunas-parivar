@@ -16,6 +16,8 @@ const Membership = () => {
     gender: '',
     email: '',
     phone: '',
+    password: '',
+    confirmPassword: '',
     address: '',
     city: '',
     state: '',
@@ -23,6 +25,8 @@ const Membership = () => {
     occupation: '',
     education: '',
     idProof: null,
+    addressProof: null,
+    photo: null,
     donationDocument: null
   });
 
@@ -51,19 +55,46 @@ const Membership = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type === 'application/pdf') {
-      setFormData({
-        ...formData,
-        [e.target.name]: file
-      });
-    } else if (file) {
-      alert(language === 'en' ? 'Please upload a PDF file only' : 'कृपया केवल पीडीएफ फाइल अपलोड करें');
-      e.target.value = '';
+    const fieldName = e.target.name;
+    
+    // Photo field accepts images
+    if (fieldName === 'photo') {
+      if (file && (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg')) {
+        setFormData({
+          ...formData,
+          [fieldName]: file
+        });
+      } else if (file) {
+        alert(language === 'en' ? 'Please upload a JPG/PNG image file only' : 'कृपया केवल JPG/PNG छवि फ़ाइल अपलोड करें');
+        e.target.value = '';
+      }
+    } 
+    // Other fields accept PDFs
+    else {
+      if (file && file.type === 'application/pdf') {
+        setFormData({
+          ...formData,
+          [fieldName]: file
+        });
+      } else if (file) {
+        alert(language === 'en' ? 'Please upload a PDF file only' : 'कृपया केवल पीडीएफ फाइल अपलोड करें');
+        e.target.value = '';
+      }
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate password match
+    if (formData.password !== formData.confirmPassword) {
+      setMessage({
+        type: 'error',
+        text: language === 'en' ? 'Passwords do not match!' : 'पासवर्ड मेल नहीं खाते!'
+      });
+      return;
+    }
+    
     setLoading(true);
     setMessage({ type: '', text: '' });
 
@@ -76,6 +107,7 @@ const Membership = () => {
       submitData.append('gender', formData.gender);
       submitData.append('email', formData.email);
       submitData.append('phone', formData.phone);
+      submitData.append('password', formData.password);
       submitData.append('address', formData.address);
       submitData.append('city', formData.city);
       submitData.append('state', formData.state);
@@ -85,6 +117,12 @@ const Membership = () => {
       
       if (formData.idProof) {
         submitData.append('idProof', formData.idProof);
+      }
+      if (formData.addressProof) {
+        submitData.append('addressProof', formData.addressProof);
+      }
+      if (formData.photo) {
+        submitData.append('photo', formData.photo);
       }
       if (formData.donationDocument) {
         submitData.append('donationDocument', formData.donationDocument);
@@ -107,11 +145,13 @@ const Membership = () => {
         setShowModal(true);
         setFormData({
           fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '',
-          phone: '', address: '', city: '', state: '', pincode: '', occupation: '', education: '',
-          idProof: null, donationDocument: null
+          phone: '', password: '', confirmPassword: '', address: '', city: '', state: '', pincode: '', occupation: '', education: '',
+          idProof: null, addressProof: null, photo: null, donationDocument: null
         });
         // Reset file inputs
         document.getElementById('idProof').value = '';
+        document.getElementById('addressProof').value = '';
+        document.getElementById('photo').value = '';
         const donationInput = document.getElementById('donationDocument');
         if (donationInput) donationInput.value = '';
         // Scroll to top
@@ -297,6 +337,36 @@ const Membership = () => {
                 </div>
               </div>
 
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="password">{language === 'en' ? 'Password *' : 'पासवर्ड *'}</label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    minLength="6"
+                    placeholder={language === 'en' ? 'Create a password (min 6 characters)' : 'पासवर्ड बनाएं (न्यूनतम 6 अक्षर)'}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="confirmPassword">{language === 'en' ? 'Confirm Password *' : 'पासवर्ड की पुष्टि करें *'}</label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                    minLength="6"
+                    placeholder={language === 'en' ? 'Re-enter password' : 'पासवर्ड फिर से दर्ज करें'}
+                  />
+                </div>
+              </div>
+
               <div className="form-group">
                 <label htmlFor="address">{t('membership.address')}</label>
                 <textarea
@@ -394,7 +464,45 @@ const Membership = () => {
                     className="file-input"
                   />
                   <small className="file-hint">
-                    {language === 'en' ? 'Upload a valid ID proof in PDF format (Aadhar, PAN, Voter ID, etc.)' : 'पीडीएफ प्रारूप में एक वैध पहचान प्रमाण अपलोड करें (आधार, पैन, वोटर आईडी, आदि)'}
+                    {language === 'en' ? 'Upload ID proof in PDF (Aadhar, PAN, Voter ID, etc.)' : 'पीडीएफ में पहचान प्रमाण अपलोड करें (आधार, पैन, वोटर आईडी, आदि)'}
+                  </small>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="addressProof">
+                    {language === 'en' ? 'Address Proof (PDF) *' : 'पते का प्रमाण (पीडीएफ) *'}
+                  </label>
+                  <input
+                    type="file"
+                    id="addressProof"
+                    name="addressProof"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
+                    required
+                    className="file-input"
+                  />
+                  <small className="file-hint">
+                    {language === 'en' ? 'Upload address proof in PDF (Utility bill, Bank statement, etc.)' : 'पीडीएफ में पते का प्रमाण अपलोड करें (बिजली बिल, बैंक स्टेटमेंट, आदि)'}
+                  </small>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="photo">
+                    {language === 'en' ? 'Photo (JPG/PNG) *' : 'फोटो (JPG/PNG) *'}
+                  </label>
+                  <input
+                    type="file"
+                    id="photo"
+                    name="photo"
+                    accept="image/jpeg,image/png,image/jpg"
+                    onChange={handleFileChange}
+                    required
+                    className="file-input"
+                  />
+                  <small className="file-hint">
+                    {language === 'en' ? 'Upload a recent passport-size photo' : 'एक हालिया पासपोर्ट आकार की फोटो अपलोड करें'}
                   </small>
                 </div>
 

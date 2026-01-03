@@ -12,6 +12,7 @@ const Login = () => {
   const navigate = useNavigate();
   
   const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
@@ -28,7 +29,7 @@ const Login = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ phone, password }),
       });
 
       const data = await response.json();
@@ -37,7 +38,12 @@ const Login = () => {
         login(data.user);
         navigate('/');
       } else {
-        if (data.code === 'PENDING') {
+        if (data.code === 'INVALID_PASSWORD') {
+          setError(language === 'en' 
+            ? 'Invalid password. Please try again.'
+            : 'गलत पासवर्ड। कृपया पुन: प्रयास करें।'
+          );
+        } else if (data.code === 'PENDING') {
           setStatusMessage(language === 'en' 
             ? 'Your registration is pending approval. Please wait for admin verification.'
             : 'आपका पंजीकरण अनुमोदन के लिए लंबित है। कृपया व्यवस्थापक सत्यापन की प्रतीक्षा करें।'
@@ -85,6 +91,21 @@ const Login = () => {
               required
               pattern="[0-9]{10}"
               title={language === 'en' ? 'Please enter a valid 10-digit phone number' : 'कृपया 10 अंकों का फ़ोन नंबर दर्ज करें'}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password">
+              {language === 'en' ? 'Password' : 'पासवर्ड'}
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={language === 'en' ? 'Enter your password' : 'अपना पासवर्ड दर्ज करें'}
+              required
+              minLength="6"
             />
           </div>
 

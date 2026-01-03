@@ -21,12 +21,22 @@ const storage = multer.diskStorage({
   }
 });
 
-// File filter for PDF only
+// File filter for PDF and images
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'application/pdf') {
-    cb(null, true);
+  if (file.fieldname === 'photo') {
+    // Allow images for photo field
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
+      cb(null, true);
+    } else {
+      cb(new Error('Only JPG/PNG images are allowed for photo!'), false);
+    }
   } else {
-    cb(new Error('Only PDF files are allowed!'), false);
+    // Allow only PDF for other fields
+    if (file.mimetype === 'application/pdf') {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF files are allowed for documents!'), false);
+    }
   }
 };
 

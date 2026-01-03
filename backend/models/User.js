@@ -65,6 +65,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  addressProofPath: {
+    type: String,
+    required: true
+  },
+  photoPath: {
+    type: String,
+    required: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
   donationDocumentPath: {
     type: String,
     default: null
