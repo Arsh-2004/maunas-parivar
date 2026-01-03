@@ -336,6 +336,22 @@ const AdminDashboard = () => {
                   {language === 'en' ? 'View PDF' : 'PDF देखें'} 📄
                 </a>
               </div>
+              {selectedUser.addressProofPath && (
+                <div className="detail-row">
+                  <span>{language === 'en' ? 'Address Proof:' : 'पते का प्रमाण:'}</span>
+                  <a href={`${API_URL.replace('/api', '')}/uploads/${selectedUser.addressProofPath}`} target="_blank" rel="noopener noreferrer">
+                    {language === 'en' ? 'View PDF' : 'PDF देखें'} 📄
+                  </a>
+                </div>
+              )}
+              {selectedUser.photoPath && (
+                <div className="detail-row">
+                  <span>{language === 'en' ? 'Photo:' : 'फोटो:'}</span>
+                  <a href={`${API_URL.replace('/api', '')}/uploads/${selectedUser.photoPath}`} target="_blank" rel="noopener noreferrer">
+                    {language === 'en' ? 'View Photo' : 'फोटो देखें'} 🖼️
+                  </a>
+                </div>
+              )}
               {selectedUser.donationDocumentPath && (
                 <div className="detail-row">
                   <span>{language === 'en' ? 'Donation Doc:' : 'दान दस्तावेज़:'}</span>
