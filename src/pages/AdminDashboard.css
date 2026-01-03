@@ -242,6 +242,52 @@
   background: #2980b9;
 }
 
+/* Inline tier dropdown and view button in table */
+.tier-dropdown-inline {
+  padding: 8px 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: white;
+  transition: all 0.3s;
+  min-width: 120px;
+}
+
+.tier-dropdown-inline:hover {
+  border-color: #FF6B35;
+}
+
+.tier-dropdown-inline:focus {
+  outline: none;
+  border-color: #FF6B35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.view-btn-inline {
+  padding: 8px 20px;
+  background: #0088FF;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 136, 255, 0.3);
+}
+
+.view-btn-inline:hover {
+  background: #0066CC;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 136, 255, 0.4);
+}
+
+.view-btn-inline:active {
+  transform: translateY(0);
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;

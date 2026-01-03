@@ -471,7 +471,8 @@ const AdminDashboard = () => {
                       <th>{language === 'en' ? 'Name' : 'नाम'}</th>
                       <th>{language === 'en' ? 'Phone' : 'फोन'}</th>
                       <th>{language === 'en' ? 'Date' : 'तारीख'}</th>
-                      <th>{language === 'en' ? 'Actions' : 'क्रियाएं'}</th>
+                      <th>{language === 'en' ? 'Tier' : 'स्तर'}</th>
+                      <th>{language === 'en' ? 'Action' : 'कार्यवाई'}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -481,8 +482,19 @@ const AdminDashboard = () => {
                         <td>{user.phone}</td>
                         <td>{new Date(user.registeredAt).toLocaleDateString('en-GB')}</td>
                         <td>
+                          <select
+                            value={user.membershipTier || 'silver'}
+                            onChange={(e) => handleUpdateTier(user._id, e.target.value)}
+                            className="tier-dropdown-inline"
+                          >
+                            <option value="silver">Silver</option>
+                            <option value="gold">Gold</option>
+                            <option value="diamond">Diamond</option>
+                          </select>
+                        </td>
+                        <td>
                           <button 
-                            className="view-btn"
+                            className="view-btn-inline"
                             onClick={() => {
                               setSelectedUser(user);
                               setShowUserModal(true);

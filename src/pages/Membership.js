@@ -122,12 +122,214 @@ const Membership = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate password match
+    // Comprehensive form validation
+    
+    // Name validation - only letters and spaces
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!formData.fullName.trim()) {
+      alert(language === 'en' ? '❌ Please enter your full name' : '❌ कृपया अपना पूरा नाम दर्ज करें');
+      document.getElementById('fullName').focus();
+      return;
+    }
+    if (!nameRegex.test(formData.fullName)) {
+      alert(language === 'en' ? '❌ Full name should contain only letters' : '❌ पूरे नाम में केवल अक्षर होने चाहिए');
+      document.getElementById('fullName').focus();
+      return;
+    }
+    
+    // Father name validation
+    if (!formData.fatherName.trim()) {
+      alert(language === 'en' ? "❌ Please enter father's name" : '❌ कृपया पिता का नाम दर्ज करें');
+      document.getElementById('fatherName').focus();
+      return;
+    }
+    if (!nameRegex.test(formData.fatherName)) {
+      alert(language === 'en' ? "❌ Father's name should contain only letters" : '❌ पिता के नाम में केवल अक्षर होने चाहिए');
+      document.getElementById('fatherName').focus();
+      return;
+    }
+    
+    // Date of birth validation
+    if (!formData.dateOfBirth) {
+      alert(language === 'en' ? '❌ Please select your date of birth' : '❌ कृपया अपनी जन्म तिथि चुनें');
+      document.getElementById('dateOfBirth').focus();
+      return;
+    }
+    
+    // Age validation - must be at least 18 years old
+    const dob = new Date(formData.dateOfBirth);
+    const today = new Date();
+    const age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate()) ? age - 1 : age;
+    
+    if (actualAge < 18) {
+      alert(language === 'en' ? '❌ You must be at least 18 years old to register' : '❌ पंजीकरण के लिए आपकी आयु कम से कम 18 वर्ष होनी चाहिए');
+      document.getElementById('dateOfBirth').focus();
+      return;
+    }
+    if (actualAge > 120) {
+      alert(language === 'en' ? '❌ Please enter a valid date of birth' : '❌ कृपया वैध जन्म तिथि दर्ज करें');
+      document.getElementById('dateOfBirth').focus();
+      return;
+    }
+    
+    // Gender validation
+    if (!formData.gender) {
+      alert(language === 'en' ? '❌ Please select your gender' : '❌ कृपया अपना लिंग चुनें');
+      document.getElementById('gender').focus();
+      return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) {
+      alert(language === 'en' ? '❌ Please enter your email address' : '❌ कृपया अपना ईमेल पता दर्ज करें');
+      document.getElementById('email').focus();
+      return;
+    }
+    if (!emailRegex.test(formData.email)) {
+      alert(language === 'en' ? '❌ Please enter a valid email address' : '❌ कृपया वैध ईमेल पता दर्ज करें');
+      document.getElementById('email').focus();
+      return;
+    }
+    
+    // Phone validation - Indian phone number (10 digits)
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!formData.phone.trim()) {
+      alert(language === 'en' ? '❌ Please enter your phone number' : '❌ कृपया अपना फोन नंबर दर्ज करें');
+      document.getElementById('phone').focus();
+      return;
+    }
+    if (!phoneRegex.test(formData.phone)) {
+      alert(language === 'en' ? '❌ Please enter a valid 10-digit phone number' : '❌ कृपया वैध 10 अंकों का फोन नंबर दर्ज करें');
+      document.getElementById('phone').focus();
+      return;
+    }
+    
+    // Password validation
+    if (!formData.password) {
+      alert(language === 'en' ? '❌ Please enter a password' : '❌ कृपया पासवर्ड दर्ज करें');
+      document.getElementById('password').focus();
+      return;
+    }
+    if (formData.password.length < 6) {
+      alert(language === 'en' ? '❌ Password must be at least 6 characters long' : '❌ पासवर्ड कम से कम 6 अक्षरों का होना चाहिए');
+      document.getElementById('password').focus();
+      return;
+    }
+    
+    // Confirm password validation
+    if (!formData.confirmPassword) {
+      alert(language === 'en' ? '❌ Please confirm your password' : '❌ कृपया अपने पासवर्ड की पुष्टि करें');
+      document.getElementById('confirmPassword').focus();
+      return;
+    }
     if (formData.password !== formData.confirmPassword) {
-      setMessage({
-        type: 'error',
-        text: language === 'en' ? 'Passwords do not match!' : 'पासवर्ड मेल नहीं खाते!'
-      });
+      alert(language === 'en' ? '❌ Passwords do not match!' : '❌ पासवर्ड मेल नहीं खाते!');
+      document.getElementById('confirmPassword').focus();
+      return;
+    }
+    
+    // Address validation
+    if (!formData.address.trim()) {
+      alert(language === 'en' ? '❌ Please enter your address' : '❌ कृपया अपना पता दर्ज करें');
+      document.getElementById('address').focus();
+      return;
+    }
+    if (formData.address.trim().length < 10) {
+      alert(language === 'en' ? '❌ Please enter a complete address (minimum 10 characters)' : '❌ कृपया पूरा पता दर्ज करें (न्यूनतम 10 अक्षर)');
+      document.getElementById('address').focus();
+      return;
+    }
+    
+    // State validation
+    if (!formData.state.trim()) {
+      alert(language === 'en' ? '❌ Please select or enter your state' : '❌ कृपया अपना राज्य चुनें या दर्ज करें');
+      document.getElementById('state').focus();
+      return;
+    }
+    
+    // City validation
+    if (!formData.city.trim()) {
+      alert(language === 'en' ? '❌ Please select or enter your city' : '❌ कृपया अपना शहर चुनें या दर्ज करें');
+      document.getElementById('city').focus();
+      return;
+    }
+    
+    // Pincode validation - 6 digits
+    const pincodeRegex = /^\d{6}$/;
+    if (!formData.pincode.trim()) {
+      alert(language === 'en' ? '❌ Please enter your pincode' : '❌ कृपया अपना पिन कोड दर्ज करें');
+      document.getElementById('pincode').focus();
+      return;
+    }
+    if (!pincodeRegex.test(formData.pincode)) {
+      alert(language === 'en' ? '❌ Please enter a valid 6-digit pincode' : '❌ कृपया वैध 6 अंकों का पिन कोड दर्ज करें');
+      document.getElementById('pincode').focus();
+      return;
+    }
+    
+    // Occupation validation
+    if (!formData.occupation.trim()) {
+      alert(language === 'en' ? '❌ Please enter your occupation' : '❌ कृपया अपना व्यवसाय दर्ज करें');
+      document.getElementById('occupation').focus();
+      return;
+    }
+    if (formData.occupation.trim().length < 2) {
+      alert(language === 'en' ? '❌ Please enter a valid occupation' : '❌ कृपया वैध व्यवसाय दर्ज करें');
+      document.getElementById('occupation').focus();
+      return;
+    }
+    
+    // Education validation
+    if (!formData.education) {
+      alert(language === 'en' ? '❌ Please select your education level' : '❌ कृपया अपनी शिक्षा का स्तर चुनें');
+      document.getElementById('education').focus();
+      return;
+    }
+    
+    // File validations
+    if (!formData.idProof) {
+      alert(language === 'en' ? '❌ Please upload your ID proof (PDF)' : '❌ कृपया अपना पहचान प्रमाण अपलोड करें (पीडीएफ)');
+      document.getElementById('idProof').focus();
+      return;
+    }
+    
+    if (!formData.addressProof) {
+      alert(language === 'en' ? '❌ Please upload your address proof (PDF)' : '❌ कृपया अपना पते का प्रमाण अपलोड करें (पीडीएफ)');
+      document.getElementById('addressProof').focus();
+      return;
+    }
+    
+    if (!formData.photo) {
+      alert(language === 'en' ? '❌ Please upload your photo (JPG/PNG)' : '❌ कृपया अपनी फोटो अपलोड करें (JPG/PNG)');
+      document.getElementById('photo').focus();
+      return;
+    }
+    
+    // File size validations
+    if (formData.idProof && formData.idProof.size > 5 * 1024 * 1024) {
+      alert(language === 'en' ? '❌ ID proof file size should be less than 5MB' : '❌ पहचान प्रमाण फाइल का आकार 5MB से कम होना चाहिए');
+      document.getElementById('idProof').focus();
+      return;
+    }
+    
+    if (formData.addressProof && formData.addressProof.size > 5 * 1024 * 1024) {
+      alert(language === 'en' ? '❌ Address proof file size should be less than 5MB' : '❌ पते के प्रमाण फाइल का आकार 5MB से कम होना चाहिए');
+      document.getElementById('addressProof').focus();
+      return;
+    }
+    
+    if (formData.photo && formData.photo.size > 2 * 1024 * 1024) {
+      alert(language === 'en' ? '❌ Photo file size should be less than 2MB' : '❌ फोटो फाइल का आकार 2MB से कम होना चाहिए');
+      document.getElementById('photo').focus();
+      return;
+    }
+    
+    if (formData.donationDocument && formData.donationDocument.size > 5 * 1024 * 1024) {
+      alert(language === 'en' ? '❌ Donation document file size should be less than 5MB' : '❌ दान दस्तावेज़ फाइल का आकार 5MB से कम होना चाहिए');
+      document.getElementById('donationDocument').focus();
       return;
     }
     
