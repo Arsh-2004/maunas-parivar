@@ -236,12 +236,53 @@ const Membership = () => {
       <section className="benefits-section">
         <div className="container">
           <div className="section-header">
-            <h2>{language === 'en' ? 'Membership Tiers' : 'सदस्यता स्तर'}</h2>
+            <h2>{language === 'en' ? 'Membership Benefits' : 'सदस्यता लाभ'}</h2>
             <div className="underline"></div>
           </div>
           <div className="benefits-grid">
-            <div className="benefit-card tier-card diamond">
-              <div className="benefit-icon">💎</div>
+            <div className="benefit-card">
+              <div className="benefit-icon">🤝</div>
+              <h3>{language === 'en' ? 'Community Network' : 'सामुदायिक नेटवर्क'}</h3>
+              <p>{language === 'en' ? 'Connect with thousands of community members across India' : 'पूरे भारत में समुदाय के हजारों सदस्यों से जुड़ें'}</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-icon">🎉</div>
+              <h3>{language === 'en' ? 'Exclusive Events' : 'एक्सक्लूसिव इवेंट्स'}</h3>
+              <p>{language === 'en' ? 'Access to community gatherings, cultural programs and celebrations' : 'सामुदायिक समारोह, सांस्कृतिक कार्यक्रमों और समारोहों तक पहुँच'}</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-icon">🎓</div>
+              <h3>{language === 'en' ? 'Educational Support' : 'शैक्षणिक सहायता'}</h3>
+              <p>{language === 'en' ? 'Scholarships and educational guidance for students' : 'छात्रों के लिए छात्रवृत्ति और शैक्षणिक मार्गदर्शन'}</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-icon">💼</div>
+              <h3>{language === 'en' ? 'Career Opportunities' : 'कैरियर की संभावनाएं'}</h3>
+              <p>{language === 'en' ? 'Job referrals and professional networking opportunities' : 'नौकरी के रेफ़रल और व्यावसायिक नेटवर्किंग के अवसर'}</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-icon">🏥</div>
+              <h3>{language === 'en' ? 'Wellness Programs' : 'कल्याण कार्यक्रम'}</h3>
+              <p>{language === 'en' ? 'Access to community welfare and support programs' : 'सामुदायिक कल्याण और सहायता कार्यक्रमों तक पहुँच'}</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-icon">📜</div>
+              <h3>{language === 'en' ? 'Member ID Card' : 'सदस्य आईडी कार्ड'}</h3>
+              <p>{language === 'en' ? 'Official membership certificate and digital ID card' : 'आधिकारिक सदस्यता प्रमाणपत्र और डिजिटल आईडी कार्ड'}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="tiers-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>{language === 'en' ? 'Membership Tiers' : 'सदस्यता स्तर'}</h2>
+            <div className="underline"></div>
+          </div>
+          <div className="tiers-grid">
+            <div className="tier-card diamond">
+              <div className="tier-icon">💎</div>
               <h3>{language === 'en' ? 'Diamond Tier' : 'डायमंड स्तर'}</h3>
               <ul className="tier-benefits">
                 <li>{language === 'en' ? '✓ Can approve new members (admin-like privileges)' : '✓ नए सदस्यों को मंजूरी दे सकते हैं'}</li>
@@ -250,8 +291,8 @@ const Membership = () => {
                 <li>{language === 'en' ? '✓ Decision-making authority' : '✓ निर्णय लेने का अधिकार'}</li>
               </ul>
             </div>
-            <div className="benefit-card tier-card gold">
-              <div className="benefit-icon">🏆</div>
+            <div className="tier-card gold">
+              <div className="tier-icon">🏆</div>
               <h3>{language === 'en' ? 'Gold Tier' : 'गोल्ड स्तर'}</h3>
               <ul className="tier-benefits">
                 <li>{language === 'en' ? '✓ View all upcoming events' : '✓ आगामी सभी कार्यक्रम देखें'}</li>
@@ -260,8 +301,8 @@ const Membership = () => {
                 <li>{language === 'en' ? '✓ Exclusive networking opportunities' : '✓ विशेष नेटवर्किंग अवसर'}</li>
               </ul>
             </div>
-            <div className="benefit-card tier-card silver">
-              <div className="benefit-icon">🥈</div>
+            <div className="tier-card silver">
+              <div className="tier-icon">🥈</div>
               <h3>{language === 'en' ? 'Silver Tier' : 'सिल्वर स्तर'}</h3>
               <ul className="tier-benefits">
                 <li>{language === 'en' ? '✓ Access to Community, Events, and Gallery tabs' : '✓ समुदाय, कार्यक्रम और गैलरी टैब देखें'}</li>
@@ -539,15 +580,31 @@ const Membership = () => {
 
                 <div className="form-group">
                   <label htmlFor="education">{t('membership.education')}</label>
-                  <input
-                    type="text"
+                  <select
                     id="education"
                     name="education"
                     value={formData.education}
                     onChange={handleChange}
                     required
-                    placeholder={language === 'en' ? 'Enter education qualification' : 'शैक्षणिक योग्यता दर्ज करें'}
-                  />
+                  >
+                    <option value="">{language === 'en' ? 'Select Education' : 'शिक्षा चुनें'}</option>
+                    <option value="Below 10th">{language === 'en' ? 'Below 10th' : '10वीं से कम'}</option>
+                    <option value="10th Pass">{language === 'en' ? '10th Pass' : '10वीं पास'}</option>
+                    <option value="12th Pass">{language === 'en' ? '12th Pass' : '12वीं पास'}</option>
+                    <option value="Diploma">{language === 'en' ? 'Diploma' : 'डिप्लोमा'}</option>
+                    <option value="ITI">{language === 'en' ? 'ITI' : 'आईटीआई'}</option>
+                    <option value="Bachelor's Degree (B.A/B.Sc/B.Com)">{language === 'en' ? "Bachelor's Degree (B.A/B.Sc/B.Com)" : 'स्नातक (B.A/B.Sc/B.Com)'}</option>
+                    <option value="B.Tech/B.E">{language === 'en' ? 'B.Tech/B.E' : 'बी.टेक/बी.ई'}</option>
+                    <option value="BBA/BCA">{language === 'en' ? 'BBA/BCA' : 'बीबीए/बीसीए'}</option>
+                    <option value="Master's Degree (M.A/M.Sc/M.Com)">{language === 'en' ? "Master's Degree (M.A/M.Sc/M.Com)" : 'स्नातकोत्तर (M.A/M.Sc/M.Com)'}</option>
+                    <option value="M.Tech/M.E">{language === 'en' ? 'M.Tech/M.E' : 'एम.टेक/एम.ई'}</option>
+                    <option value="MBA">{language === 'en' ? 'MBA' : 'एमबीए'}</option>
+                    <option value="MCA">{language === 'en' ? 'MCA' : 'एमसीए'}</option>
+                    <option value="PhD/Doctorate">{language === 'en' ? 'PhD/Doctorate' : 'पीएचडी/डॉक्टरेट'}</option>
+                    <option value="Medical (MBBS/MD/MS)">{language === 'en' ? 'Medical (MBBS/MD/MS)' : 'चिकित्सा (MBBS/MD/MS)'}</option>
+                    <option value="Law (LLB/LLM)">{language === 'en' ? 'Law (LLB/LLM)' : 'कानून (LLB/LLM)'}</option>
+                    <option value="Other Professional">{language === 'en' ? 'Other Professional' : 'अन्य व्यावसायिक'}</option>
+                  </select>
                 </div>
               </div>
 

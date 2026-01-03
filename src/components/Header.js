@@ -10,6 +10,7 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userPhoto, setUserPhoto] = useState(null);
+  const [userTier, setUserTier] = useState(null);
   const { language, toggleLanguage } = useLanguage();
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
@@ -18,25 +19,30 @@ const Header = () => {
 
   const isAdminPage = location.pathname === '/admin';
 
-  // Fetch user photo
+  // Fetch user photo and tier
   useEffect(() => {
-    const fetchUserPhoto = async () => {
+    const fetchUserData = async () => {
       if (isAuthenticated()) {
         const phone = localStorage.getItem('userPhone');
         if (phone) {
           try {
             const response = await fetch(`${API_URL}/users/profile/${phone}`);
             const data = await response.json();
-            if (data.success && data.user.photoPath) {
-              setUserPhoto(data.user.photoPath);
+            console.log('Header - Fetched user data:', data);
+            if (data.success && data.user) {
+              if (data.user.photoPath) {
+                setUserPhoto(data.user.photoPath);
+              }
+              console.log('Header - Setting userTier to:', data.user.membershipTier);
+              setUserTier(data.user.membershipTier);
             }
           } catch (err) {
-            console.error('Error fetching user photo:', err);
+            console.error('Error fetching user data:', err);
           }
         }
       }
     };
-    fetchUserPhoto();
+    fetchUserData();
   }, [isAuthenticated]);
 
   const toggleMenu = () => {
@@ -47,6 +53,7 @@ const Header = () => {
     logout();
     setIsMenuOpen(false);
     setUserPhoto(null);
+    setUserTier(null);
     navigate('/');
   };
 
@@ -75,10 +82,10 @@ const Header = () => {
               <div className="social-links">
                 <a href="mailto:info@maunasparivar.com" 
                    aria-label={language === 'en' ? 'Send us an email' : 'हमें ईमेल भेजें'}
-                   title={language === 'en' ? 'Email' : 'ईमेल'}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <rect x="2" y="4" width="20" height="16" rx="2"/>
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" fill="none" stroke="white" strokeWidth="2"/>
+                   title={language === 'en' ? 'Gmail' : 'जीमेल'}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" fill="#D44638"/>
+                    <path d="M0 5.457v.727l12 9 12-9v-.727c0-.666-.404-1.235-.982-1.491L12 10.91 1.982 3.966A1.636 1.636 0 0 0 0 5.457z" fill="#EA4335"/>
                   </svg>
                 </a>
                 <a href="https://facebook.com" 
@@ -143,6 +150,18 @@ const Header = () => {
               <Link to="/members" onClick={() => setIsMenuOpen(false)}>{language === 'en' ? 'Members' : 'सदस्य'}</Link>
               {isAuthenticated() && !isAdminPage && (
                 <>
+                  {console.log('Header - Current userTier:', userTier, 'isAuthenticated:', isAuthenticated())}
+                  {/* Show tier-specific dashboard links */}
+                  {userTier === 'diamond' && (
+                    <Link to="/diamond-dashboard" onClick={() => setIsMenuOpen(false)}>
+                      💎 {language === 'en' ? 'Diamond Panel' : 'डायमंड पैनल'}
+                    </Link>
+                  )}
+                  {userTier === 'gold' && (
+                    <Link to="/gold-dashboard" onClick={() => setIsMenuOpen(false)}>
+                      🥇 {language === 'en' ? 'Gold Panel' : 'गोल्ड पैनल'}
+                    </Link>
+                  )}
                   <Link to="/community" onClick={() => setIsMenuOpen(false)}>{t('header.community')}</Link>
                   <Link to="/events" onClick={() => setIsMenuOpen(false)}>{t('header.events')}</Link>
                   <Link to="/gallery" onClick={() => setIsMenuOpen(false)}>{t('header.gallery')}</Link>

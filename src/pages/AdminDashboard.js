@@ -14,7 +14,7 @@ const AdminDashboard = () => {
   const [adminPassword, setAdminPassword] = useState('');
   const [users, setUsers] = useState([]);
   const [stats, setStats] = useState({ pending: 0, approved: 0, rejected: 0, total: 0 });
-  const [filter, setFilter] = useState('approved');
+  const [filter, setFilter] = useState('pending');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
@@ -25,6 +25,7 @@ const AdminDashboard = () => {
   const [gallery, setGallery] = useState([]);
   const [eventForm, setEventForm] = useState({ title: '', description: '', date: '', location: '', image: null });
   const [galleryForm, setGalleryForm] = useState({ title: '', description: '', category: 'general', image: null });
+  const [showUserModal, setShowUserModal] = useState(false);
 
   // Admin login
   const handleAdminLogin = async (e) => {
@@ -388,8 +389,8 @@ const AdminDashboard = () => {
   return (
     <div className="admin-dashboard">
       <div className="admin-header">
-        <h1>{language === 'en' ? 'Admin Dashboard' : 'व्यवस्थापक डैशबोर्ड'}</h1>
-        <button onClick={handleLogout} className="logout-button">
+        <h1>📊 {language === 'en' ? 'Admin Dashboard' : 'व्यवस्थापक डैशबोर्ड'}</h1>
+        <button onClick={handleLogout} className="logout-btn">
           {language === 'en' ? 'Logout' : 'लॉगआउट'}
         </button>
       </div>
@@ -417,65 +418,60 @@ const AdminDashboard = () => {
 
       {activeTab === 'users' && (
         <>
-          <div className="stats-container">
-            <div className="stat-card">
-              <h3>{stats.total}</h3>
-              <p>{language === 'en' ? 'Total Members' : 'कुल सदस्य'}</p>
+          <div className="stats-grid">
+            <div className="stat-card pending-card">
+              <div className="stat-number">{stats.pending}</div>
+              <div className="stat-label">{language === 'en' ? 'Pending' : 'लंबित'}</div>
             </div>
-            <div className="stat-card">
-              <h3>{stats.pending}</h3>
-              <p>{language === 'en' ? 'Pending' : 'लंबित'}</p>
+            <div className="stat-card approved-card">
+              <div className="stat-number">{stats.approved}</div>
+              <div className="stat-label">{language === 'en' ? 'Approved' : 'स्वीकृत'}</div>
             </div>
-            <div className="stat-card">
-              <h3>{stats.approved}</h3>
-              <p>{language === 'en' ? 'Approved' : 'स्वीकृत'}</p>
+            <div className="stat-card rejected-card">
+              <div className="stat-number">{stats.rejected}</div>
+              <div className="stat-label">{language === 'en' ? 'Rejected' : 'अस्वीकृत'}</div>
             </div>
-            <div className="stat-card">
-              <h3>{stats.rejected}</h3>
-              <p>{language === 'en' ? 'Rejected' : 'अस्वीकृत'}</p>
+            <div className="stat-card total-card">
+              <div className="stat-number">{stats.total}</div>
+              <div className="stat-label">{language === 'en' ? 'Total' : 'कुल'}</div>
             </div>
           </div>
 
-          <div className="search-filter-container">
-            <input
-              type="text"
-              className="search-input"
-              placeholder={language === 'en' ? 'Search by name, phone, email, or city...' : 'नाम, फोन, ईमेल या शहर से खोजें...'}
-              value={searchQuery}
-              onChange={handleSearch}
-            />
-            <div className="filter-buttons">
-              <button onClick={() => setFilter('all')} className={filter === 'all' ? 'active' : ''}>
-                {language === 'en' ? 'All' : 'सभी'}
-              </button>
-              <button onClick={() => setFilter('pending')} className={filter === 'pending' ? 'active' : ''}>
-                {language === 'en' ? 'Pending' : 'लंबित'}
-              </button>
-              <button onClick={() => setFilter('approved')} className={filter === 'approved' ? 'active' : ''}>
-                {language === 'en' ? 'Approved' : 'स्वीकृत'}
-              </button>
-              <button onClick={() => setFilter('rejected')} className={filter === 'rejected' ? 'active' : ''}>
-                {language === 'en' ? 'Rejected' : 'अस्वीकृत'}
-              </button>
-            </div>
+          <div className="filter-tabs">
+            <button 
+              onClick={() => setFilter('pending')} 
+              className={filter === 'pending' ? 'active' : ''}
+            >
+              {language === 'en' ? 'Pending' : 'लंबित'}
+            </button>
+            <button 
+              onClick={() => setFilter('approved')} 
+              className={filter === 'approved' ? 'active' : ''}
+            >
+              {language === 'en' ? 'Approved' : 'स्वीकृत'}
+            </button>
+            <button 
+              onClick={() => setFilter('rejected')} 
+              className={filter === 'rejected' ? 'active' : ''}
+            >
+              {language === 'en' ? 'Rejected' : 'अस्वीकृत'}
+            </button>
           </div>
 
           {loading ? (
-            <p>{language === 'en' ? 'Loading...' : 'लोड हो रहा है...'}</p>
+            <p className="loading-text">{language === 'en' ? 'Loading...' : 'लोड हो रहा है...'}</p>
           ) : (
-            <div className="users-table">
+            <div className="members-table-container">
               {filteredUsers.length === 0 ? (
-                <p>{language === 'en' ? 'No members found' : 'कोई सदस्य नहीं मिला'}</p>
+                <p className="no-data">{language === 'en' ? 'No registrations found' : 'कोई पंजीकरण नहीं मिला'}</p>
               ) : (
-                <table>
+                <table className="members-table">
                   <thead>
                     <tr>
                       <th>{language === 'en' ? 'Name' : 'नाम'}</th>
                       <th>{language === 'en' ? 'Phone' : 'फोन'}</th>
-                      <th>{language === 'en' ? 'City' : 'शहर'}</th>
-                      <th>{language === 'en' ? 'Status' : 'स्थिति'}</th>
-                      <th>{language === 'en' ? 'Tier' : 'स्तर'}</th>
-                      <th>{language === 'en' ? 'Actions' : 'कार्रवाई'}</th>
+                      <th>{language === 'en' ? 'Date' : 'तारीख'}</th>
+                      <th>{language === 'en' ? 'Actions' : 'क्रियाएं'}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -483,27 +479,15 @@ const AdminDashboard = () => {
                       <tr key={user._id}>
                         <td>{user.fullName}</td>
                         <td>{user.phone}</td>
-                        <td>{user.city}</td>
+                        <td>{new Date(user.registeredAt).toLocaleDateString('en-GB')}</td>
                         <td>
-                          <span className={`status-badge ${user.status}`}>
-                            {user.status}
-                          </span>
-                        </td>
-                        <td>
-                          {user.status === 'approved' && (
-                            <select
-                              value={user.membershipTier || 'silver'}
-                              onChange={(e) => handleUpdateTier(user._id, e.target.value)}
-                              className="tier-select"
-                            >
-                              <option value="silver">Silver</option>
-                              <option value="gold">Gold</option>
-                              <option value="diamond">Diamond</option>
-                            </select>
-                          )}
-                        </td>
-                        <td>
-                          <button onClick={() => setSelectedUser(user)} className="view-btn">
+                          <button 
+                            className="view-btn"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowUserModal(true);
+                            }}
+                          >
                             {language === 'en' ? 'View' : 'देखें'}
                           </button>
                         </td>
@@ -512,6 +496,85 @@ const AdminDashboard = () => {
                   </tbody>
                 </table>
               )}
+            </div>
+          )}
+
+          {showUserModal && selectedUser && (
+            <div className="modal-overlay" onClick={() => setShowUserModal(false)}>
+              <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <button className="modal-close" onClick={() => setShowUserModal(false)}>×</button>
+                <h2>{selectedUser.fullName}</h2>
+                <div className="modal-details">
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? "Father's Name:" : 'पिता का नाम:'}</span>
+                    <span className="detail-value">{selectedUser.fatherName}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'Date of Birth:' : 'जन्म तिथि:'}</span>
+                    <span className="detail-value">{new Date(selectedUser.dateOfBirth).toLocaleDateString('en-GB')}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'Gender:' : 'लिंग:'}</span>
+                    <span className="detail-value">{selectedUser.gender}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'Phone:' : 'फोन:'}</span>
+                    <span className="detail-value">{selectedUser.phone}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'Email:' : 'ईमेल:'}</span>
+                    <span className="detail-value">{selectedUser.email}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'Address:' : 'पता:'}</span>
+                    <span className="detail-value">{selectedUser.address}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'City:' : 'शहर:'}</span>
+                    <span className="detail-value">{selectedUser.city}, {selectedUser.state} - {selectedUser.pincode}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'Occupation:' : 'व्यवसाय:'}</span>
+                    <span className="detail-value">{selectedUser.occupation}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'Education:' : 'शिक्षा:'}</span>
+                    <span className="detail-value">{selectedUser.education}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'ID Proof:' : 'पहचान प्रमाण:'}</span>
+                    <a href={`${API_URL.replace('/api', '')}/uploads/${selectedUser.idProofPath}`} target="_blank" rel="noreferrer" className="pdf-link">
+                      PDF {language === 'en' ? 'View' : 'देखें'} 📄
+                    </a>
+                  </div>
+                </div>
+                
+                {selectedUser.status === 'pending' && (
+                  <div className="modal-actions">
+                    <select
+                      value={selectedUser.membershipTier || 'silver'}
+                      onChange={(e) => handleUpdateTier(selectedUser._id, e.target.value)}
+                      className="tier-dropdown"
+                    >
+                      <option value="silver">Silver</option>
+                      <option value="gold">Gold</option>
+                      <option value="diamond">Diamond</option>
+                    </select>
+                    <button className="approve-btn" onClick={() => { handleApprove(selectedUser._id); setShowUserModal(false); }}>
+                      {language === 'en' ? 'Approve' : 'स्वीकृत करें'}
+                    </button>
+                    <button className="reject-btn" onClick={() => {
+                      const reason = prompt(language === 'en' ? 'Enter rejection reason:' : 'अस्वीकृति कारण दर्ज करें:');
+                      if (reason) {
+                        handleReject(selectedUser._id, reason);
+                        setShowUserModal(false);
+                      }
+                    }}>
+                      {language === 'en' ? 'Reject' : 'अस्वीकृत करें'}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </>

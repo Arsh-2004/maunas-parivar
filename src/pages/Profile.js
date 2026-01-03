@@ -32,20 +32,46 @@ const Profile = () => {
       return;
     }
 
-    // Load user data
-    if (user) {
-      setFormData({
-        email: user.email || '',
-        phone: user.phone || '',
-        address: user.address || '',
-        city: user.city || '',
-        state: user.state || '',
-        pincode: user.pincode || '',
-        occupation: user.occupation || '',
-        photo: null
-      });
-    }
-  }, [user, isAuthenticated, navigate]);
+    // Load user data and fetch fresh photo
+    const fetchUserData = async () => {
+      if (user && user.phone) {
+        try {
+          const response = await fetch(`${API_URL}/users/profile/${user.phone}`);
+          const data = await response.json();
+          if (data.success && data.user) {
+            // Update user in context with fresh data including photo
+            updateUser(data.user);
+            setFormData({
+              email: data.user.email || '',
+              phone: data.user.phone || '',
+              address: data.user.address || '',
+              city: data.user.city || '',
+              state: data.user.state || '',
+              pincode: data.user.pincode || '',
+              occupation: data.user.occupation || '',
+              photo: null
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      } else if (user) {
+        // Fallback to user from context
+        setFormData({
+          email: user.email || '',
+          phone: user.phone || '',
+          address: user.address || '',
+          city: user.city || '',
+          state: user.state || '',
+          pincode: user.pincode || '',
+          occupation: user.occupation || '',
+          photo: null
+        });
+      }
+    };
+
+    fetchUserData();
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -141,8 +167,14 @@ const Profile = () => {
           <div className="profile-photo">
             {user.photoPath ? (
               <img 
-                src={`${API_URL.replace('/api', '')}/uploads/${user.photoPath}`} 
-                alt="Profile" 
+                src={`http://localhost:5000/uploads/${user.photoPath}`} 
+                alt="Profile"
+                onError={(e) => {
+                  console.error('Image failed to load:', e.target.src);
+                  console.log('User photoPath:', user.photoPath);
+                  e.target.style.display = 'none';
+                }}
+                onLoad={() => console.log('Image loaded successfully')}
               />
             ) : (
               <div className="no-photo">👤</div>
@@ -151,6 +183,19 @@ const Profile = () => {
           <div className="profile-info">
             <h2>{user.fullName}</h2>
             <p className="status-badge">{user.status.toUpperCase()}</p>
+            {user.membershipTier && (
+              <p className={`tier-badge tier-${user.membershipTier.toLowerCase()}`}>
+                {user.membershipTier === 'diamond' && '💎 '}
+                {user.membershipTier === 'gold' && '🥇 '}
+                {user.membershipTier === 'silver' && '🥈 '}
+                {user.membershipTier.toUpperCase()} {language === 'en' ? 'MEMBER' : 'सदस्य'}
+              </p>
+            )}
+            {!user.membershipTier && (
+              <p style={{color: 'red', fontSize: '0.9rem', marginTop: '10px'}}>
+                ⚠️ {language === 'en' ? 'Tier not loaded - Please logout and login again' : 'टियर लोड नहीं हुआ - कृपया लॉगआउट करें और फिर से लॉगिन करें'}
+              </p>
+            )}
           </div>
         </div>
 

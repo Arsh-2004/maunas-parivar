@@ -16,6 +16,8 @@ import Login from './pages/Login';
 import Profile from './pages/Profile';
 import MembershipCards from './pages/MembershipCards';
 import AdminDashboard from './pages/AdminDashboard';
+import DiamondDashboard from './pages/DiamondDashboard';
+import GoldDashboard from './pages/GoldDashboard';
 import './App.css';
 
 function App() {
@@ -54,6 +56,16 @@ function App() {
                   </ProtectedRoute>
                 } />
                 <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/diamond-dashboard" element={
+                  <ProtectedRoute>
+                    <DiamondDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/gold-dashboard" element={
+                  <ProtectedRoute>
+                    <GoldDashboard />
+                  </ProtectedRoute>
+                } />
               </Routes>
             </main>
             <Footer />

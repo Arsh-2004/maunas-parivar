@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -14,17 +16,43 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check for stored user on mount
+  // Check for stored user on mount and refresh if tier is missing
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        localStorage.removeItem('user');
+    const initializeUser = async () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          
+          // If membershipTier is missing, fetch fresh data
+          if (!parsedUser.membershipTier && parsedUser.phone) {
+            console.log('Tier missing, fetching fresh user data...');
+            try {
+              const response = await fetch(`${API_URL}/users/profile/${parsedUser.phone}`);
+              const data = await response.json();
+              if (data.success && data.user) {
+                const freshUser = { ...parsedUser, ...data.user };
+                setUser(freshUser);
+                localStorage.setItem('user', JSON.stringify(freshUser));
+                console.log('User data refreshed with tier:', data.user.membershipTier);
+              } else {
+                setUser(parsedUser);
+              }
+            } catch (error) {
+              console.error('Error fetching fresh user data:', error);
+              setUser(parsedUser);
+            }
+          } else {
+            setUser(parsedUser);
+          }
+        } catch (e) {
+          localStorage.removeItem('user');
+        }
       }
-    }
-    setLoading(false);
+      setLoading(false);
+    };
+    
+    initializeUser();
   }, []);
 
   // Login function

@@ -123,19 +123,77 @@
 .tier-benefits {
   list-style: none;
   padding: 0;
-  margin: 20px 0 0 0;
+  margin: 30px 0 0 0;
   text-align: left;
 }
 
 .tier-benefits li {
-  padding: 10px 0;
+  padding: 15px 10px;
   color: #555;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  line-height: 1.6;
   border-bottom: 1px solid #f0f0f0;
 }
 
 .tier-benefits li:last-child {
   border-bottom: none;
+}
+
+.tier-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.tier-card.diamond:hover {
+  border-color: #B9F2FF;
+}
+
+.tier-card.gold:hover {
+  border-color: #FFD700;
+}
+
+.tier-card.silver:hover {
+  border-color: #C0C0C0;
+}
+
+/* Tiers Section */
+.tiers-section {
+  padding: 100px 0;
+  background: white;
+}
+
+.tiers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tier-icon {
+  font-size: 5rem;
+  margin-bottom: 25px;
+}
+
+.tier-card {
+  background: white;
+  padding: 50px 35px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s;
+  border: 3px solid transparent;
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tier-card h3 {
+  color: #FF6B35;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  font-weight: 700;
 }
 
 /* Registration Section */
