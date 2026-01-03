@@ -26,6 +26,18 @@ const eventSchema = new mongoose.Schema({
     type: String,
     default: 'admin'
   },
+  volunteers: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    name: String,
+    phone: String,
+    volunteeredAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   createdAt: {
     type: Date,
     default: Date.now

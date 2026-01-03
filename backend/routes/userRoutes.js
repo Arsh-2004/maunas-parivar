@@ -165,7 +165,9 @@ router.post('/login', async (req, res) => {
         occupation: user.occupation,
         education: user.education,
         photoPath: user.photoPath,
-        status: user.status
+        membershipTier: user.membershipTier,
+        status: user.status,
+        password: user.password
       }
     });
   } catch (error) {

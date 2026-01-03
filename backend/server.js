@@ -42,9 +42,11 @@ mongoose.connect(process.env.MONGODB_URI)
 // Routes
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const memberRoutes = require('./routes/memberRoutes');
 
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/members', memberRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
