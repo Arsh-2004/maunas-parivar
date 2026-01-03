@@ -84,6 +84,60 @@
   line-height: 1.6;
 }
 
+/* Tier Cards Styling */
+.tier-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.tier-card.diamond {
+  border-color: #B9F2FF;
+  background: linear-gradient(135deg, #f0f9ff, #ffffff);
+}
+
+.tier-card.diamond:hover {
+  border-color: #B9F2FF;
+  box-shadow: 0 10px 30px rgba(185, 242, 255, 0.3);
+}
+
+.tier-card.gold {
+  border-color: #FFD700;
+  background: linear-gradient(135deg, #fffbf0, #ffffff);
+}
+
+.tier-card.gold:hover {
+  border-color: #FFD700;
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+}
+
+.tier-card.silver {
+  border-color: #C0C0C0;
+  background: linear-gradient(135deg, #f8f8f8, #ffffff);
+}
+
+.tier-card.silver:hover {
+  border-color: #C0C0C0;
+  box-shadow: 0 10px 30px rgba(192, 192, 192, 0.3);
+}
+
+.tier-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0 0;
+  text-align: left;
+}
+
+.tier-benefits li {
+  padding: 10px 0;
+  color: #555;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.tier-benefits li:last-child {
+  border-bottom: none;
+}
+
 /* Registration Section */
 .registration-section {
   padding: 80px 0;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { getTranslation } from '../translations';
+import { indianStates } from '../data/indianStates';
 import './Membership.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
@@ -35,6 +36,10 @@ const Membership = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [selectedState, setSelectedState] = useState('');
+  const [availableCities, setAvailableCities] = useState([]);
+  const [showOtherState, setShowOtherState] = useState(false);
+  const [showOtherCity, setShowOtherCity] = useState(false);
 
   // Scroll to registration form if hash is present
   useEffect(() => {
@@ -53,6 +58,35 @@ const Membership = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleStateChange = (e) => {
+    const value = e.target.value;
+    if (value === 'other') {
+      setShowOtherState(true);
+      setSelectedState('');
+      setAvailableCities([]);
+      setFormData({ ...formData, state: '', city: '' });
+      setShowOtherCity(true);
+    } else {
+      setShowOtherState(false);
+      setSelectedState(value);
+      const stateData = indianStates.find(s => s.state === value);
+      setAvailableCities(stateData ? stateData.cities : []);
+      setFormData({ ...formData, state: value, city: '' });
+      setShowOtherCity(false);
+    }
+  };
+
+  const handleCityChange = (e) => {
+    const value = e.target.value;
+    if (value === 'other') {
+      setShowOtherCity(true);
+      setFormData({ ...formData, city: '' });
+    } else {
+      setShowOtherCity(false);
+      setFormData({ ...formData, city: value });
+    }
   };
 
   const handleFileChange = (e) => {
@@ -202,39 +236,39 @@ const Membership = () => {
       <section className="benefits-section">
         <div className="container">
           <div className="section-header">
-            <h2>{t('membership.benefits')}</h2>
+            <h2>{language === 'en' ? 'Membership Tiers' : 'सदस्यता स्तर'}</h2>
             <div className="underline"></div>
           </div>
           <div className="benefits-grid">
-            <div className="benefit-card">
-              <div className="benefit-icon">🤝</div>
-              <h3>{language === 'en' ? 'Community Network' : 'सामुदायिक नेटवर्क'}</h3>
-              <p>{language === 'en' ? 'Connect with thousands of community members across India' : 'पूरे भारत में समुदाय के हजारों सदस्यों से जुड़ें'}</p>
+            <div className="benefit-card tier-card diamond">
+              <div className="benefit-icon">💎</div>
+              <h3>{language === 'en' ? 'Diamond Tier' : 'डायमंड स्तर'}</h3>
+              <ul className="tier-benefits">
+                <li>{language === 'en' ? '✓ Can approve new members (admin-like privileges)' : '✓ नए सदस्यों को मंजूरी दे सकते हैं'}</li>
+                <li>{language === 'en' ? '✓ All Gold Tier benefits' : '✓ सभी गोल्ड स्तर लाभ'}</li>
+                <li>{language === 'en' ? '✓ Priority support and assistance' : '✓ प्राथमिकता सहायता'}</li>
+                <li>{language === 'en' ? '✓ Decision-making authority' : '✓ निर्णय लेने का अधिकार'}</li>
+              </ul>
             </div>
-            <div className="benefit-card">
-              <div className="benefit-icon">🎉</div>
-              <h3>{language === 'en' ? 'Exclusive Events' : 'एक्सक्लूसिव इवेंट्स'}</h3>
-              <p>{language === 'en' ? 'Access to community gatherings, cultural programs, and celebrations' : 'सामुदायिक समारोह, सांस्कृतिक कार्यक्रमों और समारोहों तक पहुंच'}</p>
+            <div className="benefit-card tier-card gold">
+              <div className="benefit-icon">🏆</div>
+              <h3>{language === 'en' ? 'Gold Tier' : 'गोल्ड स्तर'}</h3>
+              <ul className="tier-benefits">
+                <li>{language === 'en' ? '✓ View all upcoming events' : '✓ आगामी सभी कार्यक्रम देखें'}</li>
+                <li>{language === 'en' ? '✓ Volunteer to join and organize events' : '✓ कार्यक्रमों में शामिल हों और आयोजन करें'}</li>
+                <li>{language === 'en' ? '✓ All Silver Tier benefits' : '✓ सभी सिल्वर स्तर लाभ'}</li>
+                <li>{language === 'en' ? '✓ Exclusive networking opportunities' : '✓ विशेष नेटवर्किंग अवसर'}</li>
+              </ul>
             </div>
-            <div className="benefit-card">
-              <div className="benefit-icon">🎓</div>
-              <h3>{language === 'en' ? 'Educational Support' : 'शैक्षणिक सहायता'}</h3>
-              <p>{language === 'en' ? 'Scholarships and educational guidance for students' : 'छात्रों के लिए छात्रवृत्ति और शैक्षणिक मार्गदर्शन'}</p>
-            </div>
-            <div className="benefit-card">
-              <div className="benefit-icon">💼</div>
-              <h3>{language === 'en' ? 'Career Opportunities' : 'कैरियर की संभावनाएं'}</h3>
-              <p>{language === 'en' ? 'Job referrals and business networking opportunities' : 'नौकरी के रेफरल और व्यावसायिक नेटवर्किंग के अवसर'}</p>
-            </div>
-            <div className="benefit-card">
-              <div className="benefit-icon">🏥</div>
-              <h3>{language === 'en' ? 'Welfare Programs' : 'कल्याण कार्यक्रम'}</h3>
-              <p>{language === 'en' ? 'Access to community welfare and support programs' : 'सामुदायिक कल्याण और सहायता कार्यक्रमों तक पहुंच'}</p>
-            </div>
-            <div className="benefit-card">
-              <div className="benefit-icon">📜</div>
-              <h3>{language === 'en' ? 'Member ID Card' : 'सदस्य आईडी कार्ड'}</h3>
-              <p>{language === 'en' ? 'Official membership certificate and digital ID card' : 'आधिकारिक सदस्यता प्रमाणपत्र और डिजिटल आईडी कार्ड'}</p>
+            <div className="benefit-card tier-card silver">
+              <div className="benefit-icon">🥈</div>
+              <h3>{language === 'en' ? 'Silver Tier' : 'सिल्वर स्तर'}</h3>
+              <ul className="tier-benefits">
+                <li>{language === 'en' ? '✓ Access to Community, Events, and Gallery tabs' : '✓ समुदाय, कार्यक्रम और गैलरी टैब देखें'}</li>
+                <li>{language === 'en' ? '✓ View membership list of all members' : '✓ सभी सदस्यों की सूची देखें'}</li>
+                <li>{language === 'en' ? '✓ Browse photo gallery' : '✓ फोटो गैलरी ब्राउज़ करें'}</li>
+                <li>{language === 'en' ? '✓ View completed events' : '✓ पूर्ण किए गए कार्यक्रम देखें'}</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -415,29 +449,64 @@ const Membership = () => {
 
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="city">{t('membership.city')}</label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    required
-                    placeholder={language === 'en' ? 'Enter city' : 'शहर दर्ज करें'}
-                  />
+                  <label htmlFor="state">{t('membership.state')}</label>
+                  <select
+                    id="state"
+                    name="state"
+                    value={showOtherState ? 'other' : formData.state}
+                    onChange={handleStateChange}
+                    required={!showOtherState}
+                  >
+                    <option value="">{language === 'en' ? 'Select State' : 'राज्य चुनें'}</option>
+                    {indianStates.map((stateObj) => (
+                      <option key={stateObj.state} value={stateObj.state}>
+                        {stateObj.state}
+                      </option>
+                    ))}
+                    <option value="other">{language === 'en' ? 'Other' : 'अन्य'}</option>
+                  </select>
+                  {showOtherState && (
+                    <input
+                      type="text"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleChange}
+                      required
+                      placeholder={language === 'en' ? 'Enter state name' : 'राज्य का नाम दर्ज करें'}
+                      style={{ marginTop: '10px' }}
+                    />
+                  )}
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="state">{t('membership.state')}</label>
-                  <input
-                    type="text"
-                    id="state"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleChange}
-                    required
-                    placeholder={language === 'en' ? 'Enter state' : 'राज्य दर्ज करें'}
-                  />
+                  <label htmlFor="city">{t('membership.city')}</label>
+                  <select
+                    id="city"
+                    name="city"
+                    value={showOtherCity ? 'other' : formData.city}
+                    onChange={handleCityChange}
+                    required={!showOtherCity}
+                    disabled={!selectedState && !showOtherState}
+                  >
+                    <option value="">{language === 'en' ? 'Select City' : 'शहर चुनें'}</option>
+                    {availableCities.map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))}
+                    <option value="other">{language === 'en' ? 'Other' : 'अन्य'}</option>
+                  </select>
+                  {showOtherCity && (
+                    <input
+                      type="text"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleChange}
+                      required
+                      placeholder={language === 'en' ? 'Enter city name' : 'शहर का नाम दर्ज करें'}
+                      style={{ marginTop: '10px' }}
+                    />
+                  )}
                 </div>
 
                 <div className="form-group">
