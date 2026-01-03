@@ -119,6 +119,7 @@
   color: #FF6B35;
   font-size: 1.4rem;
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .nav-links {
@@ -295,14 +296,14 @@
 
   .logo {
     gap: 8px;
+    max-width: 70%;
   }
 
   .logo-title {
-    font-size: 1rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 200px;
+    font-size: 0.85rem;
+    white-space: normal;
+    line-height: 1.2;
+    max-width: none;
   }
 
   .logo-image {
@@ -312,13 +313,17 @@
 }
 
 @media (max-width: 480px) {
+  .logo {
+    max-width: 65%;
+  }
+  
   .logo-title {
-    font-size: 0.9rem;
-    max-width: 150px;
+    font-size: 0.75rem;
+    max-width: none;
   }
 
   .logo-image {
-    width: 32px;
+    width: 30px;
   }
 
   .contact-info span {
