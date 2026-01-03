@@ -175,6 +175,40 @@
   padding: 8px 10px;
 }
 
+.profile-link {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-user-photo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #FF6B35;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.header-user-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF6B35, #F7931E);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.profile-link:hover .header-user-photo,
+.profile-link:hover .header-user-icon {
+  transform: scale(1.1);
+  border-color: #F7931E;
+}
+
 .nav-links a::after {
   content: '';
   position: absolute;

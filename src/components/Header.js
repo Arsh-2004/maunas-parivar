@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { getTranslation } from '../translations';
 import './Header.css';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userPhoto, setUserPhoto] = useState(null);
   const { language, toggleLanguage } = useLanguage();
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
@@ -15,6 +18,27 @@ const Header = () => {
 
   const isAdminPage = location.pathname === '/admin';
 
+  // Fetch user photo
+  useEffect(() => {
+    const fetchUserPhoto = async () => {
+      if (isAuthenticated()) {
+        const phone = localStorage.getItem('userPhone');
+        if (phone) {
+          try {
+            const response = await fetch(`${API_URL}/users/profile/${phone}`);
+            const data = await response.json();
+            if (data.success && data.user.photoPath) {
+              setUserPhoto(data.user.photoPath);
+            }
+          } catch (err) {
+            console.error('Error fetching user photo:', err);
+          }
+        }
+      }
+    };
+    fetchUserPhoto();
+  }, [isAuthenticated]);
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -22,6 +46,7 @@ const Header = () => {
   const handleLogout = () => {
     logout();
     setIsMenuOpen(false);
+    setUserPhoto(null);
     navigate('/');
   };
 
@@ -128,8 +153,17 @@ const Header = () => {
                 <>
                   {isAuthenticated() ? (
                     <>
-                      <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
-                        👤 {language === 'en' ? 'My Profile' : 'मेरी प्रोफ़ाइल'}
+                      <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="profile-link">
+                        {userPhoto ? (
+                          <img 
+                            src={`${API_URL.replace('/api', '')}/uploads/${userPhoto}`} 
+                            alt="Profile" 
+                            className="header-user-photo"
+                          />
+                        ) : (
+                          <span className="header-user-icon">👤</span>
+                        )}
+                        <span>{language === 'en' ? 'My Profile' : 'मेरी प्रोफ़ाइल'}</span>
                       </Link>
                       <button className="btn-logout" onClick={handleLogout}>
                         {language === 'en' ? 'Logout' : 'लॉगआउट'}
