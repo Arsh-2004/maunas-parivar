@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import './DiamondDashboard.css';
 
 const DiamondDashboard = () => {
@@ -39,9 +39,31 @@ const DiamondDashboard = () => {
     if (!isAuthenticated()) {
       navigate('/login');
       return;
+<<<<<<< HEAD
     }
     if (!user || !user.phone) {
       setMessage('Session expired. Please logout and login again.');
+=======
+    }
+    
+    if (!user) {
+      setMessage('Loading user data...');
+      return;
+    }
+    
+    console.log('DiamondDashboard - Current user:', user);
+    console.log('DiamondDashboard - User phone:', user.phone);
+    console.log('DiamondDashboard - User tier:', user.membershipTier);
+    
+    if (!user.phone) {
+      console.error('DiamondDashboard - ERROR: User phone is missing!');
+      setMessage('Session expired. Please logout and login again.');
+      return;
+    }
+    
+    if (user.membershipTier !== 'diamond') {
+      setMessage('Diamond membership required');
+>>>>>>> ade3d8b (Changes in Diamond Tier Features)
       return;
     }
   }, [user, isAuthenticated, navigate]);
@@ -57,7 +79,14 @@ const DiamondDashboard = () => {
   }, [activeTab]);
 
   const fetchPendingMembers = async () => {
+<<<<<<< HEAD
     if (!user || !user.phone) return;
+=======
+    if (!user || !user.phone) {
+      console.error('Cannot fetch - user or phone missing');
+      return;
+    }
+>>>>>>> ade3d8b (Changes in Diamond Tier Features)
     
     setLoading(true);
     try {
@@ -74,6 +103,7 @@ const DiamondDashboard = () => {
       const data = await response.json();
       if (data.success) {
         setPendingMembers(data.users);
+        setMessage('');
       } else {
         setMessage(data.message || 'Failed to fetch pending members');
       }
@@ -156,6 +186,11 @@ const DiamondDashboard = () => {
     e.preventDefault();
     if (!user || !user.phone) return;
     
+    if (!user || !user.phone) {
+      setMessage('User session invalid. Please logout and login again.');
+      return;
+    }
+    
     const formData = new FormData();
     formData.append('title', eventForm.title);
     formData.append('description', eventForm.description);
@@ -220,6 +255,11 @@ const DiamondDashboard = () => {
   const uploadGalleryPhoto = async (e) => {
     e.preventDefault();
     if (!user || !user.phone) return;
+    
+    if (!user || !user.phone) {
+      setMessage('User session invalid. Please logout and login again.');
+      return;
+    }
     
     const formData = new FormData();
     formData.append('title', galleryForm.title);
