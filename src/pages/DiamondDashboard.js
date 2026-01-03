@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './DiamondDashboard.css';
@@ -57,17 +57,7 @@ const DiamondDashboard = () => {
     }
   }, [user, isAuthenticated, navigate]);
 
-  useEffect(() => {
-    if (activeTab === 'pending') {
-      fetchPendingMembers();
-    } else if (activeTab === 'events') {
-      fetchEvents();
-    } else if (activeTab === 'gallery') {
-      fetchGallery();
-    }
-  }, [activeTab]);
-
-  const fetchPendingMembers = async () => {
+  const fetchPendingMembers = useCallback(async () => {
     if (!user || !user.phone) return;
     
     setLoading(true);
@@ -94,12 +84,22 @@ const DiamondDashboard = () => {
       setMessage('Error fetching pending members');
     }
     setLoading(false);
-  };
+  }, [user, API_URL]);
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
+    if (!user || !user.phone) return;
+    
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/admin/events`);
+      const response = await fetch(`${API_URL}/admin/events`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          phone: user.phone
+        })
+      });
       const data = await response.json();
       if (data.success) {
         setEvents(data.events);
@@ -108,12 +108,22 @@ const DiamondDashboard = () => {
       console.error('Error fetching events:', error);
     }
     setLoading(false);
-  };
+  }, [user, API_URL]);
 
-  const fetchGallery = async () => {
+  const fetchGallery = useCallback(async () => {
+    if (!user || !user.phone) return;
+    
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/admin/gallery`);
+      const response = await fetch(`${API_URL}/admin/gallery`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          phone: user.phone
+        })
+      });
       const data = await response.json();
       if (data.success) {
         setGallery(data.photos || []);
@@ -122,7 +132,17 @@ const DiamondDashboard = () => {
       console.error('Error fetching gallery:', error);
     }
     setLoading(false);
-  };
+  }, [user, API_URL]);
+
+  useEffect(() => {
+    if (activeTab === 'pending') {
+      fetchPendingMembers();
+    } else if (activeTab === 'events') {
+      fetchEvents();
+    } else if (activeTab === 'gallery') {
+      fetchGallery();
+    }
+  }, [activeTab, fetchPendingMembers, fetchEvents, fetchGallery]);
 
   const approveMember = async (id, tier) => {
     if (!user || !user.phone) return;
