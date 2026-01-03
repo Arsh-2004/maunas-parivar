@@ -28,6 +28,7 @@ const Membership = () => {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [showModal, setShowModal] = useState(false);
 
   // Scroll to registration form if hash is present
   useEffect(() => {
@@ -103,6 +104,7 @@ const Membership = () => {
             ? 'Registration successful! Your application is pending approval. You will be notified once approved.' 
             : 'पंजीकरण सफल! आपका आवेदन अनुमोदन के लिए लंबित है। अनुमोदित होने पर आपको सूचित किया जाएगा।'
         });
+        setShowModal(true);
         setFormData({
           fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '',
           phone: '', address: '', city: '', state: '', pincode: '', occupation: '', education: '',
@@ -112,6 +114,8 @@ const Membership = () => {
         document.getElementById('idProof').value = '';
         const donationInput = document.getElementById('donationDocument');
         if (donationInput) donationInput.value = '';
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         setMessage({
           type: 'error',
@@ -132,6 +136,20 @@ const Membership = () => {
 
   return (
     <div className="membership-page">
+      {/* Success Modal Popup */}
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-icon">✅</div>
+            <h2>{language === 'en' ? 'Registration Successful!' : 'पंजीकरण सफल!'}</h2>
+            <p>{message.text}</p>
+            <button className="modal-btn" onClick={() => setShowModal(false)}>
+              {language === 'en' ? 'OK' : 'ठीक है'}
+            </button>
+          </div>
+        </div>
+      )}
+
       <section className="page-header">
         <div className="container">
           <h1>{t('membership.title')}</h1>
