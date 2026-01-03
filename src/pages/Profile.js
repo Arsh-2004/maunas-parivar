@@ -71,7 +71,7 @@ const Profile = () => {
     };
 
     fetchUserData();
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, updateUser, user]);
 
   const handleChange = (e) => {
     setFormData({

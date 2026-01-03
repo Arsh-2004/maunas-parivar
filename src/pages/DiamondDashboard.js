@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './DiamondDashboard.css';
 
 const DiamondDashboard = () => {
@@ -29,17 +29,7 @@ const DiamondDashboard = () => {
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  useEffect(() => {
-    if (activeTab === 'pending') {
-      fetchPendingMembers();
-    } else if (activeTab === 'events') {
-      fetchEvents();
-    } else if (activeTab === 'gallery') {
-      fetchGallery();
-    }
-  }, [activeTab]);
-
-  const fetchPendingMembers = async () => {
+  const fetchPendingMembers = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/members/members/pending`, {
@@ -61,9 +51,9 @@ const DiamondDashboard = () => {
       console.error('Error fetching pending members:', error);
     }
     setLoading(false);
-  };
+  }, [API_URL, user.phone, user.password]);
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/admin/events`);
@@ -75,9 +65,9 @@ const DiamondDashboard = () => {
       console.error('Error fetching events:', error);
     }
     setLoading(false);
-  };
+  }, [API_URL]);
 
-  const fetchGallery = async () => {
+  const fetchGallery = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/admin/gallery`);
@@ -89,7 +79,17 @@ const DiamondDashboard = () => {
       console.error('Error fetching gallery:', error);
     }
     setLoading(false);
-  };
+  }, [API_URL]);
+
+  useEffect(() => {
+    if (activeTab === 'pending') {
+      fetchPendingMembers();
+    } else if (activeTab === 'events') {
+      fetchEvents();
+    } else if (activeTab === 'gallery') {
+      fetchGallery();
+    }
+  }, [activeTab, fetchEvents, fetchGallery, fetchPendingMembers]);
 
   const approveMember = async (id, tier) => {
     try {

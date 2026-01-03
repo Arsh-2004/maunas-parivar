@@ -19,7 +19,6 @@ const AdminDashboard = () => {
   const [error, setError] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('users');
   const [events, setEvents] = useState([]);
   const [gallery, setGallery] = useState([]);
@@ -90,18 +89,6 @@ const AdminDashboard = () => {
       console.error('Error fetching users:', err);
     }
     setLoading(false);
-  };
-
-  // Search handler
-  const handleSearch = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    
-    if (query.trim().length >= 2) {
-      fetchUsers(query);
-    } else if (query.trim().length === 0) {
-      fetchUsers();
-    }
   };
 
   // Fetch stats
@@ -709,9 +696,6 @@ const AdminDashboard = () => {
                   </p>
                 )}
               </div>
-                onChange={(e) => setGalleryForm({...galleryForm, image: e.target.files[0]})}
-                required
-              />
               <button type="submit">{language === 'en' ? 'Upload Photo' : 'फोटो अपलोड करें'}</button>
             </form>
           </div>

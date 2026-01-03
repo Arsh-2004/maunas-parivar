@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './GoldDashboard.css';
 
 const GoldDashboard = () => {
@@ -10,11 +10,7 @@ const GoldDashboard = () => {
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  useEffect(() => {
-    fetchUpcomingEvents();
-  }, []);
-
-  const fetchUpcomingEvents = async () => {
+  const fetchUpcomingEvents = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/members/events/upcoming`, {
@@ -42,7 +38,11 @@ const GoldDashboard = () => {
       console.error('Error fetching upcoming events:', error);
     }
     setLoading(false);
-  };
+  }, [API_URL, user.password, user.phone]);
+
+  useEffect(() => {
+    fetchUpcomingEvents();
+  }, [fetchUpcomingEvents]);
 
   const volunteerForEvent = async (eventId) => {
     try {
