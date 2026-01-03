@@ -13,8 +13,11 @@ const corsOptions = {
   credentials: true
 };
 app.use(cors(corsOptions));
+
+// Serve uploads with permissive CORS for direct file access
+app.use('/uploads', cors(), express.static(path.join(__dirname, 'uploads')));
+
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)
