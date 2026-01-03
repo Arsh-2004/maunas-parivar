@@ -60,6 +60,7 @@ const AdminDashboard = () => {
       fetchStats();
       fetchUsers();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, filter]);
 
   const fetchStats = async () => {
