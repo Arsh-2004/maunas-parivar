@@ -1,0 +1,206 @@
+.membership-cards-page {
+  padding: 40px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.cards-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.cards-header h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.cards-header p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.tier-filters {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.tier-filters button {
+  padding: 10px 20px;
+  border: 2px solid #ddd;
+  background: white;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.tier-filters button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.tier-filters button.active {
+  border-width: 3px;
+}
+
+.tier-filters button.silver {
+  border-color: #C0C0C0;
+}
+
+.tier-filters button.silver.active {
+  background: #C0C0C0;
+  color: white;
+}
+
+.tier-filters button.gold {
+  border-color: #FFD700;
+}
+
+.tier-filters button.gold.active {
+  background: #FFD700;
+  color: #333;
+}
+
+.tier-filters button.diamond {
+  border-color: #B9F2FF;
+}
+
+.tier-filters button.diamond.active {
+  background: #B9F2FF;
+  color: #333;
+}
+
+.membership-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.membership-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+  border: 4px solid;
+  position: relative;
+}
+
+.membership-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.tier-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 700;
+  font-size: 12px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.member-photo {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+}
+
+.member-info {
+  padding: 20px;
+}
+
+.member-info h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.member-info p {
+  margin: 8px 0;
+  color: #666;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.member-city {
+  font-weight: 600;
+}
+
+.member-footer {
+  padding: 15px 20px;
+  background: #f8f9fa;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.no-members {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Tier-specific card styling */
+.membership-card.silver {
+  border-color: #C0C0C0;
+}
+
+.membership-card.gold {
+  border-color: #FFD700;
+}
+
+.membership-card.diamond {
+  border-color: #B9F2FF;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cards-header h1 {
+    font-size: 2rem;
+  }
+  
+  .tier-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .tier-filters button {
+    width: 100%;
+  }
+  
+  .membership-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .member-photo {
+    height: 250px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .membership-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

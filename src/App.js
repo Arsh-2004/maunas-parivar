@@ -14,6 +14,7 @@ import Contact from './pages/Contact';
 import Membership from './pages/Membership';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
+import MembershipCards from './pages/MembershipCards';
 import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
 
@@ -45,6 +46,7 @@ function App() {
                 } />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/membership" element={<Membership />} />
+                <Route path="/members" element={<MembershipCards />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/profile" element={
                   <ProtectedRoute>

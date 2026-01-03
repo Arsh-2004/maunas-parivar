@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Event = require('../models/Event');
+const Gallery = require('../models/Gallery');
 const path = require('path');
 const fs = require('fs');
+const upload = require('../middleware/upload');
 
 // Simple admin authentication middleware
 const adminAuth = (req, res, next) => {
@@ -278,6 +281,252 @@ router.delete('/delete/:id', adminAuth, async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Failed to delete user' 
+    });
+  }
+});
+
+// Search users
+router.get('/search', adminAuth, async (req, res) => {
+  try {
+    const { query } = req.query;
+    
+    if (!query) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Search query is required' 
+      });
+    }
+
+    const users = await User.find({
+      $or: [
+        { fullName: { $regex: query, $options: 'i' } },
+        { phone: { $regex: query, $options: 'i' } },
+        { email: { $regex: query, $options: 'i' } },
+        { city: { $regex: query, $options: 'i' } }
+      ]
+    }).sort({ registeredAt: -1 });
+    
+    res.json({ 
+      success: true, 
+      count: users.length,
+      users 
+    });
+  } catch (error) {
+    console.error('Search error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Search failed' 
+    });
+  }
+});
+
+// Update membership tier
+router.put('/update-tier/:id', adminAuth, async (req, res) => {
+  try {
+    const { tier } = req.body;
+    
+    if (!['silver', 'gold', 'diamond'].includes(tier)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid membership tier' 
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { membershipTier: tier },
+      { new: true }
+    );
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+    
+    res.json({ 
+      success: true, 
+      message: 'Membership tier updated successfully',
+      user 
+    });
+  } catch (error) {
+    console.error('Update tier error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to update tier' 
+    });
+  }
+});
+
+// Event management routes
+router.post('/events', adminAuth, upload.single('image'), async (req, res) => {
+  try {
+    console.log('Creating event with data:', req.body);
+    console.log('File received:', req.file ? req.file.filename : 'No file');
+    
+    const eventData = {
+      title: req.body.title,
+      description: req.body.description,
+      date: req.body.date,
+      location: req.body.location,
+      imagePath: req.file ? req.file.filename : null
+    };
+
+    const event = new Event(eventData);
+    await event.save();
+
+    console.log('Event created successfully:', event._id);
+    
+    res.status(201).json({ 
+      success: true, 
+      message: 'Event created successfully',
+      event
+    });
+  } catch (error) {
+    console.error('Create event error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to create event',
+      error: error.message 
+    });
+  }
+});
+
+router.get('/events', async (req, res) => {
+  try {
+    const events = await Event.find().sort({ date: -1 });
+    res.json({ 
+      success: true, 
+      events 
+    });
+  } catch (error) {
+    console.error('Fetch events error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch events' 
+    });
+  }
+});
+
+router.delete('/events/:id', adminAuth, async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    
+    if (!event) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Event not found' 
+      });
+    }
+
+    // Delete image file if exists
+    if (event.imagePath) {
+      const filePath = path.join(__dirname, '..', 'uploads', event.imagePath);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    await Event.findByIdAndDelete(req.params.id);
+    
+    res.json({ 
+      success: true, 
+      message: 'Event deleted successfully' 
+    });
+  } catch (error) {
+    console.error('Delete event error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to delete event' 
+    });
+  }
+});
+
+// Gallery management routes
+router.post('/gallery', adminAuth, upload.single('image'), async (req, res) => {
+  try {
+    console.log('Uploading gallery photo with data:', req.body);
+    console.log('File received:', req.file ? req.file.filename : 'No file');
+    
+    if (!req.file) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Image is required' 
+      });
+    }
+
+    const galleryData = {
+      title: req.body.title,
+      description: req.body.description || '',
+      category: req.body.category || 'general',
+      imagePath: req.file.filename
+    };
+
+    const photo = new Gallery(galleryData);
+    await photo.save();
+
+    console.log('Photo uploaded successfully:', photo._id);
+
+    res.status(201).json({ 
+      success: true, 
+      message: 'Photo uploaded successfully',
+      photo
+    });
+  } catch (error) {
+    console.error('Upload photo error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to upload photo',
+      error: error.message 
+    });
+  }
+});
+
+router.get('/gallery', async (req, res) => {
+  try {
+    const photos = await Gallery.find().sort({ uploadedAt: -1 });
+    res.json({ 
+      success: true, 
+      photos 
+    });
+  } catch (error) {
+    console.error('Fetch gallery error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch gallery' 
+    });
+  }
+});
+
+router.delete('/gallery/:id', adminAuth, async (req, res) => {
+  try {
+    const photo = await Gallery.findById(req.params.id);
+    
+    if (!photo) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Photo not found' 
+      });
+    }
+
+    // Delete image file
+    const filePath = path.join(__dirname, '..', 'uploads', photo.imagePath);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    await Gallery.findByIdAndDelete(req.params.id);
+    
+    res.json({ 
+      success: true, 
+      message: 'Photo deleted successfully' 
+    });
+  } catch (error) {
+    console.error('Delete photo error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to delete photo' 
     });
   }
 });

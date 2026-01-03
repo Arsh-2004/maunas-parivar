@@ -8,7 +8,7 @@ import './Header.css';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { language, toggleLanguage } = useLanguage();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const t = (path) => getTranslation(language, path);
@@ -72,6 +72,7 @@ const Header = () => {
             <div id="nav-menu" className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
               <Link to="/" onClick={() => setIsMenuOpen(false)}>{t('header.home')}</Link>
               <Link to="/about" onClick={() => setIsMenuOpen(false)}>{t('header.about')}</Link>
+              <Link to="/members" onClick={() => setIsMenuOpen(false)}>{language === 'en' ? 'Members' : 'सदस्य'}</Link>
               {isAuthenticated() && !isAdminPage && (
                 <>
                   <Link to="/community" onClick={() => setIsMenuOpen(false)}>{t('header.community')}</Link>

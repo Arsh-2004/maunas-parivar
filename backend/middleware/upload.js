@@ -23,15 +23,15 @@ const storage = multer.diskStorage({
 
 // File filter for PDF and images
 const fileFilter = (req, file, cb) => {
-  if (file.fieldname === 'photo') {
-    // Allow images for photo field
+  // Allow images for photo, image fields (events, gallery, profile)
+  if (file.fieldname === 'photo' || file.fieldname === 'image') {
     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
       cb(null, true);
     } else {
       cb(new Error('Only JPG/PNG images are allowed for photo!'), false);
     }
   } else {
-    // Allow only PDF for other fields
+    // Allow only PDF for document fields
     if (file.mimetype === 'application/pdf') {
       cb(null, true);
     } else {

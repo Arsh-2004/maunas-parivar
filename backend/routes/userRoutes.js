@@ -3,6 +3,26 @@ const router = express.Router();
 const User = require('../models/User');
 const upload = require('../middleware/upload');
 
+// Get all approved users (for membership cards - public route)
+router.get('/', async (req, res) => {
+  try {
+    const users = await User.find({ status: 'approved' })
+      .select('-password -idProofPath -addressProofPath -donationDocumentPath -rejectionReason')
+      .sort({ registeredAt: -1 });
+    
+    res.json({ 
+      success: true, 
+      users 
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch users' 
+    });
+  }
+});
+
 // Register new user
 router.post('/register', upload.fields([
   { name: 'idProof', maxCount: 1 },
