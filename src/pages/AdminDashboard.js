@@ -163,6 +163,33 @@ const AdminDashboard = () => {
     navigate('/');
   };
 
+  // Delete rejected user
+  const handleDelete = async (userId) => {
+    if (window.confirm(language === 'en' ? 'Are you sure you want to permanently delete this application? This action cannot be undone.' : 'क्या आप इस आवेदन को स्थायी रूप से हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।')) {
+      try {
+        const response = await fetch(`${API_URL}/admin/delete/${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'x-admin-password': adminPassword
+          }
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+          alert(language === 'en' ? 'Application deleted successfully!' : 'आवेदन सफलतापूर्वक हटाया गया!');
+          fetchUsers();
+          fetchStats();
+          setSelectedUser(null);
+        } else {
+          alert(data.message || (language === 'en' ? 'Failed to delete application' : 'आवेदन हटाने में विफल'));
+        }
+      } catch (err) {
+        alert(language === 'en' ? 'Failed to delete application' : 'आवेदन हटाने में विफल');
+      }
+    }
+  };
+
   // Format date
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-IN', {
@@ -395,6 +422,15 @@ const AdminDashboard = () => {
                   )}
                 </div>
               </div>
+              
+              {selectedUser.status === 'rejected' && (
+                <div className="delete-section">
+                  <label>{language === 'en' ? 'Permanent Actions:' : 'स्थायी क्रियाएं:'}</label>
+                  <button className="delete-btn" onClick={() => handleDelete(selectedUser._id)}>
+                    🗑️ {language === 'en' ? 'Delete Application' : 'आवेदन हटाएं'}
+                  </button>
+                </div>
+              )}
             </div>
 
             {selectedUser.status === 'rejected' && selectedUser.rejectionReason && (

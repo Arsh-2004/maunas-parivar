@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const path = require('path');
+const fs = require('fs');
 
 // Simple admin authentication middleware
 const adminAuth = (req, res, next) => {
@@ -225,6 +226,58 @@ router.get('/stats', adminAuth, async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Failed to fetch stats' 
+    });
+  }
+});
+
+// Delete rejected user
+router.delete('/delete/:id', adminAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+
+    // Only allow deletion of rejected users
+    if (user.status !== 'rejected') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Only rejected applications can be deleted' 
+      });
+    }
+
+    // Delete associated files
+    const uploadsDir = path.join(__dirname, '..', 'uploads');
+    const filesToDelete = [
+      user.idProofPath,
+      user.addressProofPath,
+      user.photoPath,
+      user.donationDocumentPath
+    ].filter(Boolean); // Remove null/undefined values
+
+    filesToDelete.forEach(filename => {
+      const filePath = path.join(uploadsDir, filename);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    });
+
+    // Delete user from database
+    await User.findByIdAndDelete(req.params.id);
+    
+    res.json({ 
+      success: true, 
+      message: 'User and associated files deleted successfully' 
+    });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to delete user' 
     });
   }
 });
