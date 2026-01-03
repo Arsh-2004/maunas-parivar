@@ -121,6 +121,69 @@
   border: 2px solid #999;
 }
 
+/* Tier Access Info Section */
+.tier-access-info {
+  margin-top: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05), rgba(247, 147, 30, 0.05));
+  border-radius: 12px;
+  border: 2px solid rgba(255, 107, 53, 0.2);
+}
+
+.tier-access-info h4 {
+  margin: 0 0 15px 0;
+  color: #FF6B35;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.tier-access-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0;
+}
+
+.tier-access-info ul li {
+  padding: 8px 0;
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.dashboard-access-btn {
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  color: white;
+}
+
+.dashboard-access-btn.diamond {
+  background: linear-gradient(135deg, #00d4ff, #0099cc);
+}
+
+.dashboard-access-btn.diamond:hover {
+  background: linear-gradient(135deg, #00bbee, #0088bb);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 136, 255, 0.4);
+}
+
+.dashboard-access-btn.gold {
+  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  color: #664d00;
+}
+
+.dashboard-access-btn.gold:hover {
+  background: linear-gradient(135deg, #ffcc00, #ff9900);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 170, 0, 0.4);
+}
+
 .profile-details {
   display: flex;
   flex-direction: column;

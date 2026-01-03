@@ -1,13 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './DiamondDashboard.css';
 
 const DiamondDashboard = () => {
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('pending');
   const [pendingMembers, setPendingMembers] = useState([]);
   const [events, setEvents] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [selectedMember, setSelectedMember] = useState(null);
+  const [showMemberModal, setShowMemberModal] = useState(false);
   
   // Event form
   const [eventForm, setEventForm] = useState({
@@ -27,9 +33,32 @@ const DiamondDashboard = () => {
   });
 
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  const fetchPendingMembers = useCallback(async () => {
+  // Check authentication and user data
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate('/login');
+      return;
+    }
+    if (!user || !user.phone) {
+      setMessage('Session expired. Please logout and login again.');
+      return;
+    }
+  }, [user, isAuthenticated, navigate]);
+
+  useEffect(() => {
+    if (activeTab === 'pending') {
+      fetchPendingMembers();
+    } else if (activeTab === 'events') {
+      fetchEvents();
+    } else if (activeTab === 'gallery') {
+      fetchGallery();
+    }
+  }, [activeTab]);
+
+  const fetchPendingMembers = async () => {
+    if (!user || !user.phone) return;
+    
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/members/members/pending`, {
@@ -38,36 +67,24 @@ const DiamondDashboard = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          phone: user.phone,
-          password: user.password
+          phone: user.phone
         })
       });
 
       const data = await response.json();
       if (data.success) {
         setPendingMembers(data.users);
+      } else {
+        setMessage(data.message || 'Failed to fetch pending members');
       }
     } catch (error) {
       console.error('Error fetching pending members:', error);
+      setMessage('Error fetching pending members');
     }
     setLoading(false);
-  }, [API_URL, user.phone, user.password]);
+  };
 
-  const fetchEvents = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_URL}/admin/events`);
-      const data = await response.json();
-      if (data.success) {
-        setEvents(data.events);
-      }
-    } catch (error) {
-      console.error('Error fetching events:', error);
-    }
-    setLoading(false);
-  }, [API_URL]);
-
-  const fetchGallery = useCallback(async () => {
+  const fetchEvents = async () => {
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/admin/gallery`);
@@ -79,19 +96,11 @@ const DiamondDashboard = () => {
       console.error('Error fetching gallery:', error);
     }
     setLoading(false);
-  }, [API_URL]);
-
-  useEffect(() => {
-    if (activeTab === 'pending') {
-      fetchPendingMembers();
-    } else if (activeTab === 'events') {
-      fetchEvents();
-    } else if (activeTab === 'gallery') {
-      fetchGallery();
-    }
-  }, [activeTab, fetchEvents, fetchGallery, fetchPendingMembers]);
+  };
 
   const approveMember = async (id, tier) => {
+    if (!user || !user.phone) return;
+    
     try {
       const response = await fetch(`${API_URL}/members/members/approve/${id}`, {
         method: 'POST',
@@ -100,7 +109,6 @@ const DiamondDashboard = () => {
         },
         body: JSON.stringify({
           phone: user.phone,
-          password: user.password,
           membershipTier: tier
         })
       });
@@ -118,6 +126,8 @@ const DiamondDashboard = () => {
   };
 
   const rejectMember = async (id, reason) => {
+    if (!user || !user.phone) return;
+    
     try {
       const response = await fetch(`${API_URL}/members/members/reject/${id}`, {
         method: 'POST',
@@ -126,7 +136,6 @@ const DiamondDashboard = () => {
         },
         body: JSON.stringify({
           phone: user.phone,
-          password: user.password,
           rejectionReason: reason
         })
       });
@@ -145,6 +154,7 @@ const DiamondDashboard = () => {
 
   const createEvent = async (e) => {
     e.preventDefault();
+    if (!user || !user.phone) return;
     
     const formData = new FormData();
     formData.append('title', eventForm.title);
@@ -152,7 +162,6 @@ const DiamondDashboard = () => {
     formData.append('date', eventForm.date);
     formData.append('location', eventForm.location);
     formData.append('phone', user.phone);
-    formData.append('password', user.password);
     if (eventForm.image) {
       formData.append('image', eventForm.image);
     }
@@ -183,6 +192,7 @@ const DiamondDashboard = () => {
 
   const deleteEvent = async (id) => {
     if (!window.confirm('Are you sure you want to delete this event?')) return;
+    if (!user || !user.phone) return;
 
     try {
       const response = await fetch(`${API_URL}/members/events/${id}`, {
@@ -191,8 +201,7 @@ const DiamondDashboard = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          phone: user.phone,
-          password: user.password
+          phone: user.phone
         })
       });
 
@@ -210,13 +219,13 @@ const DiamondDashboard = () => {
 
   const uploadGalleryPhoto = async (e) => {
     e.preventDefault();
+    if (!user || !user.phone) return;
     
     const formData = new FormData();
     formData.append('title', galleryForm.title);
     formData.append('description', galleryForm.description);
     formData.append('category', galleryForm.category);
     formData.append('phone', user.phone);
-    formData.append('password', user.password);
     if (galleryForm.photo) {
       formData.append('photo', galleryForm.photo);
     }
@@ -248,6 +257,7 @@ const DiamondDashboard = () => {
 
   const deleteGalleryPhoto = async (id) => {
     if (!window.confirm('Are you sure you want to delete this photo?')) return;
+    if (!user || !user.phone) return;
 
     try {
       const response = await fetch(`${API_URL}/members/gallery/${id}`, {
@@ -256,8 +266,7 @@ const DiamondDashboard = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          phone: user.phone,
-          password: user.password
+          phone: user.phone
         })
       });
 
@@ -309,34 +318,206 @@ const DiamondDashboard = () => {
               {pendingMembers.length === 0 ? (
                 <p>No pending members</p>
               ) : (
-                pendingMembers.map(member => (
-                  <div key={member._id} className="member-card">
-                    <h3>{member.fullName}</h3>
-                    <p>Phone: {member.phone}</p>
-                    <p>Email: {member.email}</p>
-                    <p>City: {member.city}, {member.state}</p>
-                    <div className="approve-actions">
-                      <button onClick={() => approveMember(member._id, 'silver')}>
+                <div className="members-table-container">
+                  <table className="members-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>City</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pendingMembers.map(member => (
+                        <tr key={member._id}>
+                          <td>{member.fullName}</td>
+                          <td>{member.phone}</td>
+                          <td>{member.email}</td>
+                          <td>{member.city}, {member.state}</td>
+                          <td>
+                            <button 
+                              className="view-details-btn"
+                              onClick={() => {
+                                setSelectedMember(member);
+                                setShowMemberModal(true);
+                              }}
+                            >
+                              View Details
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              
+              {/* Member Details Modal */}
+              {showMemberModal && selectedMember && (
+                <div className="modal-overlay" onClick={() => setShowMemberModal(false)}>
+                  <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                    <button className="modal-close" onClick={() => setShowMemberModal(false)}>×</button>
+                    <h2>{selectedMember.fullName}</h2>
+                    
+                    <div className="modal-details">
+                      <div className="detail-section">
+                        <h3>Personal Information</h3>
+                        <div className="detail-row">
+                          <span className="detail-label">Full Name:</span>
+                          <span className="detail-value">{selectedMember.fullName}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Father's Name:</span>
+                          <span className="detail-value">{selectedMember.fatherName}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Date of Birth:</span>
+                          <span className="detail-value">{new Date(selectedMember.dateOfBirth).toLocaleDateString('en-GB')}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Gender:</span>
+                          <span className="detail-value">{selectedMember.gender}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Education:</span>
+                          <span className="detail-value">{selectedMember.education}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Occupation:</span>
+                          <span className="detail-value">{selectedMember.occupation}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="detail-section">
+                        <h3>Contact Information</h3>
+                        <div className="detail-row">
+                          <span className="detail-label">Phone:</span>
+                          <span className="detail-value">{selectedMember.phone}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Email:</span>
+                          <span className="detail-value">{selectedMember.email}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Address:</span>
+                          <span className="detail-value">{selectedMember.address}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">City:</span>
+                          <span className="detail-value">{selectedMember.city}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">State:</span>
+                          <span className="detail-value">{selectedMember.state}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Pincode:</span>
+                          <span className="detail-value">{selectedMember.pincode}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="detail-section">
+                        <h3>Documents</h3>
+                        {selectedMember.photoPath && (
+                          <div className="detail-row">
+                            <span className="detail-label">Photo:</span>
+                            <a 
+                              href={`${API_URL.replace('/api', '')}/uploads/${selectedMember.photoPath}`} 
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="pdf-link"
+                            >
+                              View Photo 📷
+                            </a>
+                          </div>
+                        )}
+                        {selectedMember.idProofPath && (
+                          <div className="detail-row">
+                            <span className="detail-label">ID Proof:</span>
+                            <a 
+                              href={`${API_URL.replace('/api', '')}/uploads/${selectedMember.idProofPath}`} 
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="pdf-link"
+                            >
+                              View PDF 📄
+                            </a>
+                          </div>
+                        )}
+                        {selectedMember.addressProofPath && (
+                          <div className="detail-row">
+                            <span className="detail-label">Address Proof:</span>
+                            <a 
+                              href={`${API_URL.replace('/api', '')}/uploads/${selectedMember.addressProofPath}`} 
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="pdf-link"
+                            >
+                              View PDF 📄
+                            </a>
+                          </div>
+                        )}
+                        {selectedMember.donationDocumentPath && (
+                          <div className="detail-row">
+                            <span className="detail-label">Donation Document:</span>
+                            <a 
+                              href={`${API_URL.replace('/api', '')}/uploads/${selectedMember.donationDocumentPath}`} 
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="pdf-link"
+                            >
+                              View PDF 📄
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="modal-actions">
+                      <button 
+                        className="approve-btn silver-btn"
+                        onClick={() => {
+                          approveMember(selectedMember._id, 'silver');
+                          setShowMemberModal(false);
+                        }}
+                      >
                         Approve as Silver
                       </button>
-                      <button onClick={() => approveMember(member._id, 'gold')}>
+                      <button 
+                        className="approve-btn gold-btn"
+                        onClick={() => {
+                          approveMember(selectedMember._id, 'gold');
+                          setShowMemberModal(false);
+                        }}
+                      >
                         Approve as Gold
                       </button>
-                      <button onClick={() => approveMember(member._id, 'diamond')}>
+                      <button 
+                        className="approve-btn diamond-btn"
+                        onClick={() => {
+                          approveMember(selectedMember._id, 'diamond');
+                          setShowMemberModal(false);
+                        }}
+                      >
                         Approve as Diamond
                       </button>
                       <button 
                         className="reject-btn"
                         onClick={() => {
                           const reason = prompt('Enter rejection reason:');
-                          if (reason) rejectMember(member._id, reason);
+                          if (reason) {
+                            rejectMember(selectedMember._id, reason);
+                            setShowMemberModal(false);
+                          }
                         }}
                       >
                         Reject
                       </button>
                     </div>
                   </div>
-                ))
+                </div>
               )}
             </div>
           )}

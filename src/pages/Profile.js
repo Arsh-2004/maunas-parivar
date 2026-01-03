@@ -188,13 +188,48 @@ const Profile = () => {
                 {user.membershipTier === 'diamond' && '💎 '}
                 {user.membershipTier === 'gold' && '🥇 '}
                 {user.membershipTier === 'silver' && '🥈 '}
-                {user.membershipTier.toUpperCase()} {language === 'en' ? 'MEMBER' : 'सदस्य'}
+                {user.membershipTier.toUpperCase()} {language === 'en' ? 'TIER' : 'स्तर'}
               </p>
             )}
             {!user.membershipTier && (
               <p style={{color: 'red', fontSize: '0.9rem', marginTop: '10px'}}>
                 ⚠️ {language === 'en' ? 'Tier not loaded - Please logout and login again' : 'टियर लोड नहीं हुआ - कृपया लॉगआउट करें और फिर से लॉगिन करें'}
               </p>
+            )}
+            
+            {/* Dashboard Access Section */}
+            {user.membershipTier === 'diamond' && (
+              <div className="tier-access-info">
+                <h4>🎯 {language === 'en' ? 'Your Diamond Privileges:' : 'आपके डायमंड विशेषाधिकार:'}</h4>
+                <ul>
+                  <li>✅ {language === 'en' ? 'Approve/Reject new members' : 'नए सदस्यों को स्वीकृत/अस्वीकृत करें'}</li>
+                  <li>✅ {language === 'en' ? 'Add events & gallery photos' : 'कार्यक्रम और गैलरी फोटो जोड़ें'}</li>
+                  <li>✅ {language === 'en' ? 'Manage community activities' : 'सामुदायिक गतिविधियां प्रबंधित करें'}</li>
+                </ul>
+                <button 
+                  className="dashboard-access-btn diamond"
+                  onClick={() => navigate('/diamond-dashboard')}
+                >
+                  💎 {language === 'en' ? 'Go to Diamond Panel' : 'डायमंड पैनल पर जाएं'}
+                </button>
+              </div>
+            )}
+            
+            {user.membershipTier === 'gold' && (
+              <div className="tier-access-info">
+                <h4>🥇 {language === 'en' ? 'Your Gold Privileges:' : 'आपके गोल्ड विशेषाधिकार:'}</h4>
+                <ul>
+                  <li>✅ {language === 'en' ? 'View all upcoming events' : 'सभी आगामी कार्यक्रम देखें'}</li>
+                  <li>✅ {language === 'en' ? 'Volunteer to organize events' : 'कार्यक्रम आयोजित करने के लिए स्वयंसेवक'}</li>
+                  <li>✅ {language === 'en' ? 'Priority event participation' : 'प्राथमिकता कार्यक्रम भागीदारी'}</li>
+                </ul>
+                <button 
+                  className="dashboard-access-btn gold"
+                  onClick={() => navigate('/gold-dashboard')}
+                >
+                  🥇 {language === 'en' ? 'Go to Gold Panel' : 'गोल्ड पैनल पर जाएं'}
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -374,7 +409,20 @@ const Profile = () => {
               </div>
             </div>
 
-            <button className="edit-btn" onClick={() => setIsEditing(true)}>
+            <button className="edit-btn" onClick={() => {
+              // Reset form data with current user data when entering edit mode
+              setFormData({
+                email: user.email || '',
+                phone: user.phone || '',
+                address: user.address || '',
+                city: user.city || '',
+                state: user.state || '',
+                pincode: user.pincode || '',
+                occupation: user.occupation || '',
+                photo: null
+              });
+              setIsEditing(true);
+            }}>
               ✏️ {language === 'en' ? 'Edit Profile' : 'प्रोफ़ाइल संपादित करें'}
             </button>
           </div>
