@@ -39,11 +39,6 @@ const DiamondDashboard = () => {
     if (!isAuthenticated()) {
       navigate('/login');
       return;
-<<<<<<< HEAD
-    }
-    if (!user || !user.phone) {
-      setMessage('Session expired. Please logout and login again.');
-=======
     }
     
     if (!user) {
@@ -51,19 +46,13 @@ const DiamondDashboard = () => {
       return;
     }
     
-    console.log('DiamondDashboard - Current user:', user);
-    console.log('DiamondDashboard - User phone:', user.phone);
-    console.log('DiamondDashboard - User tier:', user.membershipTier);
-    
     if (!user.phone) {
-      console.error('DiamondDashboard - ERROR: User phone is missing!');
       setMessage('Session expired. Please logout and login again.');
       return;
     }
     
     if (user.membershipTier !== 'diamond') {
       setMessage('Diamond membership required');
->>>>>>> ade3d8b (Changes in Diamond Tier Features)
       return;
     }
   }, [user, isAuthenticated, navigate]);
@@ -79,14 +68,7 @@ const DiamondDashboard = () => {
   }, [activeTab]);
 
   const fetchPendingMembers = async () => {
-<<<<<<< HEAD
     if (!user || !user.phone) return;
-=======
-    if (!user || !user.phone) {
-      console.error('Cannot fetch - user or phone missing');
-      return;
-    }
->>>>>>> ade3d8b (Changes in Diamond Tier Features)
     
     setLoading(true);
     try {
@@ -115,6 +97,20 @@ const DiamondDashboard = () => {
   };
 
   const fetchEvents = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/admin/events`);
+      const data = await response.json();
+      if (data.success) {
+        setEvents(data.events);
+      }
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    }
+    setLoading(false);
+  };
+
+  const fetchGallery = async () => {
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/admin/gallery`);
@@ -184,8 +180,6 @@ const DiamondDashboard = () => {
 
   const createEvent = async (e) => {
     e.preventDefault();
-    if (!user || !user.phone) return;
-    
     if (!user || !user.phone) {
       setMessage('User session invalid. Please logout and login again.');
       return;
@@ -254,8 +248,6 @@ const DiamondDashboard = () => {
 
   const uploadGalleryPhoto = async (e) => {
     e.preventDefault();
-    if (!user || !user.phone) return;
-    
     if (!user || !user.phone) {
       setMessage('User session invalid. Please logout and login again.');
       return;
