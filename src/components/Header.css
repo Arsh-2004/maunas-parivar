@@ -276,16 +276,22 @@
     right: 0;
     background: white;
     flex-direction: column;
-    padding: 20px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    box-shadow: none;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
     z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
   }
 
   .nav-links.active {
     max-height: 600px;
+    padding: 20px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    opacity: 1;
+    visibility: visible;
   }
 
   .nav-links a {
