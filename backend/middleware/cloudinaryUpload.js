@@ -39,13 +39,8 @@ const uploadToCloudinary = async (filePath, folder) => {
     
     const uploadOptions = {
       folder: `maunas-parivar/${folder}`,
-      resource_type: isPDF ? 'raw' : 'image',
-      access_mode: 'public'
+      resource_type: isPDF ? 'raw' : 'image'
     };
-
-    if (isPDF) {
-      uploadOptions.flags = 'attachment';
-    }
     
     console.log(`Uploading ${isPDF ? 'PDF' : 'image'} to Cloudinary:`, filePath);
     const result = await cloudinary.uploader.upload(filePath, uploadOptions);
@@ -53,12 +48,6 @@ const uploadToCloudinary = async (filePath, folder) => {
     
     // Delete local file after successful upload
     fs.unlinkSync(filePath);
-    
-    // For PDFs, return a signed URL or the resource URL with proper flags
-    if (isPDF) {
-      // Return URL with fl_attachment flag for proper PDF handling
-      return result.secure_url;
-    }
     
     return result.secure_url;
   } catch (error) {
@@ -68,8 +57,26 @@ const uploadToCloudinary = async (filePath, folder) => {
   }
 };
 
+// Function to generate signed URL for secure access to raw files (PDFs)
+const getSignedUrl = (publicId, resourceType = 'raw') => {
+  try {
+    // Generate a signed URL that expires in 1 hour
+    const signedUrl = cloudinary.url(publicId, {
+      resource_type: resourceType,
+      type: 'upload',
+      sign_url: true,
+      secure: true
+    });
+    return signedUrl;
+  } catch (error) {
+    console.error('Error generating signed URL:', error);
+    return null;
+  }
+};
+
 module.exports = {
   upload,
   uploadToCloudinary,
+  getSignedUrl,
   cloudinary
 };

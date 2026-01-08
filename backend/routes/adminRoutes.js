@@ -6,7 +6,7 @@ const Gallery = require('../models/Gallery');
 const OathAgreement = require('../models/OathAgreement');
 const path = require('path');
 const fs = require('fs');
-const { upload, uploadToCloudinary } = require('../middleware/cloudinaryUpload');
+const { upload, uploadToCloudinary, getSignedUrl, cloudinary } = require('../middleware/cloudinaryUpload');
 
 // Simple admin authentication middleware
 const adminAuth = (req, res, next) => {
@@ -562,6 +562,42 @@ router.delete('/gallery/:id', adminAuth, async (req, res) => {
       success: false, 
       message: 'Failed to delete photo' 
     });
+  }
+});
+
+// Generate signed URL for PDF access
+router.post('/generate-pdf-url', adminAuth, async (req, res) => {
+  try {
+    const { pdfUrl } = req.body;
+    
+    if (!pdfUrl) {
+      return res.status(400).json({ success: false, message: 'PDF URL is required' });
+    }
+    
+    // Extract public_id from Cloudinary URL
+    const urlParts = pdfUrl.split('/');
+    const uploadIndex = urlParts.findIndex(part => part === 'upload');
+    if (uploadIndex === -1) {
+      return res.status(400).json({ success: false, message: 'Invalid Cloudinary URL' });
+    }
+    
+    // Get everything after 'upload/' (excluding version if present)
+    const afterUpload = urlParts.slice(uploadIndex + 1).join('/');
+    const publicId = afterUpload.replace(/^v\d+\//, ''); // Remove version number
+    
+    // Generate signed URL
+    const signedUrl = cloudinary.url(publicId, {
+      resource_type: 'raw',
+      type: 'upload',
+      sign_url: true,
+      secure: true,
+      expires_at: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour expiry
+    });
+    
+    res.json({ success: true, signedUrl });
+  } catch (error) {
+    console.error('Error generating signed URL:', error);
+    res.status(500).json({ success: false, message: 'Failed to generate signed URL' });
   }
 });
 
