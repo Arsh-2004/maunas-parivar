@@ -6,7 +6,7 @@ const Gallery = require('../models/Gallery');
 const OathAgreement = require('../models/OathAgreement');
 const path = require('path');
 const fs = require('fs');
-const { uploadPhoto, uploadToCloudinary } = require('../middleware/cloudinaryUpload');
+const { upload, uploadToCloudinary } = require('../middleware/cloudinaryUpload');
 
 // Simple admin authentication middleware
 const adminAuth = (req, res, next) => {
@@ -381,7 +381,7 @@ router.put('/update-tier/:id', adminAuth, async (req, res) => {
 });
 
 // Event management routes
-router.post('/events', adminAuth, uploadPhoto.single('image'), async (req, res) => {
+router.post('/events', adminAuth, upload.single('image'), async (req, res) => {
   try {
     console.log('Creating event with data:', req.body);
     console.log('File received:', req.file ? req.file.path : 'No file');
@@ -475,7 +475,7 @@ router.delete('/events/:id', adminAuth, async (req, res) => {
 });
 
 // Gallery management routes
-router.post('/gallery', adminAuth, uploadPhoto.single('image'), async (req, res) => {
+router.post('/gallery', adminAuth, upload.single('image'), async (req, res) => {
   try {
     console.log('Uploading gallery photo with data:', req.body);
     console.log('File received:', req.file ? req.file.path : 'No file');
