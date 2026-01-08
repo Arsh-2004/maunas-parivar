@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import './AdminDashboard.css';
@@ -70,7 +70,7 @@ const AdminDashboard = () => {
       fetchGallery();
       fetchOathAgreements();
     }
-  }, []);
+  }, [fetchOathAgreements]);
 
   // Fetch users
   const fetchUsers = async (searchTerm = '') => {
@@ -226,7 +226,7 @@ const AdminDashboard = () => {
   };
 
   // Fetch oath agreements
-  const fetchOathAgreements = async () => {
+  const fetchOathAgreements = useCallback(async () => {
     try {
       const response = await fetch(`${API_URL}/admin/oath-agreements`, {
         headers: { 'x-admin-password': adminPassword }
@@ -238,7 +238,7 @@ const AdminDashboard = () => {
     } catch (err) {
       console.error('Error fetching oath agreements:', err);
     }
-  };
+  }, [adminPassword]);
 
   const handleEventSubmit = async (e) => {
     e.preventDefault();
