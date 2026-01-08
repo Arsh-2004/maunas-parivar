@@ -58,6 +58,21 @@ const AdminDashboard = () => {
     }
   };
 
+  // Fetch oath agreements
+  const fetchOathAgreements = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_URL}/admin/oath-agreements`, {
+        headers: { 'x-admin-password': adminPassword }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setOathAgreements(data.agreements);
+      }
+    } catch (err) {
+      console.error('Error fetching oath agreements:', err);
+    }
+  }, [adminPassword]);
+
   // Check stored admin session
   useEffect(() => {
     const storedPassword = localStorage.getItem('adminPassword');
@@ -224,21 +239,6 @@ const AdminDashboard = () => {
       console.error('Error fetching events:', err);
     }
   };
-
-  // Fetch oath agreements
-  const fetchOathAgreements = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_URL}/admin/oath-agreements`, {
-        headers: { 'x-admin-password': adminPassword }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setOathAgreements(data.agreements);
-      }
-    } catch (err) {
-      console.error('Error fetching oath agreements:', err);
-    }
-  }, [adminPassword]);
 
   const handleEventSubmit = async (e) => {
     e.preventDefault();
