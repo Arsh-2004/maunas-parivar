@@ -33,9 +33,14 @@ const upload = multer({
 // Function to upload file to Cloudinary and delete local file
 const uploadToCloudinary = async (filePath, folder) => {
   try {
+    // Determine resource type based on file extension
+    const ext = path.extname(filePath).toLowerCase();
+    const isPDF = ext === '.pdf';
+    
     const result = await cloudinary.uploader.upload(filePath, {
       folder: `maunas-parivar/${folder}`,
-      resource_type: 'auto'
+      resource_type: isPDF ? 'raw' : 'auto',
+      format: isPDF ? 'pdf' : undefined
     });
     
     // Delete local file after successful upload
