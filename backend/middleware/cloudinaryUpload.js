@@ -37,18 +37,33 @@ const uploadToCloudinary = async (filePath, folder) => {
     const ext = path.extname(filePath).toLowerCase();
     const isPDF = ext === '.pdf';
     
-    const result = await cloudinary.uploader.upload(filePath, {
+    const uploadOptions = {
       folder: `maunas-parivar/${folder}`,
-      resource_type: isPDF ? 'raw' : 'auto',
-      format: isPDF ? 'pdf' : undefined
-    });
+      resource_type: isPDF ? 'raw' : 'image',
+      access_mode: 'public'
+    };
+
+    if (isPDF) {
+      uploadOptions.flags = 'attachment';
+    }
+    
+    console.log(`Uploading ${isPDF ? 'PDF' : 'image'} to Cloudinary:`, filePath);
+    const result = await cloudinary.uploader.upload(filePath, uploadOptions);
+    console.log('Cloudinary upload success:', result.secure_url);
     
     // Delete local file after successful upload
     fs.unlinkSync(filePath);
     
+    // For PDFs, return a signed URL or the resource URL with proper flags
+    if (isPDF) {
+      // Return URL with fl_attachment flag for proper PDF handling
+      return result.secure_url;
+    }
+    
     return result.secure_url;
   } catch (error) {
     console.error('Cloudinary upload error:', error);
+    console.error('File path:', filePath);
     throw error;
   }
 };
