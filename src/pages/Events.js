@@ -70,7 +70,7 @@ const Events = () => {
                     <div className="event-image">
                       {event.imagePath ? (
                         <img 
-                          src={`${API_URL.replace('/api', '')}/uploads/${event.imagePath}`} 
+                          src={event.imagePath} 
                           alt={event.title} 
                         />
                       ) : (
@@ -121,7 +121,7 @@ const Events = () => {
                     <div className="event-image">
                       {event.imagePath ? (
                         <img 
-                          src={`${API_URL.replace('/api', '')}/uploads/${event.imagePath}`} 
+                          src={event.imagePath} 
                           alt={event.title} 
                         />
                       ) : (

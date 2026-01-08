@@ -175,7 +175,7 @@ const Header = () => {
                       <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="profile-link">
                         {userPhoto ? (
                           <img 
-                            src={`${API_URL.replace('/api', '')}/uploads/${userPhoto}`} 
+                            src={userPhoto} 
                             alt="Profile" 
                             className="header-user-photo"
                           />

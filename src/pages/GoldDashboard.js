@@ -121,7 +121,7 @@ const GoldDashboard = () => {
                 <div key={event._id} className="event-card">
                   {event.imagePath && (
                     <img 
-                      src={`${API_URL.replace('/api', '')}/uploads/${event.imagePath}`}
+                      src={event.imagePath}
                       alt={event.title}
                       className="event-image"
                     />

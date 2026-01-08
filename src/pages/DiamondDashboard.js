@@ -476,7 +476,7 @@ const DiamondDashboard = () => {
                           <div className="detail-row">
                             <span className="detail-label">Photo:</span>
                             <a 
-                              href={`${API_URL.replace('/api', '')}/uploads/${selectedMember.photoPath}`} 
+                              href={selectedMember.photoPath} 
                               target="_blank" 
                               rel="noreferrer" 
                               className="pdf-link"
@@ -489,7 +489,7 @@ const DiamondDashboard = () => {
                           <div className="detail-row">
                             <span className="detail-label">ID Proof:</span>
                             <a 
-                              href={`${API_URL.replace('/api', '')}/uploads/${selectedMember.idProofPath}`} 
+                              href={selectedMember.idProofPath} 
                               target="_blank" 
                               rel="noreferrer" 
                               className="pdf-link"
@@ -502,7 +502,7 @@ const DiamondDashboard = () => {
                           <div className="detail-row">
                             <span className="detail-label">Address Proof:</span>
                             <a 
-                              href={`${API_URL.replace('/api', '')}/uploads/${selectedMember.addressProofPath}`} 
+                              href={selectedMember.addressProofPath} 
                               target="_blank" 
                               rel="noreferrer" 
                               className="pdf-link"
@@ -515,7 +515,7 @@ const DiamondDashboard = () => {
                           <div className="detail-row">
                             <span className="detail-label">Donation Document:</span>
                             <a 
-                              href={`${API_URL.replace('/api', '')}/uploads/${selectedMember.donationDocumentPath}`} 
+                              href={selectedMember.donationDocumentPath} 
                               target="_blank" 
                               rel="noreferrer" 
                               className="pdf-link"
@@ -624,7 +624,7 @@ const DiamondDashboard = () => {
                     <div key={event._id} className="event-item">
                       {event.imagePath && (
                         <img 
-                          src={`${API_URL.replace('/api', '')}/uploads/${event.imagePath}`}
+                          src={event.imagePath}
                           alt={event.title}
                         />
                       )}
@@ -697,7 +697,7 @@ const DiamondDashboard = () => {
                   gallery.map(photo => (
                     <div key={photo._id} className="gallery-item">
                       <img 
-                        src={`${API_URL.replace('/api', '')}/uploads/${photo.imagePath}`}
+                        src={photo.imagePath}
                         alt={photo.title}
                       />
                       <div className="gallery-info">

@@ -22,9 +22,11 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('users');
   const [events, setEvents] = useState([]);
   const [gallery, setGallery] = useState([]);
+  const [oathAgreements, setOathAgreements] = useState([]);
   const [eventForm, setEventForm] = useState({ title: '', description: '', date: '', location: '', image: null });
   const [galleryForm, setGalleryForm] = useState({ title: '', description: '', category: 'general', image: null });
   const [showUserModal, setShowUserModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Admin login
   const handleAdminLogin = async (e) => {
@@ -47,6 +49,7 @@ const AdminDashboard = () => {
         fetchStats();
         fetchEvents();
         fetchGallery();
+        fetchOathAgreements();
       } else {
         setError(language === 'en' ? 'Invalid admin password' : 'गलत व्यवस्थापक पासवर्ड');
       }
@@ -65,6 +68,7 @@ const AdminDashboard = () => {
       fetchStats();
       fetchEvents();
       fetchGallery();
+      fetchOathAgreements();
     }
   }, []);
 
@@ -218,6 +222,21 @@ const AdminDashboard = () => {
       }
     } catch (err) {
       console.error('Error fetching events:', err);
+    }
+  };
+
+  // Fetch oath agreements
+  const fetchOathAgreements = async () => {
+    try {
+      const response = await fetch(`${API_URL}/admin/oath-agreements`, {
+        headers: { 'x-admin-password': adminPassword }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setOathAgreements(data.agreements);
+      }
+    } catch (err) {
+      console.error('Error fetching oath agreements:', err);
     }
   };
 
@@ -390,6 +409,12 @@ const AdminDashboard = () => {
           {language === 'en' ? 'Members' : 'सदस्य'}
         </button>
         <button 
+          className={activeTab === 'oath' ? 'active' : ''}
+          onClick={() => setActiveTab('oath')}
+        >
+          {language === 'en' ? 'Oath Agreements' : 'शपथ समझौते'}
+        </button>
+        <button 
           className={activeTab === 'events' ? 'active' : ''}
           onClick={() => setActiveTab('events')}
         >
@@ -542,7 +567,7 @@ const AdminDashboard = () => {
                   </div>
                   <div className="detail-row">
                     <span className="detail-label">{language === 'en' ? 'ID Proof:' : 'पहचान प्रमाण:'}</span>
-                    <a href={`${API_URL.replace('/api', '')}/uploads/${selectedUser.idProofPath}`} target="_blank" rel="noreferrer" className="pdf-link">
+                    <a href={selectedUser.idProofPath} target="_blank" rel="noreferrer" className="pdf-link">
                       PDF {language === 'en' ? 'View' : 'देखें'} 📄
                     </a>
                   </div>
@@ -577,6 +602,45 @@ const AdminDashboard = () => {
             </div>
           )}
         </>
+      )}
+
+      {activeTab === 'oath' && (
+        <div className="oath-agreements-section">
+          <h2>{language === 'en' ? '📜 Oath Agreements' : '📜 शपथ समझौते'}</h2>
+          <div className="stats-grid">
+            <div className="stat-card total-card">
+              <div className="stat-number">{oathAgreements.length}</div>
+              <div className="stat-label">{language === 'en' ? 'Total Agreements' : 'कुल समझौते'}</div>
+            </div>
+          </div>
+
+          {oathAgreements.length === 0 ? (
+            <p className="no-data">{language === 'en' ? 'No oath agreements yet' : 'अभी तक कोई शपथ समझौता नहीं'}</p>
+          ) : (
+            <div className="members-table-container">
+              <table className="members-table">
+                <thead>
+                  <tr>
+                    <th>{language === 'en' ? 'Name' : 'नाम'}</th>
+                    <th>{language === 'en' ? 'Mobile Number' : 'मोबाइल नंबर'}</th>
+                    <th>{language === 'en' ? 'Agreed At' : 'सहमति दिनांक'}</th>
+                    <th>{language === 'en' ? 'IP Address' : 'आईपी पता'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {oathAgreements.map((agreement) => (
+                    <tr key={agreement._id}>
+                      <td>{agreement.name}</td>
+                      <td>{agreement.mobileNumber}</td>
+                      <td>{new Date(agreement.agreedAt).toLocaleString()}</td>
+                      <td>{agreement.ipAddress || 'N/A'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       )}
 
       {activeTab === 'events' && (
@@ -639,7 +703,7 @@ const AdminDashboard = () => {
               {events.map((event) => (
                 <div key={event._id} className="event-card">
                   {event.imagePath && (
-                    <img src={`${API_URL.replace('/api', '')}/uploads/${event.imagePath}`} alt={event.title} />
+                    <img src={event.imagePath} alt={event.title} />
                   )}
                   <h3>{event.title}</h3>
                   <p>{event.description}</p>
@@ -705,7 +769,7 @@ const AdminDashboard = () => {
             <div className="gallery-grid">
               {gallery.map((photo) => (
                 <div key={photo._id} className="gallery-card">
-                  <img src={`${API_URL.replace('/api', '')}/uploads/${photo.imagePath}`} alt={photo.title} />
+                  <img src={photo.imagePath} alt={photo.title} />
                   <div className="gallery-info">
                     <h3>{photo.title}</h3>
                     <p>{photo.description}</p>
@@ -749,19 +813,35 @@ const AdminDashboard = () => {
                 <p>{selectedUser.email}</p>
               </div>
               
-              <div className="detail-group">
-                <label>{language === 'en' ? 'Address:' : 'पता:'}</label>
+              <div className="detail-group">                <label>{language === 'en' ? 'Password:' : 'पासवर्ड:'}</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <p style={{ margin: 0 }}>
+                    {showPassword ? selectedUser.password : '••••••••'}
+                  </p>
+                  <button 
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      padding: '5px 12px',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      background: '#ff6b35',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px'
+                    }}
+                  >
+                    {showPassword ? (language === 'en' ? '👁️ Hide' : '👁️ छुपाएं') : (language === 'en' ? '👁️ Show' : '👁️ दिखाएं')}
+                  </button>
+                </div>
+              </div>
+              
+              <div className="detail-group">                <label>{language === 'en' ? 'Address:' : 'पता:'}</label>
                 <p>{selectedUser.address}, {selectedUser.city}, {selectedUser.state} - {selectedUser.pincode}</p>
               </div>
               
               <div className="detail-group">
                 <label>{language === 'en' ? 'Occupation:' : 'व्यवसाय:'}</label>
                 <p>{selectedUser.occupation}</p>
-              </div>
-              
-              <div className="detail-group">
-                <label>{language === 'en' ? 'Education:' : 'शिक्षा:'}</label>
-                <p>{selectedUser.education}</p>
               </div>
               
               <div className="detail-group">
@@ -804,12 +884,12 @@ const AdminDashboard = () => {
                     <label>{language === 'en' ? 'Photo:' : 'फोटो:'}</label>
                     <div className="photo-preview">
                       <img 
-                        src={`${API_URL.replace('/api', '')}/uploads/${selectedUser.photoPath}`} 
+                        src={selectedUser.photoPath} 
                         alt={selectedUser.fullName} 
                         className="user-photo-thumbnail"
                       />
                       <a 
-                        href={`${API_URL.replace('/api', '')}/uploads/${selectedUser.photoPath}`} 
+                        href={selectedUser.photoPath} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="view-photo-btn"
@@ -823,7 +903,7 @@ const AdminDashboard = () => {
                 {selectedUser.idProofPath && (
                   <div className="document-item">
                     <label>{language === 'en' ? 'ID Proof:' : 'पहचान प्रमाण:'}</label>
-                    <a href={`${API_URL.replace('/api', '')}/uploads/${selectedUser.idProofPath}`} target="_blank" rel="noopener noreferrer">
+                    <a href={selectedUser.idProofPath} target="_blank" rel="noopener noreferrer">
                       {language === 'en' ? 'View ID Proof' : 'पहचान प्रमाण देखें'}
                     </a>
                   </div>
@@ -832,7 +912,7 @@ const AdminDashboard = () => {
                 {selectedUser.addressProofPath && (
                   <div className="document-item">
                     <label>{language === 'en' ? 'Address Proof:' : 'पता प्रमाण:'}</label>
-                    <a href={`${API_URL.replace('/api', '')}/uploads/${selectedUser.addressProofPath}`} target="_blank" rel="noopener noreferrer">
+                    <a href={selectedUser.addressProofPath} target="_blank" rel="noopener noreferrer">
                       {language === 'en' ? 'View Address Proof' : 'पता प्रमाण देखें'}
                     </a>
                   </div>
@@ -841,7 +921,7 @@ const AdminDashboard = () => {
                 {selectedUser.donationDocumentPath && (
                   <div className="document-item">
                     <label>{language === 'en' ? 'Donation Document:' : 'दान दस्तावेज़:'}</label>
-                    <a href={`${API_URL.replace('/api', '')}/uploads/${selectedUser.donationDocumentPath}`} target="_blank" rel="noopener noreferrer">
+                    <a href={selectedUser.donationDocumentPath} target="_blank" rel="noopener noreferrer">
                       {language === 'en' ? 'View Donation Document' : 'दान दस्तावेज़ देखें'}
                     </a>
                   </div>

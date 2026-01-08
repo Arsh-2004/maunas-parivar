@@ -106,7 +106,7 @@ const MembershipCards = () => {
               
               {member.photoPath && (
                 <img 
-                  src={`${API_URL.replace('/api', '')}/uploads/${member.photoPath}`} 
+                  src={member.photoPath} 
                   alt={member.fullName}
                   className="member-photo"
                 />

@@ -100,7 +100,7 @@ const Gallery = () => {
                   <div className="gallery-image">
                     {photo.imagePath ? (
                       <img 
-                        src={`${API_URL.replace('/api', '')}/uploads/${photo.imagePath}`} 
+                        src={photo.imagePath} 
                         alt={photo.title} 
                         loading="lazy"
                       />
@@ -127,7 +127,7 @@ const Gallery = () => {
           <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
             <button className="lightbox-close" onClick={closeLightbox}>×</button>
             <img 
-              src={`${API_URL.replace('/api', '')}/uploads/${selectedPhoto.imagePath}`} 
+              src={selectedPhoto.imagePath} 
               alt={selectedPhoto.title} 
             />
             <div className="lightbox-info">

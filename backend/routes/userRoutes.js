@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const OathAgreement = require('../models/OathAgreement');
-const upload = require('../middleware/upload');
+const { upload, uploadToCloudinary } = require('../middleware/cloudinaryUpload');
 
 // Save oath agreement
 router.post('/save-oath', async (req, res) => {
@@ -98,6 +98,14 @@ router.post('/register', upload.fields([
       });
     }
 
+    // Upload files to Cloudinary
+    const idProofUrl = await uploadToCloudinary(req.files.idProof[0].path, 'documents');
+    const addressProofUrl = await uploadToCloudinary(req.files.addressProof[0].path, 'documents');
+    const photoUrl = await uploadToCloudinary(req.files.photo[0].path, 'photos');
+    const donationDocUrl = req.files.donationDocument 
+      ? await uploadToCloudinary(req.files.donationDocument[0].path, 'documents')
+      : null;
+
     // Create new user
     const userData = {
       fullName: req.body.fullName,
@@ -116,10 +124,10 @@ router.post('/register', upload.fields([
       state: req.body.state,
       pincode: req.body.pincode,
       occupation: req.body.occupation,
-      idProofPath: req.files.idProof[0].filename,
-      addressProofPath: req.files.addressProof[0].filename,
-      photoPath: req.files.photo[0].filename,
-      donationDocumentPath: req.files.donationDocument ? req.files.donationDocument[0].filename : null,
+      idProofPath: idProofUrl,
+      addressProofPath: addressProofUrl,
+      photoPath: photoUrl,
+      donationDocumentPath: donationDocUrl,
       status: 'pending'
     };
 
