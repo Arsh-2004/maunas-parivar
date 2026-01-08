@@ -39,8 +39,16 @@ const uploadToCloudinary = async (filePath, folder) => {
     
     const uploadOptions = {
       folder: `maunas-parivar/${folder}`,
-      resource_type: isPDF ? 'raw' : 'image'
+      // For PDFs on free plan, upload as image type so they're publicly accessible
+      // Cloudinary will convert first page to image
+      resource_type: 'image'
     };
+
+    if (isPDF) {
+      // Add format parameter to ensure proper handling
+      uploadOptions.format = 'jpg';
+      uploadOptions.pages = true; // Enable PDF page extraction
+    }
     
     console.log(`Uploading ${isPDF ? 'PDF' : 'image'} to Cloudinary:`, filePath);
     const result = await cloudinary.uploader.upload(filePath, uploadOptions);
