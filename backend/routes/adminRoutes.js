@@ -6,7 +6,7 @@ const Gallery = require('../models/Gallery');
 const OathAgreement = require('../models/OathAgreement');
 const path = require('path');
 const fs = require('fs');
-const upload = require('../middleware/upload');
+const { uploadPhoto, uploadToCloudinary } = require('../middleware/cloudinaryUpload');
 
 // Simple admin authentication middleware
 const adminAuth = (req, res, next) => {
@@ -381,17 +381,27 @@ router.put('/update-tier/:id', adminAuth, async (req, res) => {
 });
 
 // Event management routes
-router.post('/events', adminAuth, upload.single('image'), async (req, res) => {
+router.post('/events', adminAuth, uploadPhoto.single('image'), async (req, res) => {
   try {
     console.log('Creating event with data:', req.body);
-    console.log('File received:', req.file ? req.file.filename : 'No file');
+    console.log('File received:', req.file ? req.file.path : 'No file');
+    
+    if (!req.file) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Image is required' 
+      });
+    }
+
+    // Upload to Cloudinary
+    const cloudinaryUrl = await uploadToCloudinary(req.file.path, 'events');
     
     const eventData = {
       title: req.body.title,
       description: req.body.description,
       date: req.body.date,
       location: req.body.location,
-      imagePath: req.file ? req.file.filename : null
+      imagePath: cloudinaryUrl
     };
 
     const event = new Event(eventData);
@@ -465,10 +475,10 @@ router.delete('/events/:id', adminAuth, async (req, res) => {
 });
 
 // Gallery management routes
-router.post('/gallery', adminAuth, upload.single('image'), async (req, res) => {
+router.post('/gallery', adminAuth, uploadPhoto.single('image'), async (req, res) => {
   try {
     console.log('Uploading gallery photo with data:', req.body);
-    console.log('File received:', req.file ? req.file.filename : 'No file');
+    console.log('File received:', req.file ? req.file.path : 'No file');
     
     if (!req.file) {
       return res.status(400).json({ 
@@ -477,11 +487,14 @@ router.post('/gallery', adminAuth, upload.single('image'), async (req, res) => {
       });
     }
 
+    // Upload to Cloudinary
+    const cloudinaryUrl = await uploadToCloudinary(req.file.path, 'gallery');
+
     const galleryData = {
       title: req.body.title,
       description: req.body.description || '',
       category: req.body.category || 'general',
-      imagePath: req.file.filename
+      imagePath: cloudinaryUrl
     };
 
     const photo = new Gallery(galleryData);
