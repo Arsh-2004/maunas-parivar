@@ -36,6 +36,26 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  village: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  block: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  tehsil: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  district: {
+    type: String,
+    required: true,
+    trim: true
+  },
   city: {
     type: String,
     required: true,
@@ -52,11 +72,6 @@ const userSchema = new mongoose.Schema({
     trim: true
   },
   occupation: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  education: {
     type: String,
     required: true,
     trim: true

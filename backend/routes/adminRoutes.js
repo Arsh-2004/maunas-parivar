@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const Event = require('../models/Event');
 const Gallery = require('../models/Gallery');
+const OathAgreement = require('../models/OathAgreement');
 const path = require('path');
 const fs = require('fs');
 const upload = require('../middleware/upload');
@@ -33,6 +34,26 @@ router.post('/login', (req, res) => {
     res.status(401).json({ 
       success: false, 
       message: 'Invalid admin password' 
+    });
+  }
+});
+
+// Get all oath agreements
+router.get('/oath-agreements', adminAuth, async (req, res) => {
+  try {
+    const oathAgreements = await OathAgreement.find()
+      .sort({ agreedAt: -1 });
+    
+    res.json({ 
+      success: true, 
+      count: oathAgreements.length,
+      agreements: oathAgreements 
+    });
+  } catch (error) {
+    console.error('Error fetching oath agreements:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch oath agreements' 
     });
   }
 });

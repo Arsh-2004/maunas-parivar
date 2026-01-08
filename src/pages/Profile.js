@@ -167,7 +167,7 @@ const Profile = () => {
           <div className="profile-photo">
             {user.photoPath ? (
               <img 
-                src={`http://localhost:5000/uploads/${user.photoPath}`} 
+                src={`${API_URL.replace('/api', '')}/uploads/${user.photoPath}`} 
                 alt="Profile"
                 onError={(e) => {
                   console.error('Image failed to load:', e.target.src);

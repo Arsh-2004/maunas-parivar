@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import OathModal from './components/OathModal';
 import Home from './pages/Home';
 import About from './pages/About';
 import Community from './pages/Community';
@@ -26,6 +27,7 @@ function App() {
       <AuthProvider>
         <Router basename="/">
           <div className="App">
+            <OathModal />
             <Header />
             <main>
               <Routes>

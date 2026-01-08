@@ -1,7 +1,45 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const OathAgreement = require('../models/OathAgreement');
 const upload = require('../middleware/upload');
+
+// Save oath agreement
+router.post('/save-oath', async (req, res) => {
+  try {
+    const { name, mobileNumber, agreedAt } = req.body;
+    
+    console.log('Oath agreement received:', { name, mobileNumber, agreedAt });
+    
+    // Save oath agreement to database
+    const oathAgreement = new OathAgreement({
+      name,
+      mobileNumber,
+      agreedAt: agreedAt || new Date(),
+      ipAddress: req.ip || req.connection.remoteAddress,
+      userAgent: req.get('user-agent')
+    });
+    
+    await oathAgreement.save();
+    console.log('Oath agreement saved to database');
+    
+    res.json({ 
+      success: true, 
+      message: 'Oath agreement recorded successfully',
+      data: { 
+        name, 
+        mobileNumber, 
+        agreedAt: oathAgreement.agreedAt 
+      }
+    });
+  } catch (error) {
+    console.error('Error saving oath agreement:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to save oath agreement' 
+    });
+  }
+});
 
 // Get all approved users (for membership cards - public route)
 router.get('/', async (req, res) => {
@@ -70,11 +108,14 @@ router.post('/register', upload.fields([
       phone: req.body.phone,
       password: req.body.password,
       address: req.body.address,
+      village: req.body.village,
+      block: req.body.block,
+      tehsil: req.body.tehsil,
+      district: req.body.district,
       city: req.body.city,
       state: req.body.state,
       pincode: req.body.pincode,
       occupation: req.body.occupation,
-      education: req.body.education,
       idProofPath: req.files.idProof[0].filename,
       addressProofPath: req.files.addressProof[0].filename,
       photoPath: req.files.photo[0].filename,

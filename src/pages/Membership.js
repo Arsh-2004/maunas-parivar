@@ -20,11 +20,14 @@ const Membership = () => {
     password: '',
     confirmPassword: '',
     address: '',
+    village: '',
+    block: '',
+    tehsil: '',
+    district: '',
     city: '',
     state: '',
     pincode: '',
     occupation: '',
-    education: '',
     idProof: null,
     addressProof: null,
     photo: null,
@@ -282,13 +285,6 @@ const Membership = () => {
       return;
     }
     
-    // Education validation
-    if (!formData.education) {
-      alert(language === 'en' ? '❌ Please select your education level' : '❌ कृपया अपनी शिक्षा का स्तर चुनें');
-      document.getElementById('education').focus();
-      return;
-    }
-    
     // File validations
     if (!formData.idProof) {
       alert(language === 'en' ? '❌ Please upload your ID proof (PDF)' : '❌ कृपया अपना पहचान प्रमाण अपलोड करें (पीडीएफ)');
@@ -347,11 +343,14 @@ const Membership = () => {
       submitData.append('phone', formData.phone);
       submitData.append('password', formData.password);
       submitData.append('address', formData.address);
+      submitData.append('village', formData.village);
+      submitData.append('block', formData.block);
+      submitData.append('tehsil', formData.tehsil);
+      submitData.append('district', formData.district);
       submitData.append('city', formData.city);
       submitData.append('state', formData.state);
       submitData.append('pincode', formData.pincode);
       submitData.append('occupation', formData.occupation);
-      submitData.append('education', formData.education);
       
       if (formData.idProof) {
         submitData.append('idProof', formData.idProof);
@@ -383,7 +382,7 @@ const Membership = () => {
         setShowModal(true);
         setFormData({
           fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '',
-          phone: '', password: '', confirmPassword: '', address: '', city: '', state: '', pincode: '', occupation: '', education: '',
+          phone: '', password: '', confirmPassword: '', address: '', village: '', block: '', tehsil: '', district: '', city: '', state: '', pincode: '', occupation: '',
           idProof: null, addressProof: null, photo: null, donationDocument: null
         });
         // Reset file inputs
@@ -678,16 +677,72 @@ const Membership = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="address">{t('membership.address')}</label>
+                <label htmlFor="address">{language === 'en' ? 'Address / पता *' : 'पता / Address *'}</label>
                 <textarea
                   id="address"
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
                   required
-                  rows="3"
-                  placeholder={language === 'en' ? 'Enter complete address' : 'पूरा पता दर्ज करें'}
+                  rows="2"
+                  placeholder={language === 'en' ? 'House No., Street Name' : 'मकान नं., गली का नाम'}
                 ></textarea>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="village">{language === 'en' ? 'Village/Locality/Colony / ग्राम/मोहल्ला/कॉलोनी *' : 'ग्राम/मोहल्ला/कॉलोनी / Village/Locality/Colony *'}</label>
+                  <input
+                    type="text"
+                    id="village"
+                    name="village"
+                    value={formData.village}
+                    onChange={handleChange}
+                    required
+                    placeholder={language === 'en' ? 'Enter village/locality/colony' : 'ग्राम/मोहल्ला/कॉलोनी दर्ज करें'}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="block">{language === 'en' ? 'Block / ब्लॉक *' : 'ब्लॉक / Block *'}</label>
+                  <input
+                    type="text"
+                    id="block"
+                    name="block"
+                    value={formData.block}
+                    onChange={handleChange}
+                    required
+                    placeholder={language === 'en' ? 'Enter block' : 'ब्लॉक दर्ज करें'}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="tehsil">{language === 'en' ? 'Tehsil / तहसील *' : 'तहसील / Tehsil *'}</label>
+                  <input
+                    type="text"
+                    id="tehsil"
+                    name="tehsil"
+                    value={formData.tehsil}
+                    onChange={handleChange}
+                    required
+                    placeholder={language === 'en' ? 'Enter tehsil' : 'तहसील दर्ज करें'}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="district">{language === 'en' ? 'District / जिला *' : 'जिला / District *'}</label>
+                  <input
+                    type="text"
+                    id="district"
+                    name="district"
+                    value={formData.district}
+                    onChange={handleChange}
+                    required
+                    placeholder={language === 'en' ? 'Enter district' : 'जिला दर्ज करें'}
+                  />
+                </div>
               </div>
 
               <div className="form-row">
@@ -778,35 +833,6 @@ const Membership = () => {
                     required
                     placeholder={language === 'en' ? 'Enter occupation' : 'व्यवसाय दर्ज करें'}
                   />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="education">{t('membership.education')}</label>
-                  <select
-                    id="education"
-                    name="education"
-                    value={formData.education}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">{language === 'en' ? 'Select Education' : 'शिक्षा चुनें'}</option>
-                    <option value="Below 10th">{language === 'en' ? 'Below 10th' : '10वीं से कम'}</option>
-                    <option value="10th Pass">{language === 'en' ? '10th Pass' : '10वीं पास'}</option>
-                    <option value="12th Pass">{language === 'en' ? '12th Pass' : '12वीं पास'}</option>
-                    <option value="Diploma">{language === 'en' ? 'Diploma' : 'डिप्लोमा'}</option>
-                    <option value="ITI">{language === 'en' ? 'ITI' : 'आईटीआई'}</option>
-                    <option value="Bachelor's Degree (B.A/B.Sc/B.Com)">{language === 'en' ? "Bachelor's Degree (B.A/B.Sc/B.Com)" : 'स्नातक (B.A/B.Sc/B.Com)'}</option>
-                    <option value="B.Tech/B.E">{language === 'en' ? 'B.Tech/B.E' : 'बी.टेक/बी.ई'}</option>
-                    <option value="BBA/BCA">{language === 'en' ? 'BBA/BCA' : 'बीबीए/बीसीए'}</option>
-                    <option value="Master's Degree (M.A/M.Sc/M.Com)">{language === 'en' ? "Master's Degree (M.A/M.Sc/M.Com)" : 'स्नातकोत्तर (M.A/M.Sc/M.Com)'}</option>
-                    <option value="M.Tech/M.E">{language === 'en' ? 'M.Tech/M.E' : 'एम.टेक/एम.ई'}</option>
-                    <option value="MBA">{language === 'en' ? 'MBA' : 'एमबीए'}</option>
-                    <option value="MCA">{language === 'en' ? 'MCA' : 'एमसीए'}</option>
-                    <option value="PhD/Doctorate">{language === 'en' ? 'PhD/Doctorate' : 'पीएचडी/डॉक्टरेट'}</option>
-                    <option value="Medical (MBBS/MD/MS)">{language === 'en' ? 'Medical (MBBS/MD/MS)' : 'चिकित्सा (MBBS/MD/MS)'}</option>
-                    <option value="Law (LLB/LLM)">{language === 'en' ? 'Law (LLB/LLM)' : 'कानून (LLB/LLM)'}</option>
-                    <option value="Other Professional">{language === 'en' ? 'Other Professional' : 'अन्य व्यावसायिक'}</option>
-                  </select>
                 </div>
               </div>
 
