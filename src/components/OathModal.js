@@ -181,7 +181,7 @@ const OathModal = () => {
             <p className="hindi-text">
               मैं <strong>{formData.name || '................'}</strong> मो. नं. <strong>{formData.mobileNumber || '..............'}</strong> प्रमाणित करता हूँ कि मैं क्षत्रिय मौनस वंश से हूँ। 
               भविष्य में कोई यदि यह प्रमाणित करता है कि मैं क्षत्रिय मौनस वंश से नहीं हूँ तो 
-              मेरे ऊपर अनुशासनात्मक कार्यवाही की जाएगी ।
+              मेरे ऊपर वैधानिक कार्यवाही की जाएगी ।
             </p>
             <p className="english-text">
               I <strong>{formData.name || '................'}</strong> Mo. No. <strong>{formData.mobileNumber || '..............'}</strong> certify that I belong to the Kshatriya Maunas lineage. If in the future anyone proves that I do not belong to the Kshatriya Maunas lineage, then disciplinary action will be taken against me.

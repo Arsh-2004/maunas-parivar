@@ -27,30 +27,30 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    // Only accept image files
+    const allowedTypes = /jpeg|jpg|png/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only JPEG, JPG, and PNG images are allowed!'));
+    }
+  }
 });
 
 // Function to upload file to Cloudinary and delete local file
 const uploadToCloudinary = async (filePath, folder) => {
   try {
-    // Determine resource type based on file extension
-    const ext = path.extname(filePath).toLowerCase();
-    const isPDF = ext === '.pdf';
-    
     const uploadOptions = {
       folder: `maunas-parivar/${folder}`,
-      // For PDFs on free plan, upload as image type so they're publicly accessible
-      // Cloudinary will convert first page to image
       resource_type: 'image'
     };
-
-    if (isPDF) {
-      // Add format parameter to ensure proper handling
-      uploadOptions.format = 'jpg';
-      uploadOptions.pages = true; // Enable PDF page extraction
-    }
     
-    console.log(`Uploading ${isPDF ? 'PDF' : 'image'} to Cloudinary:`, filePath);
+    console.log(`Uploading image to Cloudinary:`, filePath);
     const result = await cloudinary.uploader.upload(filePath, uploadOptions);
     console.log('Cloudinary upload success:', result.secure_url);
     

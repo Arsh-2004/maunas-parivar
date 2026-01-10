@@ -124,6 +124,7 @@ router.post('/register', upload.fields([
       state: req.body.state,
       pincode: req.body.pincode,
       occupation: req.body.occupation,
+      education: req.body.education,
       idProofPath: idProofUrl,
       addressProofPath: addressProofUrl,
       photoPath: photoUrl,

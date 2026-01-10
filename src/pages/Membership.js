@@ -28,6 +28,7 @@ const Membership = () => {
     state: '',
     pincode: '',
     occupation: '',
+    education: '',
     idProof: null,
     addressProof: null,
     photo: null,
@@ -108,15 +109,16 @@ const Membership = () => {
         e.target.value = '';
       }
     } 
-    // Other fields accept PDFs
+    // All other fields also accept images only
     else {
-      if (file && file.type === 'application/pdf') {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      if (file && allowedTypes.includes(file.type)) {
         setFormData({
           ...formData,
           [fieldName]: file
         });
       } else if (file) {
-        alert(language === 'en' ? 'Please upload a PDF file only' : 'कृपया केवल पीडीएफ फाइल अपलोड करें');
+        alert(language === 'en' ? 'Please upload a JPG/PNG image file only' : 'कृपया केवल JPG/PNG छवि फ़ाइल अपलोड करें');
         e.target.value = '';
       }
     }
@@ -273,6 +275,13 @@ const Membership = () => {
       return;
     }
     
+    // Education validation
+    if (!formData.education) {
+      alert(language === 'en' ? '❌ Please select your educational qualification' : '❌ कृपया अपनी शैक्षिक योग्यता चुनें');
+      document.getElementById('education').focus();
+      return;
+    }
+
     // Occupation validation
     if (!formData.occupation.trim()) {
       alert(language === 'en' ? '❌ Please enter your occupation' : '❌ कृपया अपना व्यवसाय दर्ज करें');
@@ -287,13 +296,13 @@ const Membership = () => {
     
     // File validations
     if (!formData.idProof) {
-      alert(language === 'en' ? '❌ Please upload your ID proof (PDF)' : '❌ कृपया अपना पहचान प्रमाण अपलोड करें (पीडीएफ)');
+      alert(language === 'en' ? '❌ Please upload your ID proof photo (JPG/PNG)' : '❌ कृपया अपना पहचान प्रमाण फोटो अपलोड करें (JPG/PNG)');
       document.getElementById('idProof').focus();
       return;
     }
     
     if (!formData.addressProof) {
-      alert(language === 'en' ? '❌ Please upload your address proof (PDF)' : '❌ कृपया अपना पते का प्रमाण अपलोड करें (पीडीएफ)');
+      alert(language === 'en' ? '❌ Please upload your address proof photo (JPG/PNG)' : '❌ कृपया अपना पते का प्रमाण फोटो अपलोड करें (JPG/PNG)');
       document.getElementById('addressProof').focus();
       return;
     }
@@ -351,6 +360,7 @@ const Membership = () => {
       submitData.append('state', formData.state);
       submitData.append('pincode', formData.pincode);
       submitData.append('occupation', formData.occupation);
+      submitData.append('education', formData.education);
       
       if (formData.idProof) {
         submitData.append('idProof', formData.idProof);
@@ -381,7 +391,7 @@ const Membership = () => {
         });
         setShowModal(true);
         setFormData({
-          fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '',
+          fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '', education: '',
           phone: '', password: '', confirmPassword: '', address: '', village: '', block: '', tehsil: '', district: '', city: '', state: '', pincode: '', occupation: '',
           idProof: null, addressProof: null, photo: null, donationDocument: null
         });
@@ -834,42 +844,79 @@ const Membership = () => {
                     placeholder={language === 'en' ? 'Enter occupation' : 'व्यवसाय दर्ज करें'}
                   />
                 </div>
+                <div className="form-group">
+                  <label htmlFor="education">
+                    {language === 'en' ? 'Educational Qualification *' : 'शैक्षिक योग्यता *'}
+                  </label>
+                  <select
+                    id="education"
+                    name="education"
+                    value={formData.education}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">
+                      {language === 'en' ? 'Select education level' : 'शिक्षा स्तर चुनें'}
+                    </option>
+                    <option value="below-10th">
+                      {language === 'en' ? 'Below 10th' : '10वीं से कम'}
+                    </option>
+                    <option value="10th">
+                      {language === 'en' ? '10th Pass' : '10वीं पास'}
+                    </option>
+                    <option value="12th">
+                      {language === 'en' ? '12th Pass' : '12वीं पास'}
+                    </option>
+                    <option value="graduate">
+                      {language === 'en' ? 'Graduate' : 'स्नातक'}
+                    </option>
+                    <option value="post-graduate">
+                      {language === 'en' ? 'Post Graduate' : 'स्नातकोत्तर'}
+                    </option>
+                    <option value="diploma">
+                      {language === 'en' ? 'Diploma' : 'डिप्लोमा'}
+                    </option>
+                    <option value="others">
+                      {language === 'en' ? 'Others' : 'अन्य'}
+                    </option>
+                  </select>
+                </div>
               </div>
 
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="idProof">
-                    {language === 'en' ? 'ID Valid Proof (PDF) *' : 'पहचान प्रमाण (पीडीएफ) *'}
+                    {language === 'en' ? 'ID Proof Photo (JPG/PNG) *' : 'पहचान प्रमाण फोटो (JPG/PNG) *'}
                   </label>
                   <input
                     type="file"
                     id="idProof"
                     name="idProof"
-                    accept="application/pdf"
+                    accept="image/jpeg,image/jpg,image/png"
                     onChange={handleFileChange}
                     required
                     className="file-input"
                   />
                   <small className="file-hint">
-                    {language === 'en' ? 'Upload ID proof in PDF (Aadhar, PAN, Voter ID, etc.)' : 'पीडीएफ में पहचान प्रमाण अपलोड करें (आधार, पैन, वोटर आईडी, आदि)'}
+                    {language === 'en' ? 'Upload clear photo of ID proof (Aadhar, PAN, Voter ID, etc.)' : 'पहचान प्रमाण की स्पष्ट फोटो अपलोड करें (आधार, पैन, वोटर आईडी, आदि)'}
                   </small>
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="addressProof">
-                    {language === 'en' ? 'Address Proof (PDF) *' : 'पते का प्रमाण (पीडीएफ) *'}
+                    {language === 'en' ? 'Address Proof Photo (JPG/PNG) *' : 'पते का प्रमाण फोटो (JPG/PNG) *'}
                   </label>
                   <input
                     type="file"
                     id="addressProof"
                     name="addressProof"
-                    accept="application/pdf"
+                    accept="image/jpeg,image/jpg,image/png"
                     onChange={handleFileChange}
                     required
                     className="file-input"
                   />
                   <small className="file-hint">
-                    {language === 'en' ? 'Upload address proof in PDF (Utility bill, Bank statement, etc.)' : 'पीडीएफ में पते का प्रमाण अपलोड करें (बिजली बिल, बैंक स्टेटमेंट, आदि)'}
+                    {language === 'en' ? 'Upload clear photo of address proof (Utility bill, Bank statement, etc.)' : 'पते के प्रमाण की स्पष्ट फोटो अपलोड करें (बिजली बिल, बैंक स्टेटमेंट, आदि)'}
                   </small>
                 </div>
               </div>
@@ -895,18 +942,18 @@ const Membership = () => {
 
                 <div className="form-group">
                   <label htmlFor="donationDocument">
-                    {language === 'en' ? 'Donation Towards Community (PDF)' : 'समुदाय के लिए दान (पीडीएफ)'}
+                    {language === 'en' ? 'Donation Receipt Photo (JPG/PNG)' : 'दान रसीद फोटो (JPG/PNG)'}
                   </label>
                   <input
                     type="file"
                     id="donationDocument"
                     name="donationDocument"
-                    accept="application/pdf"
+                    accept="image/jpeg,image/jpg,image/png"
                     onChange={handleFileChange}
                     className="file-input"
                   />
                   <small className="file-hint">
-                    {language === 'en' ? 'Optional: Upload donation receipt or document in PDF format' : 'वैकल्पिक: पीडीएफ प्रारूप में दान रसीद या दस्तावेज अपलोड करें'}
+                    {language === 'en' ? 'Optional: Upload donation receipt photo (JPG/PNG)' : 'वैकल्पिक: दान रसीद की फोटो अपलोड करें (JPG/PNG)'}
                   </small>
                 </div>
               </div>

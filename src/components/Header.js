@@ -147,7 +147,6 @@ const Header = () => {
             <div id="nav-menu" className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
               <Link to="/" onClick={() => setIsMenuOpen(false)}>{t('header.home')}</Link>
               <Link to="/about" onClick={() => setIsMenuOpen(false)}>{t('header.about')}</Link>
-              <Link to="/members" onClick={() => setIsMenuOpen(false)}>{language === 'en' ? 'Members' : 'सदस्य'}</Link>
               {isAuthenticated() && !isAdminPage && (
                 <>
                   {console.log('Header - Current userTier:', userTier, 'isAuthenticated:', isAuthenticated())}

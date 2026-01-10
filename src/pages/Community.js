@@ -1,38 +1,78 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { getTranslation } from '../translations';
 import './Community.css';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 const Community = () => {
   const { language } = useLanguage();
   const t = (path) => getTranslation(language, path);
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all'); // all, silver, gold, diamond
 
-  const managementTeam = [
-    { name: language === 'en' ? 'Rajendra Singh' : 'राजेंद्र सिंह', position: language === 'en' ? 'National President' : 'राष्ट्रीय अध्यक्ष', icon: '👤' },
-    { name: language === 'en' ? 'Mahendra Singh' : 'महेंद्र सिंह', position: language === 'en' ? 'National Vice President' : 'राष्ट्रीय उपाध्यक्ष', icon: '👤' },
-    { name: language === 'en' ? 'Vikram Singh' : 'विक्रम सिंह', position: language === 'en' ? 'General Secretary' : 'महासचिव', icon: '👤' },
-    { name: language === 'en' ? 'Pradeep Singh' : 'प्रदीप सिंह', position: language === 'en' ? 'National Treasurer' : 'राष्ट्रीय कोषाध्यक्ष', icon: '👤' },
-    { name: language === 'en' ? 'Suresh Kumar' : 'सुरेश कुमार', position: language === 'en' ? 'Cultural Secretary' : 'सांस्कृतिक सचिव', icon: '👤' },
-    { name: language === 'en' ? 'Amit Singh' : 'अमित सिंह', position: language === 'en' ? 'Youth Wing President' : 'युवा विंग अध्यक्ष', icon: '👤' },
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+
+  const fetchMembers = async () => {
+    try {
+      const response = await fetch(`${API_URL}/users`);
+      const data = await response.json();
+      if (data.success) {
+        // Filter only approved members
+        const approvedMembers = data.users.filter(user => user.status === 'approved');
+        setMembers(approvedMembers);
+      }
+    } catch (error) {
+      console.error('Error fetching members:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const prakosths = [
+    { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Youth Cell' : 'युवा प्रकोष्ठ', icon: '👨‍💼' },
+    { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Brave Women Cell' : 'वीरांगना प्रकोष्ठ', icon: '👩‍💼' },
+    { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Legal Cell' : 'विधि प्रकोष्ठ', icon: '⚖️' },
+    { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Medical Cell' : 'चिकित्सा प्रकोष्ठ', icon: '⚕️' },
+    { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Business Cell' : 'व्यापार प्रकोष्ठ', icon: '💼' },
+    { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Farmer Cell' : 'किसान प्रकोष्ठ', icon: '🚜' },
+    { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Sports & Military Cell' : 'खेल एवं सैनिक प्रकोष्ठ', icon: '⛹️' },
+    { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Human Service Cell' : 'मानव सेवा प्रकोष्ठ', icon: '🤝' },
   ];
 
-  const members = [
-    { name: language === 'en' ? 'Ramesh Singh' : 'रमेश सिंह', location: language === 'en' ? 'Jaipur' : 'जयपुर', memberSince: '2023', icon: '👤' },
-    { name: language === 'en' ? 'Sunil Kumar' : 'सुनील कुमार', location: language === 'en' ? 'Ajmer' : 'अजमेर', memberSince: '2023', icon: '👤' },
-    { name: language === 'en' ? 'Prakash Singh' : 'प्रकाश सिंह', location: language === 'en' ? 'Jodhpur' : 'जोधपुर', memberSince: '2024', icon: '👤' },
-    { name: language === 'en' ? 'Dinesh Sharma' : 'दिनेश शर्मा', location: language === 'en' ? 'Udaipur' : 'उदयपुर', memberSince: '2024', icon: '👤' },
-    { name: language === 'en' ? 'Rajesh Kumar' : 'राजेश कुमार', location: language === 'en' ? 'Kota' : 'कोटा', memberSince: '2023', icon: '👤' },
-    { name: language === 'en' ? 'Anil Singh' : 'अनिल सिंह', location: language === 'en' ? 'Bikaner' : 'बीकानेर', memberSince: '2024', icon: '👤' },
-    { name: language === 'en' ? 'Mohan Singh' : 'मोहन सिंह', location: language === 'en' ? 'Alwar' : 'अलवर', memberSince: '2023', icon: '👤' },
-    { name: language === 'en' ? 'Vijay Kumar' : 'विजय कुमार', location: language === 'en' ? 'Sikar' : 'सीकर', memberSince: '2024', icon: '👤' },
+  const upadhiRankings = [
+    { name: language === 'en' ? 'Dr. Rajesh Sharma' : 'डॉ. राजेश शर्मा', title: language === 'en' ? 'Ph.D.' : 'पीएच.डी.', icon: '🎓' },
+    { name: language === 'en' ? 'Col. Vikram Singh' : 'कर्नल विक्रम सिंह', title: language === 'en' ? 'Colonel' : 'कर्नल', icon: '⭐' },
+    { name: language === 'en' ? 'Prof. Suresh Kumar' : 'प्रो. सुरेश कुमार', title: language === 'en' ? 'Professor' : 'प्रोफेसर', icon: '👨‍🎓' },
+    { name: language === 'en' ? 'Sri Mahendra Chaudhary' : 'श्री महेंद्र चौधरी', title: language === 'en' ? 'Business Magnate' : 'व्यवसायी', icon: '💼' },
+    { name: language === 'en' ? 'Dr. Pradeep Singh' : 'डॉ. प्रदीप सिंह', title: language === 'en' ? 'Medical Doctor' : 'चिकित्सक', icon: '⚕️' },
+    { name: language === 'en' ? 'Advocate Anil Kumar' : 'अधिवक्ता अनिल कुमार', title: language === 'en' ? 'Advocate' : 'अधिवक्ता', icon: '⚖️' },
   ];
 
-  const stats = [
-    { label: t('community.stats.members'), value: '5000+' },
-    { label: t('community.stats.cities'), value: '15+' },
-    { label: t('community.stats.events'), value: '100+' },
-    { label: t('community.stats.scholarships'), value: '500+' },
-  ];
+  const getTierColor = (tier) => {
+    switch(tier) {
+      case 'silver': return '#C0C0C0';
+      case 'gold': return '#FFD700';
+      case 'diamond': return '#B9F2FF';
+      default: return '#C0C0C0';
+    }
+  };
+
+  const getTierIcon = (tier) => {
+    switch(tier) {
+      case 'silver': return '🥈';
+      case 'gold': return '🥇';
+      case 'diamond': return '💎';
+      default: return '🥈';
+    }
+  };
+
+  const filteredMembers = filter === 'all' 
+    ? members 
+    : members.filter(member => member.membershipTier === filter);
 
   return (
     <div className="community-page">
@@ -44,36 +84,43 @@ const Community = () => {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="stats-section">
+      {/* Management Team - Hamari Netritav */}
+      <section className="management-section">
         <div className="container">
-          <div className="stats-grid">
-            {stats.map(stat => (
-              <div key={stat.label} className="stat-card">
-                <div className="stat-number">{stat.value}</div>
-                <div className="stat-label">{stat.label}</div>
+          <div className="section-header">
+            <h2>{language === 'en' ? 'Our Leadership' : 'हमारी नेतृत्व'}</h2>
+            <div className="underline"></div>
+          </div>
+          <div className="team-grid">
+            {prakosths.map((prakosth, index) => (
+              <div key={index} className="team-member-card">
+                <div className="member-image">
+                  <div className="image-placeholder">{prakosth.icon}</div>
+                </div>
+                <div className="member-info">
+                  <h3>{prakosth.name}</h3>
+                  <p className="member-position">{prakosth.title}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Management Team */}
-      <section className="management-section">
+      {/* Upadhi (Titles & Rankings) Section */}
+      <section className="upadhi-section">
         <div className="container">
           <div className="section-header">
-            <h2>{t('community.managementTeam')}</h2>
+            <h2>{language === 'en' ? 'Upadhi' : 'उपाधि'}</h2>
             <div className="underline"></div>
           </div>
-          <div className="team-grid">
-            {managementTeam.map((member, index) => (
-              <div key={index} className="team-member-card">
-                <div className="member-image">
-                  <div className="image-placeholder">{member.icon}</div>
-                </div>
-                <div className="member-info">
+          <div className="upadhi-grid">
+            {upadhiRankings.map((member, index) => (
+              <div key={index} className="upadhi-card">
+                <div className="upadhi-icon">{member.icon}</div>
+                <div className="upadhi-info">
                   <h3>{member.name}</h3>
-                  <p className="member-position">{member.position}</p>
+                  <p className="upadhi-title">{member.title}</p>
                 </div>
               </div>
             ))}
@@ -85,19 +132,77 @@ const Community = () => {
       <section className="members-section">
         <div className="container">
           <div className="section-header">
-            <h2>{t('community.memberDirectory')}</h2>
+            <h2>{language === 'en' ? 'Our Members' : 'हमारे सदस्य'}</h2>
             <div className="underline"></div>
           </div>
-          <div className="members-grid">
-            {members.map((member, index) => (
-              <div key={index} className="member-card">
-                <div className="member-avatar">{member.icon}</div>
-                <h3>{member.name}</h3>
-                <p className="city">📍 {member.location}</p>
-                <p className="since">{language === 'en' ? 'Member Since' : 'सदस्य बने'}: {member.memberSince}</p>
-              </div>
-            ))}
+
+          <div className="tier-filters">
+            <button 
+              className={filter === 'all' ? 'active' : ''}
+              onClick={() => setFilter('all')}
+            >
+              {language === 'en' ? 'All Members' : 'सभी सदस्य'}
+            </button>
+            <button 
+              className={filter === 'silver' ? 'active silver' : 'silver'}
+              onClick={() => setFilter('silver')}
+            >
+              🥈 Silver
+            </button>
+            <button 
+              className={filter === 'gold' ? 'active gold' : 'gold'}
+              onClick={() => setFilter('gold')}
+            >
+              🥇 Gold
+            </button>
+            <button 
+              className={filter === 'diamond' ? 'active diamond' : 'diamond'}
+              onClick={() => setFilter('diamond')}
+            >
+              💎 Diamond
+            </button>
           </div>
+
+          {loading ? (
+            <p className="loading">{language === 'en' ? 'Loading members...' : 'सदस्य लोड हो रहे हैं...'}</p>
+          ) : filteredMembers.length === 0 ? (
+            <p className="no-members">{language === 'en' ? 'No members found' : 'कोई सदस्य नहीं मिला'}</p>
+          ) : (
+            <div className="membership-cards-grid">
+              {filteredMembers.map((member) => (
+                <div 
+                  key={member._id} 
+                  className={`membership-card ${member.membershipTier || 'silver'}`}
+                  style={{ borderColor: getTierColor(member.membershipTier || 'silver') }}
+                >
+                  <div className="tier-badge" style={{ background: getTierColor(member.membershipTier || 'silver') }}>
+                    {getTierIcon(member.membershipTier || 'silver')} {(member.membershipTier || 'silver').toUpperCase()}
+                  </div>
+                  
+                  {member.photoPath && (
+                    <img 
+                      src={member.photoPath} 
+                      alt={member.fullName}
+                      className="member-photo"
+                    />
+                  )}
+                  
+                  <div className="member-info">
+                    <h3>{member.fullName}</h3>
+                    <p className="member-city">📍 {member.city}, {member.state}</p>
+                    <p className="member-occupation">💼 {member.occupation}</p>
+                    {member.education && (
+                      <p className="member-education">🎓 {member.education}</p>
+                    )}
+                  </div>
+                  
+                  <div className="member-footer">
+                    <span>{language === 'en' ? 'Member since' : 'सदस्य बने'} {new Date(member.registeredAt).getFullYear()}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>

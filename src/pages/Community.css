@@ -320,6 +320,216 @@ section {
   text-align: center;
 }
 
+/* Upadhi Section */
+.upadhi-section {
+  background-color: #f9f9f9;
+}
+
+.upadhi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.upadhi-card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border-left: 5px solid #FF6B35;
+}
+
+.upadhi-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.upadhi-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  display: inline-block;
+}
+
+.upadhi-card h3 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.upadhi-title {
+  font-size: 1.1rem;
+  color: #FF6B35;
+  font-weight: 600;
+}
+
+/* Tier Filters */
+.tier-filters {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.tier-filters button {
+  padding: 12px 25px;
+  border: 2px solid #ddd;
+  background: white;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.tier-filters button:hover {
+  border-color: #FF6B35;
+  color: #FF6B35;
+}
+
+.tier-filters button.active {
+  background: linear-gradient(135deg, #FF6B35, #F7931E);
+  color: white;
+  border-color: #FF6B35;
+}
+
+.tier-filters button.silver {
+  color: #C0C0C0;
+  border-color: #C0C0C0;
+}
+
+.tier-filters button.silver.active {
+  background: #C0C0C0;
+  color: white;
+}
+
+.tier-filters button.gold {
+  color: #FFD700;
+  border-color: #FFD700;
+}
+
+.tier-filters button.gold.active {
+  background: #FFD700;
+  color: #333;
+}
+
+.tier-filters button.diamond {
+  color: #B9F2FF;
+  border-color: #B9F2FF;
+}
+
+.tier-filters button.diamond.active {
+  background: #B9F2FF;
+  color: #333;
+}
+
+/* Membership Cards Grid */
+.membership-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 40px;
+}
+
+.membership-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border-left: 5px solid;
+  position: relative;
+}
+
+.membership-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.tier-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 0 0 0 15px;
+  color: white;
+  z-index: 10;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.membership-card.diamond .tier-badge {
+  color: #333;
+}
+
+.membership-card.gold .tier-badge {
+  color: #333;
+}
+
+.member-photo {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  background: linear-gradient(135deg, #FF6B35, #F7931E);
+}
+
+.member-info {
+  padding: 20px;
+}
+
+.member-info h3 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.member-city {
+  font-size: 1rem;
+  color: #666;
+  margin: 8px 0;
+}
+
+.member-occupation {
+  font-size: 0.95rem;
+  color: #FF6B35;
+  font-weight: 500;
+  margin: 8px 0;
+}
+
+.member-education {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 8px 0;
+}
+
+.member-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  font-size: 0.9rem;
+  color: #999;
+  background: #f9f9f9;
+}
+
+.no-members {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  padding: 40px;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  padding: 40px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .page-header h1 {
@@ -344,5 +554,22 @@ section {
 
   .join-benefits {
     grid-template-columns: 1fr;
+  }
+
+  .upadhi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .membership-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tier-filters {
+    gap: 10px;
+  }
+
+  .tier-filters button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
   }
 }
