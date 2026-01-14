@@ -273,7 +273,9 @@ router.get('/profile/:phone', async (req, res) => {
         occupation: user.occupation,
         education: user.education,
         status: user.status,
-        approvedAt: user.approvedAt
+        approvedAt: user.approvedAt,
+        photoPath: user.photoPath,
+        membershipTier: user.membershipTier
       }
     });
   } catch (error) {

@@ -558,3 +558,126 @@
     transform: scale(1);
   }
 }
+
+/* Help Section - Support Tiers */
+.help-section {
+  padding: 100px 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+}
+
+.help-subtitle {
+  text-align: center;
+  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 50px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.support-tiers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.support-card {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+  border: 3px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.support-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #FF6B35, #F7931E);
+}
+
+.support-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.support-card.bronze {
+  border-color: #CD7F32;
+}
+
+.support-card.bronze:hover {
+  border-color: #CD7F32;
+}
+
+.support-card.silver {
+  border-color: #C0C0C0;
+}
+
+.support-card.silver:hover {
+  border-color: #C0C0C0;
+}
+
+.support-card.gold {
+  border-color: #FFD700;
+}
+
+.support-card.gold:hover {
+  border-color: #FFD700;
+}
+
+.support-card.diamond {
+  border-color: #B9F2FF;
+}
+
+.support-card.diamond:hover {
+  border-color: #B9F2FF;
+}
+
+.support-icon {
+  font-size: 3.5rem;
+  margin-bottom: 15px;
+}
+
+.support-card h3 {
+  color: #FF6B35;
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.support-amount {
+  font-size: 2.2rem;
+  color: #333;
+  font-weight: 800;
+  margin: 15px 0;
+}
+
+.support-description {
+  color: #666;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.help-note {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  border-left: 5px solid #FF6B35;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.help-note p {
+  color: #333;
+  font-size: 1.1rem;
+  margin: 0;
+  line-height: 1.6;
+}

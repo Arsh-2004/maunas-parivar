@@ -28,10 +28,15 @@ const Header = () => {
           try {
             const response = await fetch(`${API_URL}/users/profile/${phone}`);
             const data = await response.json();
-            console.log('Header - Fetched user data:', data);
+            console.log('Header - Full response data:', data);
+            console.log('Header - User object:', data.user);
+            console.log('Header - PhotoPath value:', data.user?.photoPath);
             if (data.success && data.user) {
               if (data.user.photoPath) {
+                console.log('Header - Setting photo to:', data.user.photoPath);
                 setUserPhoto(data.user.photoPath);
+              } else {
+                console.log('Header - No photoPath found in user object');
               }
               console.log('Header - Setting userTier to:', data.user.membershipTier);
               setUserTier(data.user.membershipTier);
@@ -177,6 +182,14 @@ const Header = () => {
                             src={userPhoto} 
                             alt="Profile" 
                             className="header-user-photo"
+                            onError={(e) => {
+                              console.error('Image failed to load:', userPhoto);
+                              e.target.style.display = 'none';
+                              e.target.parentElement.innerHTML = '<span class="header-user-icon">👤</span>';
+                            }}
+                            onLoad={() => {
+                              console.log('Image loaded successfully:', userPhoto);
+                            }}
                           />
                         ) : (
                           <span className="header-user-icon">👤</span>

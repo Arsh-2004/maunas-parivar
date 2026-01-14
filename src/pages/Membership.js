@@ -526,6 +526,69 @@ const Membership = () => {
         </div>
       </section>
 
+      <section className="help-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>{language === 'en' ? 'Support Our Community' : 'हमारे समुदाय का समर्थन करें'}</h2>
+            <div className="underline"></div>
+          </div>
+          <p className="help-subtitle">
+            {language === 'en' 
+              ? 'Your contributions help us grow and support the community better'
+              : 'आपके योगदान हमें बढ़ने और समुदाय की बेहतर सेवा करने में मदद करते हैं'}
+          </p>
+          <div className="support-tiers-grid">
+            <div className="support-card bronze">
+              <div className="support-icon">🥉</div>
+              <h3>{language === 'en' ? 'Bronze Support' : 'ब्रांज सहयोग'}</h3>
+              <p className="support-amount">₹100</p>
+              <p className="support-description">
+                {language === 'en' 
+                  ? 'Basic support to help community initiatives'
+                  : 'समुदाय की पहल में मदद के लिए बुनियादी सहायता'}
+              </p>
+            </div>
+            <div className="support-card silver">
+              <div className="support-icon">🥈</div>
+              <h3>{language === 'en' ? 'Silver Support' : 'सिल्वर सहयोग'}</h3>
+              <p className="support-amount">₹500</p>
+              <p className="support-description">
+                {language === 'en' 
+                  ? 'Enhanced support for community welfare programs'
+                  : 'सामुदायिक कल्याण कार्यक्रमों के लिए बेहतर सहायता'}
+              </p>
+            </div>
+            <div className="support-card gold">
+              <div className="support-icon">🥇</div>
+              <h3>{language === 'en' ? 'Golden Support' : 'गोल्डन सहयोग'}</h3>
+              <p className="support-amount">₹5,100</p>
+              <p className="support-description">
+                {language === 'en' 
+                  ? 'Premium support for major community projects'
+                  : 'बड़ी सामुदायिक परियोजनाओं के लिए प्रीमियम सहायता'}
+              </p>
+            </div>
+            <div className="support-card diamond">
+              <div className="support-icon">💎</div>
+              <h3>{language === 'en' ? 'Diamond Support' : 'डायमंड सहयोग'}</h3>
+              <p className="support-amount">₹21,000</p>
+              <p className="support-description">
+                {language === 'en' 
+                  ? 'Premier support for transformative community initiatives'
+                  : 'समुदाय की महत्वपूर्ण परियोजनाओं के लिए शीर्ष सहायता'}
+              </p>
+            </div>
+          </div>
+          <div className="help-note">
+            <p>
+              {language === 'en'
+                ? '💝 Every contribution is valuable and makes a difference. Thank you for supporting our community!'
+                : '💝 हर योगदान मूल्यवान है और फर्क लाता है। हमारे समुदाय का समर्थन करने के लिए धन्यवाद!'}
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="registration-section" id="registration-form">
         <div className="container">
           <div className="form-container">
