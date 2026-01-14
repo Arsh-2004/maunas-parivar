@@ -920,9 +920,9 @@ const AdminDashboard = () => {
                 
                 {selectedUser.donationDocumentPath && (
                   <div className="document-item">
-                    <label>{language === 'en' ? 'Donation Document:' : 'दान दस्तावेज़:'}</label>
+                    <label>{language === 'en' ? 'Donation Document:' : 'सहयोग दस्तावेज़:'}</label>
                     <a href={selectedUser.donationDocumentPath} target="_blank" rel="noopener noreferrer">
-                      {language === 'en' ? 'View Donation Document' : 'दान दस्तावेज़ देखें'}
+                      {language === 'en' ? 'View Donation Document' : 'सहयोग दस्तावेज़ देखें'}
                     </a>
                   </div>
                 )}

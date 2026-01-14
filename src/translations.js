@@ -88,7 +88,7 @@ export const translations = {
       events: 'घटनाएं',
       gallery: 'गैलरी',
       contact: 'संपर्क करें',
-      joinUs: 'हमसे जुड़ें',
+      joinUs: 'अपने वंश से जुड़ें',
     },
     // Community Page
     community: {

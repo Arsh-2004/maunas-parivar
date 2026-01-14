@@ -135,6 +135,24 @@
   color: #ddd;
 }
 
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 15px !important;
+}
+
+.contact-icon {
+  flex-shrink: 0;
+  font-size: 1.2rem;
+  margin-top: 2px;
+}
+
+.contact-item span:last-child {
+  flex: 1;
+  word-break: break-word;
+}
+
 .footer-bottom {
   background: rgba(0, 0, 0, 0.3);
   padding: 20px 0;

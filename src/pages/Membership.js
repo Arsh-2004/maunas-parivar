@@ -333,7 +333,7 @@ const Membership = () => {
     }
     
     if (formData.donationDocument && formData.donationDocument.size > 5 * 1024 * 1024) {
-      alert(language === 'en' ? '❌ Donation document file size should be less than 5MB' : '❌ दान दस्तावेज़ फाइल का आकार 5MB से कम होना चाहिए');
+      alert(language === 'en' ? '❌ Donation document file size should be less than 5MB' : '❌ सहयोग दस्तावेज़ फाइल का आकार 5MB से कम होना चाहिए');
       document.getElementById('donationDocument').focus();
       return;
     }
@@ -1005,7 +1005,7 @@ const Membership = () => {
 
                 <div className="form-group">
                   <label htmlFor="donationDocument">
-                    {language === 'en' ? 'Donation Receipt Photo (JPG/PNG)' : 'दान रसीद फोटो (JPG/PNG)'}
+                    {language === 'en' ? 'Donation Receipt Photo (JPG/PNG)' : 'सहयोग रसीद फोटो (JPG/PNG)'}
                   </label>
                   <input
                     type="file"
@@ -1016,7 +1016,7 @@ const Membership = () => {
                     className="file-input"
                   />
                   <small className="file-hint">
-                    {language === 'en' ? 'Optional: Upload donation receipt photo (JPG/PNG)' : 'वैकल्पिक: दान रसीद की फोटो अपलोड करें (JPG/PNG)'}
+                    {language === 'en' ? 'Optional: Upload donation receipt photo (JPG/PNG)' : 'वैकल्पिक: सहयोग रसीद की फोटो अपलोड करें (JPG/PNG)'}
                   </small>
                 </div>
               </div>

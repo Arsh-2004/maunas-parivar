@@ -18,7 +18,7 @@ const Footer = () => {
               <p>
                 {language === 'en' 
                   ? 'Dedicated to preserving our rich heritage and empowering the Maunas Kshatriya community through unity, tradition, and progress.'
-                  : 'हमारी समृद्ध विरासत को संरक्षित करने और मौनस क्षत्रिय समुदाय को एकता, परंपरा और प्रगति के माध्यम से सशक्त बनाने के लिए समर्पित।'}
+                  : 'हमारी समृद्ध विरासत को संरक्षित करने और मौनस क्षत्रिय वंश को एकता, परंपरा और प्रगति के माध्यम से सशक्त बनाने के लिए समर्पित।'}
               </p>
               <div className="social-icons">
                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
@@ -60,7 +60,7 @@ const Footer = () => {
               <ul>
                 <li><Link to="/membership">{language === 'en' ? 'Member Registration' : 'सदस्य पंजीकरण'}</Link></li>
                 <li><Link to="/events">{language === 'en' ? 'Upcoming Events' : 'आने वाली घटनाएं'}</Link></li>
-                <li><Link to="/">{language === 'en' ? 'Donate' : 'दान करें'}</Link></li>
+                <li><Link to="/">{language === 'en' ? 'Donate' : 'सहयोग करें'}</Link></li>
                 <li><Link to="/">{language === 'en' ? 'Volunteer' : 'स्वयंसेवक'}</Link></li>
                 <li><Link to="/contact">{t('header.contact')}</Link></li>
               </ul>
@@ -69,10 +69,18 @@ const Footer = () => {
             <div className="footer-section">
               <h4>{language === 'en' ? 'Contact Information' : 'संपर्क जानकारी'}</h4>
               <div className="contact-details">
-                <p>📍 {language === 'en' ? 'Rajasthan, India' : 'राजस्थान, भारत'}</p>
-                <p>📧 info@maunasparivar.com</p>
-                <p>📞 +91 9876543210</p>
-                <p>🕐 {language === 'en' ? 'Mon - Sat: 9:00 AM - 6:00 PM' : 'सोम - शनि: 9:00 AM - 6:00 PM'}</p>
+                <p className="contact-item">
+                  <span className="contact-icon">📍</span>
+                  <span>{language === 'en' ? 'Devtaayan, Surabhi Nagar Colony, Avleshpur, Varanasi' : 'देवतायन, सुरभि नगर कॉलोनी, अवलेशपुर वाराणसी'}</span>
+                </p>
+                <p className="contact-item">
+                  <span className="contact-icon">📧</span>
+                  <span>kshatriyamaunasparivar@gmail.com</span>
+                </p>
+                <p className="contact-item">
+                  <span className="contact-icon">📞</span>
+                  <span>+91 8840709296</span>
+                </p>
               </div>
             </div>
           </div>
