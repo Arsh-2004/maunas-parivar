@@ -184,7 +184,7 @@ const OathModal = () => {
               मेरे ऊपर वैधानिक कार्यवाही की जाएगी ।
             </p>
             <p className="english-text">
-              I <strong>{formData.name || '................'}</strong> Mo. No. <strong>{formData.mobileNumber || '..............'}</strong> certify that I belong to the Kshatriya Maunas lineage. If in the future anyone proves that I do not belong to the Kshatriya Maunas lineage, then disciplinary action will be taken against me.
+              I <strong>{formData.name || '................'}</strong> Mo. No. <strong>{formData.mobileNumber || '..............'}</strong> certify that I belong to the Kshatriya Maunas lineage. If in the future anyone proves that I do not belong to the Kshatriya Maunas lineage, then legal action will be taken against me.
             </p>
           </div>
 
