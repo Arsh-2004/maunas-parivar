@@ -151,7 +151,7 @@ const About = () => {
               <p>
                 {language === 'en'
                   ? 'In these modern times, while we honor our glorious past, we must also embrace progress and unity. Our mission is to ensure that every member of our community has opportunities for growth, education, and prosperity.'
-                  : 'इस आधुनिक समय में, हमें गौरवशाली अतीत को सम्मान करते हुए अपनी प्रगति और एकता को भी बनाये रखना होगा। हमारा उद्देश्य यह सुनिश्चित करना है की हमारे वंश के हर सदस्य को शिक्षा, रोजगार एवं विकास का अवसर सुलभ हो।'}
+                  : 'इस आधुनिक समय में, हमें गौरवशाली अतीत का सम्मान करते हुए अपनी प्रगति और एकता को भी बनाये रखना होगा। हमारा उद्देश्य यह सुनिश्चित करना है की हमारे वंश के हर सदस्य को शिक्षा, रोजगार एवं विकास का अवसर सुलभ हो।'}
               </p>
               <p>
                 {language === 'en'
