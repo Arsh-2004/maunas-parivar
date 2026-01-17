@@ -18,7 +18,7 @@ const Footer = () => {
               <p>
                 {language === 'en' 
                   ? 'Dedicated to preserving our rich heritage and empowering the Maunas Kshatriya community through unity, tradition, and progress.'
-                  : 'हमारी समृद्ध विरासत को संरक्षित करने और मौनस क्षत्रिय वंश को एकता, परंपरा और प्रगति के माध्यम से सशक्त बनाने के लिए समर्पित।'}
+                  : 'हमारी समृद्ध विरासत को संरक्षित करने और मौनस क्षत्रिय वंश को शिक्षा, रोजगार एवं एकजुटता के माध्यम से सशक्त बनाने के लिए समर्पित।'}
               </p>
               <div className="social-icons">
                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
