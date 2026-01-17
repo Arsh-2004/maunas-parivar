@@ -44,6 +44,10 @@ const Membership = () => {
   const [availableCities, setAvailableCities] = useState([]);
   const [showOtherState, setShowOtherState] = useState(false);
   const [showOtherCity, setShowOtherCity] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmCheckbox, setConfirmCheckbox] = useState(false);
+  const [notification, setNotification] = useState({ type: '', text: '', show: false });
 
   // Scroll to registration form if hash is present
   useEffect(() => {
@@ -56,6 +60,14 @@ const Membership = () => {
       }, 100);
     }
   }, []);
+
+  // Helper function to show notifications
+  const showNotification = (type, text) => {
+    setNotification({ type, text, show: true });
+    setTimeout(() => {
+      setNotification({ type: '', text: '', show: false });
+    }, 5000); // Auto close after 5 seconds
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -105,7 +117,7 @@ const Membership = () => {
           [fieldName]: file
         });
       } else if (file) {
-        alert(language === 'en' ? 'Please upload a JPG/PNG image file only' : 'कृपया केवल JPG/PNG छवि फ़ाइल अपलोड करें');
+        showNotification('error', language === 'en' ? '❌ Please upload a JPG/PNG image file only' : '❌ कृपया केवल JPG/PNG छवि फ़ाइल अपलोड करें');
         e.target.value = '';
       }
     } 
@@ -118,7 +130,7 @@ const Membership = () => {
           [fieldName]: file
         });
       } else if (file) {
-        alert(language === 'en' ? 'Please upload a JPG/PNG image file only' : 'कृपया केवल JPG/PNG छवि फ़ाइल अपलोड करें');
+        showNotification('error', language === 'en' ? '❌ Please upload a JPG/PNG image file only' : '❌ कृपया केवल JPG/PNG छवि फ़ाइल अपलोड करें');
         e.target.value = '';
       }
     }
@@ -132,31 +144,31 @@ const Membership = () => {
     // Name validation - only letters and spaces
     const nameRegex = /^[a-zA-Z\s]+$/;
     if (!formData.fullName.trim()) {
-      alert(language === 'en' ? '❌ Please enter your full name' : '❌ कृपया अपना पूरा नाम दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please enter your full name' : '❌ कृपया अपना पूरा नाम दर्ज करें');
       document.getElementById('fullName').focus();
       return;
     }
     if (!nameRegex.test(formData.fullName)) {
-      alert(language === 'en' ? '❌ Full name should contain only letters' : '❌ पूरे नाम में केवल अक्षर होने चाहिए');
+      showNotification('error', language === 'en' ? '❌ Full name should contain only letters' : '❌ पूरे नाम में केवल अक्षर होने चाहिए');
       document.getElementById('fullName').focus();
       return;
     }
     
     // Father name validation
     if (!formData.fatherName.trim()) {
-      alert(language === 'en' ? "❌ Please enter father's name" : '❌ कृपया पिता का नाम दर्ज करें');
+      showNotification('error', language === 'en' ? "❌ Please enter father's name" : '❌ कृपया पिता का नाम दर्ज करें');
       document.getElementById('fatherName').focus();
       return;
     }
     if (!nameRegex.test(formData.fatherName)) {
-      alert(language === 'en' ? "❌ Father's name should contain only letters" : '❌ पिता के नाम में केवल अक्षर होने चाहिए');
+      showNotification('error', language === 'en' ? "❌ Father's name should contain only letters" : '❌ पिता के नाम में केवल अक्षर होने चाहिए');
       document.getElementById('fatherName').focus();
       return;
     }
     
     // Date of birth validation
     if (!formData.dateOfBirth) {
-      alert(language === 'en' ? '❌ Please select your date of birth' : '❌ कृपया अपनी जन्म तिथि चुनें');
+      showNotification('error', language === 'en' ? '❌ Please select your date of birth' : '❌ कृपया अपनी जन्म तिथि चुनें');
       document.getElementById('dateOfBirth').focus();
       return;
     }
@@ -169,19 +181,19 @@ const Membership = () => {
     const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate()) ? age - 1 : age;
     
     if (actualAge < 18) {
-      alert(language === 'en' ? '❌ You must be at least 18 years old to register' : '❌ पंजीकरण के लिए आपकी आयु कम से कम 18 वर्ष होनी चाहिए');
+      showNotification('error', language === 'en' ? '❌ You must be at least 18 years old to register' : '❌ पंजीकरण के लिए आपकी आयु कम से कम 18 वर्ष होनी चाहिए');
       document.getElementById('dateOfBirth').focus();
       return;
     }
     if (actualAge > 120) {
-      alert(language === 'en' ? '❌ Please enter a valid date of birth' : '❌ कृपया वैध जन्म तिथि दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please enter a valid date of birth' : '❌ कृपया वैध जन्म तिथि दर्ज करें');
       document.getElementById('dateOfBirth').focus();
       return;
     }
     
     // Gender validation
     if (!formData.gender) {
-      alert(language === 'en' ? '❌ Please select your gender' : '❌ कृपया अपना लिंग चुनें');
+      showNotification('error', language === 'en' ? '❌ Please select your gender' : '❌ कृपया अपना लिंग चुनें');
       document.getElementById('gender').focus();
       return;
     }
@@ -189,12 +201,12 @@ const Membership = () => {
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim()) {
-      alert(language === 'en' ? '❌ Please enter your email address' : '❌ कृपया अपना ईमेल पता दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please enter your email address' : '❌ कृपया अपना ईमेल पता दर्ज करें');
       document.getElementById('email').focus();
       return;
     }
     if (!emailRegex.test(formData.email)) {
-      alert(language === 'en' ? '❌ Please enter a valid email address' : '❌ कृपया वैध ईमेल पता दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please enter a valid email address' : '❌ कृपया वैध ईमेल पता दर्ज करें');
       document.getElementById('email').focus();
       return;
     }
@@ -202,62 +214,62 @@ const Membership = () => {
     // Phone validation - Indian phone number (10 digits)
     const phoneRegex = /^[6-9]\d{9}$/;
     if (!formData.phone.trim()) {
-      alert(language === 'en' ? '❌ Please enter your phone number' : '❌ कृपया अपना फोन नंबर दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please enter your phone number' : '❌ कृपया अपना फोन नंबर दर्ज करें');
       document.getElementById('phone').focus();
       return;
     }
     if (!phoneRegex.test(formData.phone)) {
-      alert(language === 'en' ? '❌ Please enter a valid 10-digit phone number' : '❌ कृपया वैध 10 अंकों का फोन नंबर दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please enter a valid 10-digit phone number' : '❌ कृपया वैध 10 अंकों का फोन नंबर दर्ज करें');
       document.getElementById('phone').focus();
       return;
     }
     
     // Password validation
     if (!formData.password) {
-      alert(language === 'en' ? '❌ Please enter a password' : '❌ कृपया पासवर्ड दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please enter a password' : '❌ कृपया पासवर्ड दर्ज करें');
       document.getElementById('password').focus();
       return;
     }
     if (formData.password.length < 6) {
-      alert(language === 'en' ? '❌ Password must be at least 6 characters long' : '❌ पासवर्ड कम से कम 6 अक्षरों का होना चाहिए');
+      showNotification('error', language === 'en' ? '❌ Password must be at least 6 characters long' : '❌ पासवर्ड कम से कम 6 अक्षरों का होना चाहिए');
       document.getElementById('password').focus();
       return;
     }
     
     // Confirm password validation
     if (!formData.confirmPassword) {
-      alert(language === 'en' ? '❌ Please confirm your password' : '❌ कृपया अपने पासवर्ड की पुष्टि करें');
+      showNotification('error', language === 'en' ? '❌ Please confirm your password' : '❌ कृपया अपने पासवर्ड की पुष्टि करें');
       document.getElementById('confirmPassword').focus();
       return;
     }
     if (formData.password !== formData.confirmPassword) {
-      alert(language === 'en' ? '❌ Passwords do not match!' : '❌ पासवर्ड मेल नहीं खाते!');
+      showNotification('error', language === 'en' ? '❌ Passwords do not match!' : '❌ पासवर्ड मेल नहीं खाते!');
       document.getElementById('confirmPassword').focus();
       return;
     }
     
     // Address validation
     if (!formData.address.trim()) {
-      alert(language === 'en' ? '❌ Please enter your address' : '❌ कृपया अपना पता दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please enter your address' : '❌ कृपया अपना पता दर्ज करें');
       document.getElementById('address').focus();
       return;
     }
     if (formData.address.trim().length < 10) {
-      alert(language === 'en' ? '❌ Please enter a complete address (minimum 10 characters)' : '❌ कृपया पूरा पता दर्ज करें (न्यूनतम 10 अक्षर)');
+      showNotification('error', language === 'en' ? '❌ Please enter a complete address (minimum 10 characters)' : '❌ कृपया पूरा पता दर्ज करें (न्यूनतम 10 अक्षर)');
       document.getElementById('address').focus();
       return;
     }
     
     // State validation
     if (!formData.state.trim()) {
-      alert(language === 'en' ? '❌ Please select or enter your state' : '❌ कृपया अपना राज्य चुनें या दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please select or enter your state' : '❌ कृपया अपना राज्य चुनें या दर्ज करें');
       document.getElementById('state').focus();
       return;
     }
     
     // City validation
     if (!formData.city.trim()) {
-      alert(language === 'en' ? '❌ Please select or enter your city' : '❌ कृपया अपना शहर चुनें या दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please select or enter your city' : '❌ कृपया अपना शहर चुनें या दर्ज करें');
       document.getElementById('city').focus();
       return;
     }
@@ -265,79 +277,84 @@ const Membership = () => {
     // Pincode validation - 6 digits
     const pincodeRegex = /^\d{6}$/;
     if (!formData.pincode.trim()) {
-      alert(language === 'en' ? '❌ Please enter your pincode' : '❌ कृपया अपना पिन कोड दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please enter your pincode' : '❌ कृपया अपना पिन कोड दर्ज करें');
       document.getElementById('pincode').focus();
       return;
     }
     if (!pincodeRegex.test(formData.pincode)) {
-      alert(language === 'en' ? '❌ Please enter a valid 6-digit pincode' : '❌ कृपया वैध 6 अंकों का पिन कोड दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please enter a valid 6-digit pincode' : '❌ कृपया वैध 6 अंकों का पिन कोड दर्ज करें');
       document.getElementById('pincode').focus();
       return;
     }
     
     // Education validation
     if (!formData.education) {
-      alert(language === 'en' ? '❌ Please select your educational qualification' : '❌ कृपया अपनी शैक्षिक योग्यता चुनें');
+      showNotification('error', language === 'en' ? '❌ Please select your educational qualification' : '❌ कृपया अपनी शैक्षिक योग्यता चुनें');
       document.getElementById('education').focus();
       return;
     }
 
     // Occupation validation
     if (!formData.occupation.trim()) {
-      alert(language === 'en' ? '❌ Please enter your occupation' : '❌ कृपया अपना व्यवसाय दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please enter your occupation' : '❌ कृपया अपना व्यवसाय दर्ज करें');
       document.getElementById('occupation').focus();
       return;
     }
     if (formData.occupation.trim().length < 2) {
-      alert(language === 'en' ? '❌ Please enter a valid occupation' : '❌ कृपया वैध व्यवसाय दर्ज करें');
+      showNotification('error', language === 'en' ? '❌ Please enter a valid occupation' : '❌ कृपया वैध व्यवसाय दर्ज करें');
       document.getElementById('occupation').focus();
       return;
     }
     
     // File validations
     if (!formData.idProof) {
-      alert(language === 'en' ? '❌ Please upload your ID proof photo (JPG/PNG)' : '❌ कृपया अपना पहचान प्रमाण फोटो अपलोड करें (JPG/PNG)');
+      showNotification('error', language === 'en' ? '❌ Please upload your ID proof photo (JPG/PNG)' : '❌ कृपया अपना पहचान प्रमाण फोटो अपलोड करें (JPG/PNG)');
       document.getElementById('idProof').focus();
       return;
     }
     
     if (!formData.addressProof) {
-      alert(language === 'en' ? '❌ Please upload your address proof photo (JPG/PNG)' : '❌ कृपया अपना पते का प्रमाण फोटो अपलोड करें (JPG/PNG)');
+      showNotification('error', language === 'en' ? '❌ Please upload your address proof photo (JPG/PNG)' : '❌ कृपया अपना पते का प्रमाण फोटो अपलोड करें (JPG/PNG)');
       document.getElementById('addressProof').focus();
       return;
     }
     
     if (!formData.photo) {
-      alert(language === 'en' ? '❌ Please upload your photo (JPG/PNG)' : '❌ कृपया अपनी फोटो अपलोड करें (JPG/PNG)');
+      showNotification('error', language === 'en' ? '❌ Please upload your photo (JPG/PNG)' : '❌ कृपया अपनी फोटो अपलोड करें (JPG/PNG)');
       document.getElementById('photo').focus();
       return;
     }
     
     // File size validations
     if (formData.idProof && formData.idProof.size > 5 * 1024 * 1024) {
-      alert(language === 'en' ? '❌ ID proof file size should be less than 5MB' : '❌ पहचान प्रमाण फाइल का आकार 5MB से कम होना चाहिए');
+      showNotification('error', language === 'en' ? '❌ ID proof file size should be less than 5MB' : '❌ पहचान प्रमाण फाइल का आकार 5MB से कम होना चाहिए');
       document.getElementById('idProof').focus();
       return;
     }
     
     if (formData.addressProof && formData.addressProof.size > 5 * 1024 * 1024) {
-      alert(language === 'en' ? '❌ Address proof file size should be less than 5MB' : '❌ पते के प्रमाण फाइल का आकार 5MB से कम होना चाहिए');
+      showNotification('error', language === 'en' ? '❌ Address proof file size should be less than 5MB' : '❌ पते के प्रमाण फाइल का आकार 5MB से कम होना चाहिए');
       document.getElementById('addressProof').focus();
       return;
     }
     
     if (formData.photo && formData.photo.size > 2 * 1024 * 1024) {
-      alert(language === 'en' ? '❌ Photo file size should be less than 2MB' : '❌ फोटो फाइल का आकार 2MB से कम होना चाहिए');
+      showNotification('error', language === 'en' ? '❌ Photo file size should be less than 2MB' : '❌ फोटो फाइल का आकार 2MB से कम होना चाहिए');
       document.getElementById('photo').focus();
       return;
     }
     
     if (formData.donationDocument && formData.donationDocument.size > 5 * 1024 * 1024) {
-      alert(language === 'en' ? '❌ Donation document file size should be less than 5MB' : '❌ सहयोग दस्तावेज़ फाइल का आकार 5MB से कम होना चाहिए');
+      showNotification('error', language === 'en' ? '❌ Donation document file size should be less than 5MB' : '❌ सहयोग दस्तावेज़ फाइल का आकार 5MB से कम होना चाहिए');
       document.getElementById('donationDocument').focus();
       return;
     }
-    
+
+    // All validations passed - show review modal
+    setShowReviewModal(true);
+  };
+
+  const handleConfirmRegistration = async () => {
     setLoading(true);
     setMessage({ type: '', text: '' });
 
@@ -390,6 +407,8 @@ const Membership = () => {
             : 'पंजीकरण सफल! आपका आवेदन अनुमोदन के लिए लंबित है। अनुमोदित होने पर आपको सूचित किया जाएगा।'
         });
         setShowModal(true);
+        setShowReviewModal(false);
+        setShowConfirmation(false);
         setFormData({
           fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '', education: '',
           phone: '', password: '', confirmPassword: '', address: '', village: '', block: '', tehsil: '', district: '', city: '', state: '', pincode: '', occupation: '',
@@ -408,14 +427,17 @@ const Membership = () => {
           type: 'error',
           text: data.message || (language === 'en' ? 'Registration failed. Please try again.' : 'पंजीकरण विफल। कृपया पुन: प्रयास करें।')
         });
+        showNotification('error', data.message || (language === 'en' ? '❌ Registration failed. Please try again.' : '❌ पंजीकरण विफल। कृपया पुन: प्रयास करें।'));
       }
     } catch (error) {
+      const errorMsg = language === 'en' 
+        ? 'Connection error. Please check if the server is running.' 
+        : 'कनेक्शन त्रुटि। कृपया जांचें कि सर्वर चल रहा है।';
       setMessage({
         type: 'error',
-        text: language === 'en' 
-          ? 'Connection error. Please check if the server is running.' 
-          : 'कनेक्शन त्रुटि। कृपया जांचें कि सर्वर चल रहा है।'
+        text: errorMsg
       });
+      showNotification('error', `❌ ${errorMsg}`);
     } finally {
       setLoading(false);
     }
@@ -433,6 +455,191 @@ const Membership = () => {
             <button className="modal-btn" onClick={() => setShowModal(false)}>
               {language === 'en' ? 'OK' : 'ठीक है'}
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Notification Toast for Errors & Warnings */}
+      {notification.show && (
+        <div className={`notification-toast notification-${notification.type}`}>
+          <div className="notification-content">
+            <span className="notification-icon">
+              {notification.type === 'error' && '❌'}
+              {notification.type === 'success' && '✅'}
+              {notification.type === 'warning' && '⚠️'}
+              {notification.type === 'info' && 'ℹ️'}
+            </span>
+            <span className="notification-text">{notification.text}</span>
+          </div>
+          <div className="notification-close" onClick={() => setNotification({ type: '', text: '', show: false })}>
+            ✕
+          </div>
+        </div>
+      )}
+
+      {/* Review Modal - Summary of all details */}
+      {showReviewModal && (
+        <div className="modal-overlay" onClick={() => setShowReviewModal(false)}>
+          <div className="modal-content review-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-icon">📋</div>
+            <h2>{language === 'en' ? 'Review Your Details' : 'अपने विवरण की समीक्षा करें'}</h2>
+            <p className="review-subtitle">
+              {language === 'en' 
+                ? 'Please check all your information carefully before confirming:'
+                : 'कृपया पुष्टि करने से पहले अपनी सभी जानकारी को सावधानीपूर्वक जांचें:'}
+            </p>
+            
+            <div className="review-details">
+              <div className="review-row">
+                <div className="review-col">
+                  <strong>{language === 'en' ? 'Full Name:' : 'पूरा नाम:'}</strong>
+                  <p>{formData.fullName}</p>
+                </div>
+                <div className="review-col">
+                  <strong>{language === 'en' ? "Father's Name:" : 'पिता का नाम:'}</strong>
+                  <p>{formData.fatherName}</p>
+                </div>
+              </div>
+
+              <div className="review-row">
+                <div className="review-col">
+                  <strong>{language === 'en' ? 'Date of Birth:' : 'जन्म तिथि:'}</strong>
+                  <p>{formData.dateOfBirth}</p>
+                </div>
+                <div className="review-col">
+                  <strong>{language === 'en' ? 'Gender:' : 'लिंग:'}</strong>
+                  <p>{formData.gender === 'male' ? (language === 'en' ? 'Male' : 'पुरुष') : formData.gender === 'female' ? (language === 'en' ? 'Female' : 'महिला') : 'Other'}</p>
+                </div>
+              </div>
+
+              <div className="review-row">
+                <div className="review-col">
+                  <strong>{language === 'en' ? 'Email:' : 'ईमेल:'}</strong>
+                  <p>{formData.email}</p>
+                </div>
+                <div className="review-col">
+                  <strong>{language === 'en' ? 'Phone Number:' : 'फोन नंबर:'}</strong>
+                  <p>{formData.phone}</p>
+                </div>
+              </div>
+
+              <div className="review-row">
+                <div className="review-col-full">
+                  <strong>{language === 'en' ? 'Address:' : 'पता:'}</strong>
+                  <p>{formData.address}</p>
+                </div>
+              </div>
+
+              <div className="review-row">
+                <div className="review-col">
+                  <strong>{language === 'en' ? 'City:' : 'शहर:'}</strong>
+                  <p>{formData.city}</p>
+                </div>
+                <div className="review-col">
+                  <strong>{language === 'en' ? 'State:' : 'राज्य:'}</strong>
+                  <p>{formData.state}</p>
+                </div>
+                <div className="review-col">
+                  <strong>{language === 'en' ? 'Pincode:' : 'पिन कोड:'}</strong>
+                  <p>{formData.pincode}</p>
+                </div>
+              </div>
+
+              <div className="review-row">
+                <div className="review-col">
+                  <strong>{language === 'en' ? 'Occupation:' : 'व्यवसाय:'}</strong>
+                  <p>{formData.occupation}</p>
+                </div>
+                <div className="review-col">
+                  <strong>{language === 'en' ? 'Education:' : 'शिक्षा:'}</strong>
+                  <p>{formData.education}</p>
+                </div>
+              </div>
+
+              <div className="review-row">
+                <div className="review-col-full">
+                  <strong>{language === 'en' ? '✓ Documents Uploaded:' : '✓ अपलोड किए गए दस्तावेज़:'}</strong>
+                  <ul className="document-list">
+                    <li>✓ {language === 'en' ? 'ID Proof Photo' : 'पहचान प्रमाण फोटो'}</li>
+                    <li>✓ {language === 'en' ? 'Address Proof Photo' : 'पते का प्रमाण फोटो'}</li>
+                    <li>✓ {language === 'en' ? 'Profile Photo' : 'प्रोफ़ाइल फोटो'}</li>
+                    {formData.donationDocument && <li>✓ {language === 'en' ? 'Donation Receipt' : 'सहयोग रसीद'}</li>}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="review-actions">
+              <button 
+                className="modal-btn cancel-btn" 
+                onClick={() => setShowReviewModal(false)}
+              >
+                {language === 'en' ? 'Back to Edit' : 'संपादन के लिए वापस जाएं'}
+              </button>
+              <button 
+                className="modal-btn confirm-btn" 
+                onClick={() => {
+                  setShowConfirmation(true);
+                  setConfirmCheckbox(false);
+                }}
+                disabled={loading}
+              >
+                {language === 'en' ? 'Continue to Confirm' : 'पुष्टि के लिए जारी रखें'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Final Confirmation Modal */}
+      {showConfirmation && (
+        <div className="modal-overlay" onClick={() => setShowConfirmation(false)}>
+          <div className="modal-content confirmation-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-icon">⚠️</div>
+            <h2>{language === 'en' ? 'Final Confirmation' : 'अंतिम पुष्टि'}</h2>
+            <p className="confirmation-message">
+              {language === 'en' 
+                ? 'By clicking "Confirm Registration", you certify that all the information provided is true and accurate. Any false information may result in rejection of your application.'
+                : 'पंजीकरण की पुष्टि करें" पर क्लिक करके, आप प्रमाणित करते हैं कि प्रदान की गई सभी जानकारी सत्य और सटीक है। कोई भी गलत जानकारी आपके आवेदन को अस्वीकार कर सकती है।'}
+            </p>
+
+            <div className="confirmation-checklist">
+              <label className="checklist-item">
+                <input 
+                  type="checkbox" 
+                  checked={confirmCheckbox}
+                  onChange={(e) => setConfirmCheckbox(e.target.checked)}
+                />
+                <span>
+                  {language === 'en' 
+                    ? 'I confirm that all details are accurate and complete'
+                    : 'मैं पुष्टि करता हूं कि सभी विवरण सटीक और पूर्ण हैं'}
+                </span>
+              </label>
+            </div>
+
+            <div className="confirmation-actions">
+              <button 
+                className="modal-btn cancel-btn" 
+                onClick={() => {
+                  setShowConfirmation(false);
+                  setConfirmCheckbox(false);
+                  setShowReviewModal(true);
+                }}
+              >
+                {language === 'en' ? 'Back' : 'वापस'}
+              </button>
+              <button 
+                className="modal-btn final-confirm-btn" 
+                onClick={handleConfirmRegistration}
+                disabled={loading || !confirmCheckbox}
+              >
+                {loading
+                  ? (language === 'en' ? 'Confirming...' : 'पुष्टि हो रही है...')
+                  : (language === 'en' ? 'Confirm Registration' : 'पंजीकरण की पुष्टि करें')
+                }
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -1025,7 +1232,7 @@ const Membership = () => {
                 <button type="submit" className="submit-btn" disabled={loading}>
                   {loading 
                     ? (language === 'en' ? 'Submitting...' : 'जमा हो रहा है...')
-                    : t('membership.submitBtn')
+                    : (language === 'en' ? 'Review & Confirm Registration' : 'समीक्षा और पंजीकरण की पुष्टि करें')
                   }
                 </button>
               </div>

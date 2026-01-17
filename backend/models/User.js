@@ -122,6 +122,14 @@ const userSchema = new mongoose.Schema({
   approvedAt: {
     type: Date,
     default: null
+  },
+  idCardPath: {
+    type: String,
+    default: null
+  },
+  idCardGeneratedAt: {
+    type: Date,
+    default: null
   }
 });
 

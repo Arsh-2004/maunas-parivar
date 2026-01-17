@@ -7,6 +7,7 @@ const OathAgreement = require('../models/OathAgreement');
 const path = require('path');
 const fs = require('fs');
 const { upload, uploadToCloudinary, getSignedUrl, cloudinary } = require('../middleware/cloudinaryUpload');
+const { generateIDCard } = require('../middleware/idCardGenerator');
 
 // Simple admin authentication middleware
 const adminAuth = (req, res, next) => {
@@ -143,6 +144,49 @@ router.put('/approve/:id', adminAuth, async (req, res) => {
         message: 'User not found' 
       });
     }
+
+    console.log('🔄 Generating ID card for user:', user.fullName);
+
+    // Generate digital ID card
+    try {
+      console.log('📸 Creating canvas...');
+      const idCardBuffer = await generateIDCard(user);
+      console.log('✅ Canvas created, buffer size:', idCardBuffer.length);
+      
+      console.log('☁️ Uploading to Cloudinary...');
+      // Upload ID card to Cloudinary
+      const uploadResult = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            resource_type: 'image',
+            public_id: `id-cards/${user._id}-${Date.now()}`,
+            format: 'jpg',
+            quality: 'auto:good'
+          },
+          (error, result) => {
+            if (error) {
+              console.error('❌ Cloudinary upload error:', error);
+              reject(error);
+            } else {
+              console.log('✅ Uploaded to Cloudinary:', result.secure_url);
+              resolve(result);
+            }
+          }
+        );
+        uploadStream.end(idCardBuffer);
+      });
+
+      console.log('💾 Saving ID card URL to database...');
+      // Update user with ID card URL
+      user.idCardPath = uploadResult.secure_url;
+      user.idCardGeneratedAt = new Date();
+      await user.save();
+      console.log('✅ ID card saved successfully!');
+    } catch (idCardError) {
+      console.error('❌ Error generating ID card:', idCardError.message);
+      console.error('Full error:', idCardError);
+      // Continue without ID card - don't fail the approval
+    }
     
     res.json({ 
       success: true, 
@@ -150,7 +194,7 @@ router.put('/approve/:id', adminAuth, async (req, res) => {
       user 
     });
   } catch (error) {
-    console.error('Approve user error:', error);
+    console.error('❌ Approve user error:', error);
     res.status(500).json({ 
       success: false, 
       message: 'Failed to approve user' 
@@ -598,6 +642,72 @@ router.post('/generate-pdf-url', adminAuth, async (req, res) => {
   } catch (error) {
     console.error('Error generating signed URL:', error);
     res.status(500).json({ success: false, message: 'Failed to generate signed URL' });
+  }
+});
+
+// Regenerate ID card for a user
+router.post('/regenerate-id-card/:id', adminAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+
+    if (user.status !== 'approved') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Only approved users can have ID cards' 
+      });
+    }
+
+    // Generate digital ID card
+    try {
+      const idCardBuffer = await generateIDCard(user);
+      
+      // Upload ID card to Cloudinary
+      const uploadResult = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            resource_type: 'image',
+            public_id: `id-cards/${user._id}-${Date.now()}`,
+            format: 'jpg',
+            quality: 'auto:good'
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        uploadStream.end(idCardBuffer);
+      });
+
+      // Update user with new ID card URL
+      user.idCardPath = uploadResult.secure_url;
+      user.idCardGeneratedAt = new Date();
+      await user.save();
+
+      res.json({ 
+        success: true, 
+        message: 'ID card regenerated successfully',
+        idCardPath: user.idCardPath 
+      });
+    } catch (idCardError) {
+      console.error('Error generating ID card:', idCardError);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to generate ID card' 
+      });
+    }
+  } catch (error) {
+    console.error('Regenerate ID card error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to regenerate ID card' 
+    });
   }
 });
 

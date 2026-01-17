@@ -23,6 +23,27 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// Trust proxy to get real IP address (important for deployed apps)
+app.set('trust proxy', 1);
+
+// Middleware to capture real IP address
+app.use((req, res, next) => {
+  // Try multiple header sources for the real IP
+  const ip = req.headers['x-forwarded-for'] || 
+             req.headers['x-real-ip'] || 
+             req.connection.remoteAddress || 
+             req.socket.remoteAddress || 
+             req.connection.socket?.remoteAddress;
+  
+  // Clean up IPv6 localhost (::1) or IPv4 localhost (127.0.0.1)
+  if (ip && ip !== '::1' && ip !== '127.0.0.1') {
+    req.clientIp = ip.split(',')[0].trim(); // Handle comma-separated proxy chain
+  } else {
+    req.clientIp = ip;
+  }
+  next();
+});
+
 // Serve uploads with permissive CORS for direct file access
 app.use('/uploads', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');

@@ -28,4 +28,7 @@ const oathAgreementSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Ensure each user (name + mobileNumber combination) can only have one oath agreement
+oathAgreementSchema.index({ name: 1, mobileNumber: 1 }, { unique: true });
+
 module.exports = mongoose.model('OathAgreement', oathAgreementSchema);

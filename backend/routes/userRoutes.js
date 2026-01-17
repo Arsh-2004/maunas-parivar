@@ -11,17 +11,40 @@ router.post('/save-oath', async (req, res) => {
     
     console.log('Oath agreement received:', { name, mobileNumber, agreedAt });
     
+    // Check if this mobile number has already taken oath
+    // Only mobile number matters - prevents same person taking oath multiple times with different names
+    const existingOath = await OathAgreement.findOne({ 
+      mobileNumber: mobileNumber.trim() 
+    });
+    
+    if (existingOath) {
+      console.log('This mobile number has already taken oath. Returning existing agreement.');
+      return res.json({ 
+        success: true, 
+        message: 'This mobile number has already taken the oath',
+        data: { 
+          name: existingOath.name, 
+          mobileNumber: existingOath.mobileNumber, 
+          agreedAt: existingOath.agreedAt,
+          isExisting: true
+        }
+      });
+    }
+    
+    // Get real IP address from the request
+    const ipAddress = req.clientIp || req.ip || req.connection.remoteAddress;
+    
     // Save oath agreement to database
     const oathAgreement = new OathAgreement({
       name,
       mobileNumber,
       agreedAt: agreedAt || new Date(),
-      ipAddress: req.ip || req.connection.remoteAddress,
+      ipAddress: ipAddress,
       userAgent: req.get('user-agent')
     });
     
     await oathAgreement.save();
-    console.log('Oath agreement saved to database');
+    console.log('Oath agreement saved to database', { name, mobileNumber, ipAddress });
     
     res.json({ 
       success: true, 
@@ -29,11 +52,23 @@ router.post('/save-oath', async (req, res) => {
       data: { 
         name, 
         mobileNumber, 
-        agreedAt: oathAgreement.agreedAt 
+        agreedAt: oathAgreement.agreedAt,
+        ipAddress: ipAddress,
+        isExisting: false
       }
     });
   } catch (error) {
     console.error('Error saving oath agreement:', error);
+    
+    // Check if it's a duplicate key error
+    if (error.code === 11000) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'This mobile number has already taken the oath. Only one oath per phone number is allowed.',
+        code: 'DUPLICATE_OATH'
+      });
+    }
+    
     res.status(500).json({ 
       success: false, 
       message: 'Failed to save oath agreement' 
@@ -263,19 +298,24 @@ router.get('/profile/:phone', async (req, res) => {
     res.json({ 
       success: true, 
       user: {
+        _id: user._id,
         id: user._id,
         fullName: user.fullName,
         fatherName: user.fatherName,
         email: user.email,
         phone: user.phone,
+        address: user.address,
         city: user.city,
         state: user.state,
+        pincode: user.pincode,
         occupation: user.occupation,
         education: user.education,
         status: user.status,
         approvedAt: user.approvedAt,
         photoPath: user.photoPath,
-        membershipTier: user.membershipTier
+        membershipTier: user.membershipTier,
+        idCardPath: user.idCardPath,
+        idCardGeneratedAt: user.idCardGeneratedAt
       }
     });
   } catch (error) {

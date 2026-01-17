@@ -39,7 +39,8 @@ const Profile = () => {
           const response = await fetch(`${API_URL}/users/profile/${user.phone}`);
           const data = await response.json();
           if (data.success && data.user) {
-            // Update user in context with fresh data including photo
+            console.log('🔄 Profile refresh - ID Card Path:', data.user.idCardPath ? '✅ Present' : '❌ Not yet');
+            // Update user in context with fresh data including photo and ID card
             updateUser(data.user);
             setFormData({
               email: data.user.email || '',
@@ -70,8 +71,16 @@ const Profile = () => {
       }
     };
 
+    // Initial fetch
     fetchUserData();
-  }, [isAuthenticated, navigate, updateUser, user]);
+    
+    // Poll every 3 seconds only if user is approved but doesn't have ID card yet
+    if (user?.status === 'approved' && !user?.idCardPath) {
+      console.log('⏳ ID card generating... polling for updates');
+      const interval = setInterval(fetchUserData, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated, navigate, updateUser, user?.phone, user?.status, user?.idCardPath]);
 
   const handleChange = (e) => {
     setFormData({
@@ -195,6 +204,70 @@ const Profile = () => {
               <p style={{color: 'red', fontSize: '0.9rem', marginTop: '10px'}}>
                 ⚠️ {language === 'en' ? 'Tier not loaded - Please logout and login again' : 'टियर लोड नहीं हुआ - कृपया लॉगआउट करें और फिर से लॉगिन करें'}
               </p>
+            )}
+
+            {/* Digital ID Card Section */}
+            {user.status === 'approved' && user.idCardPath && (
+              <div className="id-card-section">
+                <div className="id-card-status">
+                  <span className="id-card-badge">🆔 {language === 'en' ? 'Digital ID Card' : 'डिजिटल आईडी कार्ड'}</span>
+                  <span className="id-card-ready">✅ {language === 'en' ? 'Ready for Download' : 'डाउनलोड के लिए तैयार'}</span>
+                </div>
+                <div className="id-card-preview">
+                  <img 
+                    src={user.idCardPath} 
+                    alt="Digital ID Card"
+                    className="id-card-image"
+                  />
+                </div>
+                <div className="id-card-actions">
+                  <a 
+                    href={user.idCardPath} 
+                    download={`Maunas-Parivar-ID-${user.phone}.jpg`}
+                    className="download-btn"
+                  >
+                    📥 {language === 'en' ? 'Download ID Card (JPG)' : 'आईडी कार्ड डाउनलोड करें (JPG)'}
+                  </a>
+                  {user.idCardGeneratedAt && (
+                    <p className="id-card-generated">
+                      {language === 'en' ? 'Generated on: ' : 'बनाया गया: '}
+                      {new Date(user.idCardGeneratedAt).toLocaleDateString('en-IN')}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {user.status === 'approved' && !user.idCardPath && (
+              <div className="id-card-section pending">
+                <span className="id-card-generating">⏳ {language === 'en' ? 'ID Card being generated...' : 'आईडी कार्ड तैयार किया जा रहा है...'}</span>
+                <button 
+                  type="button"
+                  className="refresh-btn"
+                  onClick={() => {
+                    if (user?.phone) {
+                      fetch(`${API_URL}/users/profile/${user.phone}`)
+                        .then(res => res.json())
+                        .then(data => {
+                          if (data.success && data.user) {
+                            updateUser(data.user);
+                            console.log('✅ Profile refreshed manually');
+                          }
+                        })
+                        .catch(err => console.error('Refresh error:', err));
+                    }
+                  }}
+                  style={{marginLeft: '10px'}}
+                >
+                  🔄 {language === 'en' ? 'Refresh' : 'रीफ्रेश करें'}
+                </button>
+              </div>
+            )}
+
+            {user.status !== 'approved' && (
+              <div className="id-card-section pending">
+                <span className="id-card-pending">🔒 {language === 'en' ? 'ID Card will be available after approval' : 'आईडी कार्ड अनुमोदन के बाद उपलब्ध होगा'}</span>
+              </div>
             )}
             
             {/* Dashboard Access Section */}
