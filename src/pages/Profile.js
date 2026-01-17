@@ -80,7 +80,7 @@ const Profile = () => {
       const interval = setInterval(fetchUserData, 3000);
       return () => clearInterval(interval);
     }
-  }, [isAuthenticated, navigate, updateUser, user?.phone, user?.status, user?.idCardPath]);
+  }, [isAuthenticated, navigate, updateUser, user]);
 
   const handleChange = (e) => {
     setFormData({
