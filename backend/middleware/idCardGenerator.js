@@ -60,26 +60,26 @@ const generateIDCard = async (user) => {
     
     // White header background
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, width, 90);
+    ctx.fillRect(0, 0, width, 85);
 
     // Organization Name (Top left)
     ctx.fillStyle = '#0f2940';
-    ctx.font = 'bold 28px "Arial", sans-serif';
+    ctx.font = 'bold 26px "Arial", sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText('MAUNAS PARIVAR', 25, 45);
+    ctx.fillText('MAUNAS PARIVAR', 20, 40);
 
-    // Card Type (Top right)
-    ctx.fillStyle = '#e94560';
-    ctx.font = 'bold 14px "Arial", sans-serif';
+    // Card Type (Top right) - smaller and cleaner
+    ctx.fillStyle = '#999999';
+    ctx.font = '11px "Arial", sans-serif';
     ctx.textAlign = 'right';
-    ctx.fillText('DIGITAL MEMBER ID CARD', width - 25, 45);
+    ctx.fillText('Member ID Card', width - 20, 35);
 
     // Thin divider line
     ctx.strokeStyle = '#e94560';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(20, 65);
-    ctx.lineTo(width - 20, 65);
+    ctx.moveTo(20, 60);
+    ctx.lineTo(width - 20, 60);
     ctx.stroke();
 
     // ===== MIDDLE SECTION - PHOTO & INFO =====
@@ -132,36 +132,38 @@ const generateIDCard = async (user) => {
     // ===== RIGHT SECTION - USER INFORMATION =====
     
     const infoX = photoX + photoSize + 40;
-    const infoY = 120;
+    const infoY = 115;
     const colWidth = (width - infoX - 30);
     
-    // Information boxes background
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-    ctx.fillRect(infoX, infoY, colWidth, photoSize - 10);
-
-    // Info title background
-    ctx.fillStyle = '#e94560';
-    ctx.fillRect(infoX, infoY, colWidth, 30);
-    
+    // Information box background - cleaner design
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 12px Arial';
+    ctx.fillRect(infoX, infoY, colWidth, photoSize + 5);
+    
+    // Subtle border
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(infoX, infoY, colWidth, photoSize + 5);
+
+    // Info title with minimal styling
+    ctx.fillStyle = '#0f2940';
+    ctx.font = 'bold 11px Arial';
     ctx.textAlign = 'left';
-    ctx.fillText('MEMBER INFORMATION', infoX + 10, infoY + 20);
+    ctx.fillText('MEMBER DETAILS', infoX + 10, infoY + 18);
 
     // Information details
-    const lineSpacing = 28;
-    let detailY = infoY + 45;
+    const lineSpacing = 32;
+    let detailY = infoY + 50;
     
-    // Helper function to draw info line
+    // Helper function to draw info line with proper spacing
     const drawInfoLine = (label, value) => {
       ctx.fillStyle = '#666666';
-      ctx.font = 'bold 11px Arial';
+      ctx.font = 'bold 10px Arial';
       ctx.textAlign = 'left';
       ctx.fillText(label, infoX + 10, detailY);
       
       ctx.fillStyle = '#0f2940';
-      ctx.font = '12px Arial';
-      ctx.fillText(value.substring(0, 35), infoX + 110, detailY);
+      ctx.font = '11px Arial';
+      ctx.fillText(value.substring(0, 32), infoX + 100, detailY);
       
       detailY += lineSpacing;
     };
@@ -173,34 +175,45 @@ const generateIDCard = async (user) => {
     const dob = new Date(user.dateOfBirth).toLocaleDateString('en-IN');
     drawInfoLine('DATE OF BIRTH:', dob);
     
+    // Membership tier on separate line with better formatting
+    ctx.fillStyle = '#666666';
+    ctx.font = 'bold 10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('MEMBERSHIP:', infoX + 10, detailY);
+    
     ctx.fillStyle = '#e94560';
-    ctx.font = 'bold 12px Arial';
-    drawInfoLine('MEMBERSHIP TIER:', user.membershipTier.toUpperCase());
+    ctx.font = 'bold 11px Arial';
+    ctx.fillText(user.membershipTier.toUpperCase(), infoX + 100, detailY);
 
     // ===== BOTTOM SECTION - ID & VALIDITY =====
     
     // Unique ID generation
     const uniqueId = `MP-${user.phone.slice(-6).toUpperCase()}-${user._id.toString().slice(-4).toUpperCase()}`;
     
-    // ID Card Number box
-    ctx.fillStyle = '#e94560';
-    ctx.fillRect(0, height - 70, width, 70);
+    // Clean footer with subtle background
+    ctx.fillStyle = '#f5f5f5';
+    ctx.fillRect(0, height - 65, width, 65);
     
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 16px Arial';
+    // Red accent line
+    ctx.fillStyle = '#e94560';
+    ctx.fillRect(0, height - 65, width, 3);
+    
+    // ID Card Number - centered
+    ctx.fillStyle = '#0f2940';
+    ctx.font = 'bold 14px Arial';
     ctx.textAlign = 'center';
     ctx.fillText(`ID: ${uniqueId}`, width / 2, height - 35);
 
-    // Validity dates
+    // Validity info - smaller text
     const approvedDate = user.approvedAt ? new Date(user.approvedAt).toLocaleDateString('en-IN') : new Date().toLocaleDateString('en-IN');
     
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '11px Arial';
+    ctx.fillStyle = '#999999';
+    ctx.font = '10px Arial';
     ctx.textAlign = 'left';
-    ctx.fillText(`Issued: ${approvedDate}`, 30, height - 15);
+    ctx.fillText(`Issued: ${approvedDate}`, 20, height - 10);
 
     ctx.textAlign = 'right';
-    ctx.fillText('Valid for 5 years', width - 30, height - 15);
+    ctx.fillText('Valid for 5 years', width - 20, height - 10);
 
     // Convert canvas to buffer
     console.log('🖼️ Converting canvas to JPEG buffer...');

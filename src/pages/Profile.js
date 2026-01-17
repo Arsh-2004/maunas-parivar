@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import DigitalIDCard from '../components/DigitalIDCard';
 import './Profile.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
@@ -206,62 +207,9 @@ const Profile = () => {
               </p>
             )}
 
-            {/* Digital ID Card Section */}
-            {user.status === 'approved' && user.idCardPath && (
-              <div className="id-card-section">
-                <div className="id-card-status">
-                  <span className="id-card-badge">🆔 {language === 'en' ? 'Digital ID Card' : 'डिजिटल आईडी कार्ड'}</span>
-                  <span className="id-card-ready">✅ {language === 'en' ? 'Ready for Download' : 'डाउनलोड के लिए तैयार'}</span>
-                </div>
-                <div className="id-card-preview">
-                  <img 
-                    src={user.idCardPath} 
-                    alt="Digital ID Card"
-                    className="id-card-image"
-                  />
-                </div>
-                <div className="id-card-actions">
-                  <a 
-                    href={user.idCardPath} 
-                    download={`Maunas-Parivar-ID-${user.phone}.jpg`}
-                    className="download-btn"
-                  >
-                    📥 {language === 'en' ? 'Download ID Card (JPG)' : 'आईडी कार्ड डाउनलोड करें (JPG)'}
-                  </a>
-                  {user.idCardGeneratedAt && (
-                    <p className="id-card-generated">
-                      {language === 'en' ? 'Generated on: ' : 'बनाया गया: '}
-                      {new Date(user.idCardGeneratedAt).toLocaleDateString('en-IN')}
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {user.status === 'approved' && !user.idCardPath && (
-              <div className="id-card-section pending">
-                <span className="id-card-generating">⏳ {language === 'en' ? 'ID Card being generated...' : 'आईडी कार्ड तैयार किया जा रहा है...'}</span>
-                <button 
-                  type="button"
-                  className="refresh-btn"
-                  onClick={() => {
-                    if (user?.phone) {
-                      fetch(`${API_URL}/users/profile/${user.phone}`)
-                        .then(res => res.json())
-                        .then(data => {
-                          if (data.success && data.user) {
-                            updateUser(data.user);
-                            console.log('✅ Profile refreshed manually');
-                          }
-                        })
-                        .catch(err => console.error('Refresh error:', err));
-                    }
-                  }}
-                  style={{marginLeft: '10px'}}
-                >
-                  🔄 {language === 'en' ? 'Refresh' : 'रीफ्रेश करें'}
-                </button>
-              </div>
+            {/* Digital ID Card Component - Modern UI */}
+            {user.status === 'approved' && (
+              <DigitalIDCard user={user} />
             )}
 
             {user.status !== 'approved' && (
@@ -481,6 +429,14 @@ const Profile = () => {
                 <span className="value">{user.occupation}</span>
               </div>
             </div>
+
+            {/* Digital ID Card Component */}
+            {user.status === 'approved' && (
+              <div className="digital-id-card-section">
+                <h3>{language === 'en' ? '📱 Digital ID Card' : '📱 डिजिटल आईडी कार्ड'}</h3>
+                <DigitalIDCard user={user} />
+              </div>
+            )}
 
             <button className="edit-btn" onClick={() => {
               // Reset form data with current user data when entering edit mode

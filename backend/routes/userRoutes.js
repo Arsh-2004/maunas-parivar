@@ -385,4 +385,53 @@ router.put('/update-profile/:id', upload.single('photo'), async (req, res) => {
   }
 });
 
+// Get ID Card data by user ID (for QR code scanning)
+router.get('/id-card/:userId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+
+    // Return only necessary data for ID card display
+    res.json({ 
+      success: true, 
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        fatherName: user.fatherName,
+        dateOfBirth: user.dateOfBirth,
+        gender: user.gender,
+        phone: user.phone,
+        email: user.email,
+        address: user.address,
+        village: user.village,
+        block: user.block,
+        tehsil: user.tehsil,
+        district: user.district,
+        city: user.city,
+        state: user.state,
+        pincode: user.pincode,
+        occupation: user.occupation,
+        education: user.education,
+        photoPath: user.photoPath,
+        membershipTier: user.membershipTier,
+        status: user.status,
+        registeredAt: user.registeredAt,
+        approvedAt: user.approvedAt
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching ID card data:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch ID card data' 
+    });
+  }
+});
+
 module.exports = router;

@@ -1,0 +1,488 @@
+/* Digital ID Card - Professional Modern Design */
+
+.digital-id-card-section {
+  width: 100%;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.id-card-header-section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.id-card-main-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 15px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.id-icon {
+  font-size: 32px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.en-text {
+  font-size: 16px;
+  color: #718096;
+  font-weight: 500;
+  width: 100%;
+}
+
+.id-card-subtitle {
+  color: #718096;
+  font-size: 13px;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* 3D Flip Card Container */
+.id-card-display-container {
+  perspective: 1000px;
+  width: 100%;
+}
+
+.id-card-flipper {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  border-radius: 15px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.id-card-flipper.flipped {
+  transform: rotateY(180deg);
+}
+
+/* Card Faces */
+.id-card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.id-card-front-face {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: 2;
+}
+
+.id-card-back-face {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  transform: rotateY(180deg);
+}
+
+.id-card-bg-gradient,
+.id-card-bg-gradient-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.id-card-content-front,
+.id-card-content-back {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+/* Front Side Content */
+.id-card-org-header {
+  text-align: center;
+  margin-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 12px;
+}
+
+.id-org-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.id-org-subtitle {
+  margin: 5px 0 0 0;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.id-card-type-label {
+  margin: 8px 0 0 0;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  opacity: 0.8;
+  font-weight: 600;
+}
+
+.id-card-photo-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 15px 0;
+}
+
+.id-member-photo {
+  width: 90px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 3px solid white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.id-photo-placeholder {
+  width: 90px;
+  height: 110px;
+  border-radius: 8px;
+  border: 3px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.id-card-member-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.id-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.id-detail-label {
+  font-size: 10px;
+  opacity: 0.8;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.id-detail-value {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: right;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.id-tier-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 10px;
+}
+
+.id-card-flip-hint {
+  font-size: 10px;
+  text-align: center;
+  opacity: 0.7;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* Back Side Content */
+.id-back-header {
+  text-align: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.id-back-header h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.id-back-header p {
+  margin: 5px 0 0 0;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.id-qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 8px;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.id-qr-container svg {
+  width: 100px !important;
+  height: 100px !important;
+}
+
+.id-qr-text {
+  margin: 0;
+  font-size: 9px;
+  color: #333;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.id-back-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.id-back-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  font-size: 9px;
+}
+
+.id-back-detail-row .id-detail-value {
+  font-size: 9px;
+  max-width: 55%;
+}
+
+/* Action Buttons */
+.id-card-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 25px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.id-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.id-btn-flip {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.id-btn-flip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.id-btn-download {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.id-btn-download:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(245, 87, 108, 0.4);
+}
+
+.id-btn span {
+  font-size: 16px;
+}
+
+/* Footer */
+.id-card-footer {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.id-generated-info {
+  margin: 0;
+  color: #718096;
+  font-size: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .digital-id-card-section {
+    padding: 20px;
+    margin: 20px 15px;
+  }
+
+  .id-card-flipper {
+    height: 380px;
+  }
+
+  .id-card-content-front,
+  .id-card-content-back {
+    padding: 15px;
+  }
+
+  .id-card-main-title {
+    font-size: 22px;
+  }
+
+  .id-member-photo,
+  .id-photo-placeholder {
+    width: 75px;
+    height: 95px;
+  }
+
+  .id-detail-row,
+  .id-back-detail-row {
+    font-size: 10px;
+    padding: 5px 6px;
+  }
+
+  .id-btn {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .digital-id-card-section {
+    padding: 15px;
+    border-radius: 15px;
+  }
+
+  .id-card-flipper {
+    height: 340px;
+  }
+
+  .id-card-content-front,
+  .id-card-content-back {
+    padding: 12px;
+  }
+
+  .id-card-main-title {
+    font-size: 18px;
+    gap: 8px;
+  }
+
+  .id-icon {
+    font-size: 24px;
+  }
+
+  .id-org-name {
+    font-size: 16px;
+  }
+
+  .id-member-photo,
+  .id-photo-placeholder {
+    width: 60px;
+    height: 80px;
+  }
+
+  .id-detail-row,
+  .id-back-detail-row {
+    font-size: 9px;
+    padding: 4px 5px;
+  }
+
+  .id-detail-label {
+    font-size: 8px;
+  }
+
+  .id-detail-value {
+    font-size: 9px;
+  }
+
+  .id-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+
+  .id-card-actions {
+    gap: 8px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    margin: 0;
+    padding: 20px;
+    background: white;
+  }
+  
+  .digital-id-card-section {
+    background: none;
+    box-shadow: none;
+    border: none;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .id-card-actions {
+    display: none;
+  }
+  
+  .id-card-flipper {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+

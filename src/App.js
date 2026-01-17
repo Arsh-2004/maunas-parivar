@@ -18,6 +18,7 @@ import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
 import DiamondDashboard from './pages/DiamondDashboard';
 import GoldDashboard from './pages/GoldDashboard';
+import IDCardView from './pages/IDCardView';
 import './App.css';
 
 function App() {
@@ -66,6 +67,7 @@ function App() {
                     <GoldDashboard />
                   </ProtectedRoute>
                 } />
+                <Route path="/id-card/:userId" element={<IDCardView />} />
               </Routes>
             </main>
             <Footer />
