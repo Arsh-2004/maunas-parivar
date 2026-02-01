@@ -130,6 +130,15 @@ const userSchema = new mongoose.Schema({
   idCardGeneratedAt: {
     type: Date,
     default: null
+  },
+  committee: {
+    type: String,
+    enum: ['संरक्षक कमेटी', 'प्रबन्धन कमेटी', 'संचालक कमेटी'],
+    default: null
+  },
+  position: {
+    type: String,
+    default: null
   }
 });
 

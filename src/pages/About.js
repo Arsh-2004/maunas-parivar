@@ -1,9 +1,71 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import './About.css';
 
 const About = () => {
   const { language } = useLanguage();
+  const [selectedCommittee, setSelectedCommittee] = useState(null);
+  const [committeeMembers, setCommitteeMembers] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  const committees = [
+    {
+      id: 'sanrakshak',
+      nameEn: 'Protective Committee',
+      nameHi: 'संरक्षक कमेटी',
+      icon: '🛡️',
+      description: language === 'en' ? 'Protecting community interests and welfare' : 'समुदाय के हितों और कल्याण की रक्षा करना'
+    },
+    {
+      id: 'prabandhan',
+      nameEn: 'Management Committee',
+      nameHi: 'प्रबन्धन कमेटी',
+      icon: '📋',
+      description: language === 'en' ? 'Managing organization operations and initiatives' : 'संगठन के संचालन और कार्यक्रमों का प्रबंधन'
+    },
+    {
+      id: 'sanchalan',
+      nameEn: 'Execution Committee',
+      nameHi: 'संचालक कमेटी',
+      icon: '⚙️',
+      description: language === 'en' ? 'Executing programs and community activities' : 'कार्यक्रमों और सामुदायिक गतिविधियों का संचालन'
+    }
+  ];
+
+  useEffect(() => {
+    if (selectedCommittee) {
+      fetchCommitteeMembers(selectedCommittee);
+    }
+  }, [selectedCommittee]);
+
+  const fetchCommitteeMembers = async (committeeId) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/committee-members/${committeeId}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setCommitteeMembers(prev => ({
+          ...prev,
+          [committeeId]: data.members || []
+        }));
+      } else {
+        // If no API data, show placeholder
+        setCommitteeMembers(prev => ({
+          ...prev,
+          [committeeId]: []
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching committee members:', error);
+      setCommitteeMembers(prev => ({
+        ...prev,
+        [committeeId]: []
+      }));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="about-page">
@@ -175,6 +237,78 @@ const About = () => {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Committees Section */}
+      <section className="committees-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>{language === 'en' ? 'Our Committees' : 'हमारी कमेटियाँ'}</h2>
+            <div className="underline"></div>
+          </div>
+
+          {/* Committees Grid */}
+          <div className="committees-grid">
+            {committees.map((committee) => (
+              <div 
+                key={committee.id}
+                className={`committee-card ${selectedCommittee === committee.id ? 'active' : ''}`}
+                onClick={() => setSelectedCommittee(selectedCommittee === committee.id ? null : committee.id)}
+              >
+                <div className="committee-icon">{committee.icon}</div>
+                <h3>{language === 'en' ? committee.nameEn : committee.nameHi}</h3>
+                <p className="committee-desc">{committee.description}</p>
+                <span className="click-hint">
+                  {language === 'en' ? (selectedCommittee === committee.id ? 'Hide Members' : 'View Members') : (selectedCommittee === committee.id ? 'सदस्य छुपाएं' : 'सदस्य देखें')}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Committee Members Display */}
+          {selectedCommittee && (
+            <div className="committee-members-section">
+              <div className="members-header">
+                <h3>
+                  {committees.find(c => c.id === selectedCommittee) && 
+                   (language === 'en' ? committees.find(c => c.id === selectedCommittee).nameEn : committees.find(c => c.id === selectedCommittee).nameHi)}
+                  {' - '}{language === 'en' ? 'Members' : 'सदस्य'}
+                </h3>
+              </div>
+
+              {loading ? (
+                <div className="loading-message">
+                  {language === 'en' ? 'Loading members...' : 'सदस्य लोड हो रहे हैं...'}
+                </div>
+              ) : committeeMembers[selectedCommittee] && committeeMembers[selectedCommittee].length > 0 ? (
+                <div className="members-grid">
+                  {committeeMembers[selectedCommittee].map((member) => (
+                    <div key={member._id} className="member-card">
+                      {member.photoPath && (
+                        <img 
+                          src={member.photoPath} 
+                          alt={member.fullName}
+                          className="member-photo"
+                        />
+                      )}
+                      <div className="member-details">
+                        <h4>{member.fullName}</h4>
+                        <p className="member-position">{member.position || 'Member'}</p>
+                        <p className="member-contact">📍 {member.city}, {member.state}</p>
+                        {member.phone && <p className="member-phone">📱 {member.phone}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="no-members-message">
+                  <p>{language === 'en' ? 'No members added yet for this committee' : 'इस कमेटी के लिए अभी कोई सदस्य नहीं जोड़े गए हैं'}</p>
+                  <p className="hint">{language === 'en' ? 'Members will be displayed here' : 'सदस्यों को यहाँ दिखाया जाएगा'}</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
 

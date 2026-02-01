@@ -434,4 +434,44 @@ router.get('/id-card/:userId', async (req, res) => {
   }
 });
 
+// Get committee members
+router.get('/committee-members/:committeeId', async (req, res) => {
+  try {
+    const { committeeId } = req.params;
+    
+    // Map committee IDs to database committee field values
+    const committeeMap = {
+      'sanrakshak': 'संरक्षक कमेटी',
+      'prabandhan': 'प्रबन्धन कमेटी',
+      'sanchalan': 'संचालक कमेटी'
+    };
+    
+    const committeeName = committeeMap[committeeId];
+    
+    if (!committeeName) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid committee ID'
+      });
+    }
+    
+    // Fetch members from the committee field
+    const members = await User.find({
+      committee: committeeName,
+      status: 'approved'
+    }).select('fullName position city state phone photoPath committee');
+    
+    res.json({
+      success: true,
+      members: members || []
+    });
+  } catch (error) {
+    console.error('Error fetching committee members:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch committee members'
+    });
+  }
+});
+
 module.exports = router;

@@ -41,6 +41,8 @@ const Community = () => {
     { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Farmer Cell' : 'किसान प्रकोष्ठ', icon: '🚜' },
     { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Sports & Military Cell' : 'खेल एवं सैनिक प्रकोष्ठ', icon: '⛹️' },
     { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Human Service Cell' : 'मानव सेवा प्रकोष्ठ', icon: '🤝' },
+    { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Buddhist Cell' : 'बुद्धजीवी प्रकोष्ठ', icon: '🧘' },
+    { name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Women Cell' : 'महिला प्रकोष्ठ', icon: '👩' },
   ];
 
   const upadhiRankings = [
@@ -84,11 +86,11 @@ const Community = () => {
         </div>
       </section>
 
-      {/* Management Team - Hamari Netritav */}
+      {/* Management Team - Hamara Prakosth */}
       <section className="management-section">
         <div className="container">
           <div className="section-header">
-            <h2>{language === 'en' ? 'Our Leadership' : 'हमारी नेतृत्व'}</h2>
+            <h2>{language === 'en' ? 'Our Cells' : 'हमारा प्रकोष्ठ'}</h2>
             <div className="underline"></div>
           </div>
           <div className="team-grid">
@@ -107,11 +109,11 @@ const Community = () => {
         </div>
       </section>
 
-      {/* Upadhi (Titles & Rankings) Section */}
+      {/* Upadharak (Titles & Rankings) Section */}
       <section className="upadhi-section">
         <div className="container">
           <div className="section-header">
-            <h2>{language === 'en' ? 'Upadhi' : 'उपाधि'}</h2>
+            <h2>{language === 'en' ? 'Upadharak' : 'उपाधारक'}</h2>
             <div className="underline"></div>
           </div>
           <div className="upadhi-grid">
