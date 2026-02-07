@@ -154,9 +154,18 @@ const Home = () => {
           <div className="team-grid">
             <div className="team-card">
               <div className="team-image">
-                <div className="image-placeholder">👤</div>
+                <img 
+                  src="/assets/national-president.jpeg" 
+                  alt="National President"
+                  className="team-photo"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
               </div>
-              <h3>{language === 'en' ? 'National President' : 'राष्ट्रीय अध्यक्ष'}</h3>
+              <h3 className="member-name">{language === 'en' ? 'Ravi Singh' : 'रवि सिंह'}</h3>
               <p className="designation">{language === 'en' ? 'National President' : 'राष्ट्रीय अध्यक्ष'}</p>
             </div>
             <div className="team-card">
