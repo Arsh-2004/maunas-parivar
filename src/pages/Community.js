@@ -46,12 +46,12 @@ const Community = () => {
   ];
 
   const upadhiRankings = [
-    { name: language === 'en' ? 'Dr. Rajesh Sharma' : 'डॉ. राजेश शर्मा', title: language === 'en' ? 'Ph.D.' : 'पीएच.डी.', icon: '🎓' },
-    { name: language === 'en' ? 'Col. Vikram Singh' : 'कर्नल विक्रम सिंह', title: language === 'en' ? 'Colonel' : 'कर्नल', icon: '⭐' },
-    { name: language === 'en' ? 'Prof. Suresh Kumar' : 'प्रो. सुरेश कुमार', title: language === 'en' ? 'Professor' : 'प्रोफेसर', icon: '👨‍🎓' },
-    { name: language === 'en' ? 'Sri Mahendra Chaudhary' : 'श्री महेंद्र चौधरी', title: language === 'en' ? 'Business Magnate' : 'व्यवसायी', icon: '💼' },
-    { name: language === 'en' ? 'Dr. Pradeep Singh' : 'डॉ. प्रदीप सिंह', title: language === 'en' ? 'Medical Doctor' : 'चिकित्सक', icon: '⚕️' },
-    { name: language === 'en' ? 'Advocate Anil Kumar' : 'अधिवक्ता अनिल कुमार', title: language === 'en' ? 'Advocate' : 'अधिवक्ता', icon: '⚖️' },
+    { name: language === 'en' ? 'Dr. Rajesh Sharma' : 'डॉ. राजेश शर्मा', honoraryTitle: 'मौनस शिरोमणि', title: language === 'en' ? 'Ph.D.' : 'पीएच.डी.', icon: '🎓' },
+    { name: language === 'en' ? 'Col. Vikram Singh' : 'कर्नल विक्रम सिंह', honoraryTitle: 'मौनस कुबेर', title: language === 'en' ? 'Colonel' : 'कर्नल', icon: '⭐' },
+    { name: language === 'en' ? 'Prof. Suresh Kumar' : 'प्रो. सुरेश कुमार', honoraryTitle: 'मौनस कुलभूषण', title: language === 'en' ? 'Professor' : 'प्रोफेसर', icon: '👨‍🎓' },
+    { name: language === 'en' ? 'Sri Mahendra Chaudhary' : 'श्री महेंद्र चौधरी', honoraryTitle: 'मौनस कुलदीपक', title: language === 'en' ? 'Business Magnate' : 'व्यवसायी', icon: '💼' },
+    { name: language === 'en' ? 'Dr. Pradeep Singh' : 'डॉ. प्रदीप सिंह', honoraryTitle: 'मौनस नायक', title: language === 'en' ? 'Medical Doctor' : 'चिकित्सक', icon: '⚕️' },
+    { name: language === 'en' ? 'Advocate Anil Kumar' : 'अधिवक्ता अनिल कुमार', honoraryTitle: 'मौनस रत्न', title: language === 'en' ? 'Advocate' : 'अधिवक्ता', icon: '⚖️' },
   ];
 
   const getTierColor = (tier) => {
@@ -122,6 +122,7 @@ const Community = () => {
                 <div className="upadhi-icon">{member.icon}</div>
                 <div className="upadhi-info">
                   <h3>{member.name}</h3>
+                  <p className="honorary-title">{member.honoraryTitle}</p>
                   <p className="upadhi-title">{member.title}</p>
                 </div>
               </div>
