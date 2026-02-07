@@ -27,6 +27,13 @@ const AdminDashboard = () => {
   const [galleryForm, setGalleryForm] = useState({ title: '', description: '', category: 'general', image: null });
   const [showUserModal, setShowUserModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  
+  // New state for district/block filtering and sorting
+  const [districtFilter, setDistrictFilter] = useState('all');
+  const [blockFilter, setBlockFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('date');
+  const [sortOrder, setSortOrder] = useState('desc');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Admin login
   const handleAdminLogin = async (e) => {
@@ -359,10 +366,64 @@ const AdminDashboard = () => {
     }
   };
 
-  // Filter users by status
-  const filteredUsers = filter === 'all' 
-    ? users 
-    : users.filter(user => user.status === filter);
+  // Get unique districts and blocks from users
+  const uniqueDistricts = [...new Set(users.map(u => u.district).filter(Boolean))].sort();
+  const uniqueBlocks = [...new Set(users.map(u => u.block).filter(Boolean))].sort();
+
+  // Filter and sort users
+  const filteredUsers = users
+    .filter(user => {
+      // Status filter
+      if (filter !== 'all' && user.status !== filter) return false;
+      
+      // District filter
+      if (districtFilter !== 'all' && user.district !== districtFilter) return false;
+      
+      // Block filter
+      if (blockFilter !== 'all' && user.block !== blockFilter) return false;
+      
+      // Search filter
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase().trim();
+        const searchFields = [
+          user.fullName,
+          user.phone,
+          user.district,
+          user.block,
+          user.village,
+          user.tehsil,
+          user.city,
+          user.email,
+          user.fatherName
+        ].filter(Boolean).map(field => field.toLowerCase());
+        
+        const matches = searchFields.some(field => field.includes(query));
+        if (!matches) return false;
+      }
+      
+      return true;
+    })
+    .sort((a, b) => {
+      let comparison = 0;
+      
+      switch(sortBy) {
+        case 'name':
+          comparison = (a.fullName || '').localeCompare(b.fullName || '');
+          break;
+        case 'district':
+          comparison = (a.district || '').localeCompare(b.district || '');
+          break;
+        case 'block':
+          comparison = (a.block || '').localeCompare(b.block || '');
+          break;
+        case 'date':
+        default:
+          comparison = new Date(a.registeredAt) - new Date(b.registeredAt);
+          break;
+      }
+      
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -470,6 +531,125 @@ const AdminDashboard = () => {
             </button>
           </div>
 
+          <div className="search-bar-container">
+            <div className="search-bar">
+              <span className="search-icon">🔍</span>
+              <input
+                type="text"
+                placeholder={language === 'en' 
+                  ? 'Search by name, phone, district, block, village...' 
+                  : 'नाम, फोन, जिला, खंड, गाँव से खोजें...'}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+              {searchQuery && (
+                <button 
+                  className="clear-search-btn"
+                  onClick={() => setSearchQuery('')}
+                  title={language === 'en' ? 'Clear search' : 'खोज साफ़ करें'}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="advanced-filters">
+            <div className="filter-group">
+              <label>{language === 'en' ? 'District:' : 'जिला:'}</label>
+              <select 
+                value={districtFilter} 
+                onChange={(e) => {
+                  setDistrictFilter(e.target.value);
+                  setBlockFilter('all'); // Reset block when district changes
+                }}
+                className="filter-dropdown"
+              >
+                <option value="all">{language === 'en' ? 'All Districts' : 'सभी जिले'}</option>
+                {uniqueDistricts.map(district => (
+                  <option key={district} value={district}>{district}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>{language === 'en' ? 'Block:' : 'खंड:'}</label>
+              <select 
+                value={blockFilter} 
+                onChange={(e) => setBlockFilter(e.target.value)}
+                className="filter-dropdown"
+              >
+                <option value="all">{language === 'en' ? 'All Blocks' : 'सभी खंड'}</option>
+                {uniqueBlocks
+                  .filter(block => {
+                    if (districtFilter === 'all') return true;
+                    return users.some(u => u.block === block && u.district === districtFilter);
+                  })
+                  .map(block => (
+                    <option key={block} value={block}>{block}</option>
+                  ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>{language === 'en' ? 'Sort by:' : 'क्रमबद्ध करें:'}</label>
+              <select 
+                value={sortBy} 
+                onChange={(e) => setSortBy(e.target.value)}
+                className="filter-dropdown"
+              >
+                <option value="date">{language === 'en' ? 'Registration Date' : 'पंजीकरण तिथि'}</option>
+                <option value="name">{language === 'en' ? 'Name' : 'नाम'}</option>
+                <option value="district">{language === 'en' ? 'District' : 'जिला'}</option>
+                <option value="block">{language === 'en' ? 'Block' : 'खंड'}</option>
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>{language === 'en' ? 'Order:' : 'क्रम:'}</label>
+              <select 
+                value={sortOrder} 
+                onChange={(e) => setSortOrder(e.target.value)}
+                className="filter-dropdown"
+              >
+                <option value="asc">{language === 'en' ? 'Ascending' : 'आरोही'}</option>
+                <option value="desc">{language === 'en' ? 'Descending' : 'अवरोही'}</option>
+              </select>
+            </div>
+
+            <button 
+              className="reset-filters-btn"
+              onClick={() => {
+                setDistrictFilter('all');
+                setBlockFilter('all');
+                setSortBy('date');
+                setSortOrder('desc');
+                setSearchQuery('');
+              }}
+            >
+              {language === 'en' ? '🔄 Reset All' : '🔄 सभी रीसेट करें'}
+            </button>
+          </div>
+
+          <div className="results-summary">
+            <p>
+              {language === 'en' 
+                ? `Showing ${filteredUsers.length} of ${users.length} members` 
+                : `${users.length} में से ${filteredUsers.length} सदस्य दिखा रहे हैं`}
+              {searchQuery && (
+                <span className="active-search-indicator">
+                  {' '}{language === 'en' ? '(Search active)' : '(खोज सक्रिय)'}
+                </span>
+              )}
+              {(districtFilter !== 'all' || blockFilter !== 'all') && (
+                <span className="active-filter-indicator">
+                  {' '}{language === 'en' ? '(Filters active)' : '(फ़िल्टर सक्रिय)'}
+                </span>
+              )}
+            </p>
+          </div>
+
           {loading ? (
             <p className="loading-text">{language === 'en' ? 'Loading...' : 'लोड हो रहा है...'}</p>
           ) : (
@@ -482,6 +662,8 @@ const AdminDashboard = () => {
                     <tr>
                       <th>{language === 'en' ? 'Name' : 'नाम'}</th>
                       <th>{language === 'en' ? 'Phone' : 'फोन'}</th>
+                      <th>{language === 'en' ? 'District' : 'जिला'}</th>
+                      <th>{language === 'en' ? 'Block' : 'खंड'}</th>
                       <th>{language === 'en' ? 'Date' : 'तारीख'}</th>
                       <th>{language === 'en' ? 'Tier' : 'स्तर'}</th>
                       <th>{language === 'en' ? 'Action' : 'कार्यवाई'}</th>
@@ -492,6 +674,8 @@ const AdminDashboard = () => {
                       <tr key={user._id}>
                         <td>{user.fullName}</td>
                         <td>{user.phone}</td>
+                        <td>{user.district || 'N/A'}</td>
+                        <td>{user.block || 'N/A'}</td>
                         <td>{new Date(user.registeredAt).toLocaleDateString('en-GB')}</td>
                         <td>
                           <select
@@ -552,6 +736,22 @@ const AdminDashboard = () => {
                   <div className="detail-row">
                     <span className="detail-label">{language === 'en' ? 'Address:' : 'पता:'}</span>
                     <span className="detail-value">{selectedUser.address}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'Village:' : 'गाँव:'}</span>
+                    <span className="detail-value">{selectedUser.village}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'Block:' : 'खंड:'}</span>
+                    <span className="detail-value">{selectedUser.block}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'Tehsil:' : 'तहसील:'}</span>
+                    <span className="detail-value">{selectedUser.tehsil}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">{language === 'en' ? 'District:' : 'जिला:'}</span>
+                    <span className="detail-value">{selectedUser.district}</span>
                   </div>
                   <div className="detail-row">
                     <span className="detail-label">{language === 'en' ? 'City:' : 'शहर:'}</span>

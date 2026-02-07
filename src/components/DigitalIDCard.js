@@ -11,12 +11,12 @@ const DigitalIDCard = ({ user }) => {
     return <div className="id-card-container">User data not available</div>;
   }
 
-  // Generate unique URL for QR code
-  const qrValue = `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/users/id-card/${user._id}`;
+  // Generate unique URL for QR code - points to web page showing user profile
+  const frontendURL = window.location.origin;
+  const qrValue = `${frontendURL}/member-profile/${user._id}`;
 
   const downloadIDCard = async () => {
     try {
-      // Get the card flipper element
       const cardElement = document.querySelector('.id-card-flipper');
       
       if (!cardElement) {
@@ -24,34 +24,105 @@ const DigitalIDCard = ({ user }) => {
         return;
       }
 
-      // Ensure card is showing front side before download
-      if (isFlipped) {
-        setIsFlipped(false);
-        // Wait for animation to complete
-        await new Promise(resolve => setTimeout(resolve, 600));
-      }
+      // Create a container for both sides
+      const downloadContainer = document.createElement('div');
+      downloadContainer.style.position = 'fixed';
+      downloadContainer.style.left = '-9999px';
+      downloadContainer.style.top = '0';
+      downloadContainer.style.background = 'white';
+      downloadContainer.style.padding = '40px';
+      document.body.appendChild(downloadContainer);
 
-      // Capture the card as an image
-      const canvas = await html2canvas(cardElement, {
-        backgroundColor: null,
-        scale: 2,
+      // Clone the card for capturing
+      const clonedCard = cardElement.cloneNode(true);
+      clonedCard.style.transform = 'none';
+      clonedCard.style.perspective = 'none';
+      
+      downloadContainer.appendChild(clonedCard);
+
+      // Wait for images to load
+      const images = downloadContainer.getElementsByTagName('img');
+      await Promise.all(
+        Array.from(images).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        })
+      );
+
+      // Capture FRONT side
+      const frontFace = clonedCard.querySelector('.id-card-front-face');
+      frontFace.style.transform = 'rotateY(0deg)';
+      frontFace.style.display = 'block';
+      frontFace.style.position = 'relative';
+      
+      const backFace = clonedCard.querySelector('.id-card-back-face');
+      backFace.style.display = 'none';
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const frontCanvas = await html2canvas(frontFace, {
+        backgroundColor: '#ffffff',
+        scale: 3,
         useCORS: true,
         allowTaint: true,
+        logging: false,
+        width: frontFace.offsetWidth,
+        height: frontFace.offsetHeight
       });
 
-      // Convert canvas to blob and download
-      canvas.toBlob((blob) => {
+      // Capture BACK side
+      frontFace.style.display = 'none';
+      backFace.style.display = 'block';
+      backFace.style.transform = 'rotateY(0deg)';
+      backFace.style.position = 'relative';
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const backCanvas = await html2canvas(backFace, {
+        backgroundColor: '#ffffff',
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        width: backFace.offsetWidth,
+        height: backFace.offsetHeight
+      });
+
+      // Combine both sides vertically
+      const combinedCanvas = document.createElement('canvas');
+      const padding = 40;
+      combinedCanvas.width = Math.max(frontCanvas.width, backCanvas.width);
+      combinedCanvas.height = frontCanvas.height + backCanvas.height + padding;
+      
+      const ctx = combinedCanvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+      
+      // Draw front side
+      ctx.drawImage(frontCanvas, (combinedCanvas.width - frontCanvas.width) / 2, 0);
+      
+      // Draw back side
+      ctx.drawImage(backCanvas, (combinedCanvas.width - backCanvas.width) / 2, frontCanvas.height + padding);
+
+      // Remove temporary container
+      document.body.removeChild(downloadContainer);
+
+      // Download the combined image
+      combinedCanvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `Maunas-Parivar-ID-${user.phone || user._id}.png`;
+        link.download = `Maunas-Parivar-ID-Card-${user.fullName.replace(/\s+/g, '-')}-${user.phone}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
         
-        alert('ID Card downloaded successfully!');
-      });
+        alert('✅ ID Card (both sides) downloaded successfully!');
+      }, 'image/png', 1.0);
 
     } catch (error) {
       console.error('Download error:', error);
@@ -144,7 +215,7 @@ const DigitalIDCard = ({ user }) => {
                   fgColor="#000000"
                   bgColor="#ffffff"
                 />
-                <p className="id-qr-text">Scan for Profile</p>
+                <p className="id-qr-text">Scan to View Full Profile</p>
               </div>
 
               <div className="id-back-details">
@@ -192,9 +263,19 @@ const DigitalIDCard = ({ user }) => {
               onClick={downloadIDCard}
               className="id-btn id-btn-download"
             >
-              <span>📥</span> Download Card
+              <span>📥</span> Download Both Sides
             </button>
           )}
+        </div>
+
+        <div className="id-card-info-box">
+          <h4>ℹ️ How to Use Your ID Card:</h4>
+          <ul>
+            <li>💾 <strong>Download:</strong> Get both front and back sides in one image</li>
+            <li>🔄 <strong>Flip:</strong> Click the card or flip button to see both sides</li>
+            <li>📱 <strong>QR Code:</strong> Anyone can scan the QR on the back to view your full verified profile</li>
+            <li>🖨️ <strong>Print:</strong> Download and print your ID card for physical use</li>
+          </ul>
         </div>
       </div>
 

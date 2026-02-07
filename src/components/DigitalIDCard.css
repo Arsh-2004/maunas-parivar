@@ -363,6 +363,48 @@
   font-size: 12px;
 }
 
+/* Information Box */
+.id-card-info-box {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px 25px;
+  border-radius: 15px;
+  margin-top: 25px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.id-card-info-box h4 {
+  margin: 0 0 15px 0;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.id-card-info-box ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.id-card-info-box li {
+  margin-bottom: 12px;
+  padding-left: 5px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.id-card-info-box li:last-child {
+  margin-bottom: 0;
+}
+
+.id-card-info-box strong {
+  font-weight: 600;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .digital-id-card-section {
@@ -457,6 +499,20 @@
   .id-card-actions {
     gap: 8px;
   }
+
+  .id-card-info-box {
+    padding: 15px 18px;
+    margin-top: 20px;
+  }
+
+  .id-card-info-box h4 {
+    font-size: 1rem;
+  }
+
+  .id-card-info-box li {
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+  }
 }
 
 /* Print Styles */
@@ -476,7 +532,8 @@
     margin: 0;
   }
   
-  .id-card-actions {
+  .id-card-actions,
+  .id-card-info-box {
     display: none;
   }
   
