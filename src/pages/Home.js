@@ -170,23 +170,50 @@ const Home = () => {
             </div>
             <div className="team-card">
               <div className="team-image">
-                <div className="image-placeholder">👤</div>
+                <img 
+                  src="/assets/national-vice-president.jpeg" 
+                  alt="Vice President"
+                  className="team-photo"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
               </div>
-              <h3>{language === 'en' ? 'Vice President' : 'उपाध्यक्ष'}</h3>
+              <h3 className="member-name">{language === 'en' ? 'Dr J P Singh' : 'डॉ जे पी सिंह'}</h3>
               <p className="designation">{language === 'en' ? 'National Vice President' : 'राष्ट्रीय उपाध्यक्ष'}</p>
             </div>
             <div className="team-card">
               <div className="team-image">
-                <div className="image-placeholder">👤</div>
+                <img 
+                  src="/assets/National Secretary.jpeg" 
+                  alt="General Secretary"
+                  className="team-photo"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
               </div>
-              <h3>{language === 'en' ? 'General Secretary' : 'महासचिव'}</h3>
+              <h3 className="member-name">{language === 'en' ? 'Dr Om Prakash Singh' : 'डॉ ओम प्रकाश सिंह'}</h3>
               <p className="designation">{language === 'en' ? 'National Secretary' : 'राष्ट्रीय सचिव'}</p>
             </div>
             <div className="team-card">
               <div className="team-image">
-                <div className="image-placeholder">👤</div>
+                <img 
+                  src="/assets/National Treasurer.jpeg" 
+                  alt="Treasurer"
+                  className="team-photo"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
               </div>
-              <h3>{language === 'en' ? 'Treasurer' : 'कोषाध्यक्ष'}</h3>
+              <h3 className="member-name">{language === 'en' ? 'Shri Suresh Singh' : 'श्री सुरेश सिंह'}</h3>
               <p className="designation">{language === 'en' ? 'National Treasurer' : 'राष्ट्रीय कोषाध्यक्ष'}</p>
             </div>
           </div>
