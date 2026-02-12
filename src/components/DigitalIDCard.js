@@ -15,7 +15,15 @@ const DigitalIDCard = ({ user }) => {
   const frontendURL = window.location.origin;
   const qrValue = `${frontendURL}/member-profile/${user._id}`;
 
+  // Detect if user is on mobile device
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+           (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+  };
+
   const downloadIDCard = async () => {
+    const isMobile = isMobileDevice();
+    
     try {
       const cardElement = document.querySelector('.id-card-flipper');
       
@@ -23,6 +31,26 @@ const DigitalIDCard = ({ user }) => {
         alert('Card element not found');
         return;
       }
+
+      // Show loading message
+      const loadingMsg = document.createElement('div');
+      loadingMsg.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 20px 40px;
+        border-radius: 10px;
+        z-index: 10000;
+        font-size: 16px;
+        text-align: center;
+      `;
+      loadingMsg.innerHTML = isMobile ? 
+        '⏳ Generating ID Card...<br><small>Please wait</small>' :
+        '⏳ Preparing download...';
+      document.body.appendChild(loadingMsg);
 
       // Create a container for both sides
       const downloadContainer = document.createElement('div');
@@ -109,24 +137,138 @@ const DigitalIDCard = ({ user }) => {
 
       // Remove temporary container
       document.body.removeChild(downloadContainer);
+      document.body.removeChild(loadingMsg);
 
-      // Download the combined image
-      combinedCanvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `Maunas-Parivar-ID-Card-${user.fullName.replace(/\s+/g, '-')}-${user.phone}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        
-        alert('✅ ID Card (both sides) downloaded successfully!');
-      }, 'image/png', 1.0);
+      // Convert canvas to data URL
+      const imageDataUrl = combinedCanvas.toDataURL('image/png', 1.0);
+
+      if (isMobile) {
+        // MOBILE: Open in new tab so user can long-press and save
+        const newWindow = window.open('', '_blank');
+        if (newWindow) {
+          newWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+              <title>Maunas Parivar ID Card - ${user.fullName}</title>
+              <style>
+                body {
+                  margin: 0;
+                  padding: 20px;
+                  background: #f0f0f0;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  font-family: Arial, sans-serif;
+                }
+                .instruction {
+                  background: #4CAF50;
+                  color: white;
+                  padding: 15px 20px;
+                  border-radius: 10px;
+                  margin-bottom: 20px;
+                  text-align: center;
+                  max-width: 90%;
+                  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                }
+                .instruction strong {
+                  display: block;
+                  font-size: 18px;
+                  margin-bottom: 5px;
+                }
+                img {
+                  max-width: 100%;
+                  height: auto;
+                  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+                  border-radius: 10px;
+                  background: white;
+                }
+                .download-btn {
+                  background: #2196F3;
+                  color: white;
+                  border: none;
+                  padding: 15px 30px;
+                  font-size: 16px;
+                  border-radius: 8px;
+                  margin-top: 20px;
+                  cursor: pointer;
+                  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 10px;
+                }
+                .download-btn:active {
+                  transform: scale(0.95);
+                }
+              </style>
+            </head>
+            <body>
+              <div class="instruction">
+                <strong>📱 How to Save:</strong>
+                Long press (tap and hold) on the image below, then select "Save Image" or "Download Image"
+              </div>
+              <img src="${imageDataUrl}" alt="Maunas Parivar ID Card - ${user.fullName}" />
+              <button class="download-btn" onclick="tryDownload()">
+                <span>📥</span>
+                <span>Download Image</span>
+              </button>
+              <script>
+                function tryDownload() {
+                  const link = document.createElement('a');
+                  link.href = "${imageDataUrl}";
+                  link.download = "Maunas-Parivar-ID-Card-${user.fullName.replace(/\s+/g, '-')}-${user.phone}.png";
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }
+              </script>
+            </body>
+            </html>
+          `);
+          newWindow.document.close();
+          
+          // Show success message
+          setTimeout(() => {
+            alert('✅ ID Card opened in new tab!\n\nTo save:\n1. Long press the image\n2. Select "Save Image" or "Download Image"\n\nOR tap the Download button at the bottom.');
+          }, 500);
+        } else {
+          // Popup blocked - try alternative
+          alert('⚠️ Please allow popups for this site.\n\nAlternatively, try downloading from a desktop browser.');
+        }
+      } else {
+        // DESKTOP: Direct download
+        combinedCanvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `Maunas-Parivar-ID-Card-${user.fullName.replace(/\s+/g, '-')}-${user.phone}.png`;
+          document.body.appendChild(link);
+          link.click();
+          
+          // Cleanup
+          setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          }, 100);
+          
+          alert('✅ ID Card downloaded successfully!');
+        }, 'image/png', 1.0);
+      }
 
     } catch (error) {
       console.error('Download error:', error);
-      alert('Unable to download ID card. Please try again.');
+      // Remove loading message if exists
+      const loadingMsg = document.querySelector('div[style*="position: fixed"]');
+      if (loadingMsg && loadingMsg.parentNode) {
+        loadingMsg.parentNode.removeChild(loadingMsg);
+      }
+      
+      if (isMobile) {
+        alert('❌ Unable to generate ID card.\n\nPlease try:\n1. Refreshing the page\n2. Using a different browser\n3. Checking your internet connection');
+      } else {
+        alert('❌ Unable to download ID card. Please try again or contact support.');
+      }
     }
   };
 
@@ -262,8 +404,13 @@ const DigitalIDCard = ({ user }) => {
             <button 
               onClick={downloadIDCard}
               className="id-btn id-btn-download"
+              title={/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 
+                "Will open in new tab - Long press image to save" : 
+                "Download both sides of your ID card"}
             >
-              <span>📥</span> Download Both Sides
+              <span>📥</span> {/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 
+                'Get ID Card (Mobile)' : 
+                'Download Both Sides'}
             </button>
           )}
         </div>
@@ -271,7 +418,9 @@ const DigitalIDCard = ({ user }) => {
         <div className="id-card-info-box">
           <h4>ℹ️ How to Use Your ID Card:</h4>
           <ul>
-            <li>💾 <strong>Download:</strong> Get both front and back sides in one image</li>
+            <li>💾 <strong>Download:</strong> {/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 
+              'Tap button to open in new tab, then long-press image and select "Save Image"' : 
+              'Get both front and back sides in one image'}</li>
             <li>🔄 <strong>Flip:</strong> Click the card or flip button to see both sides</li>
             <li>📱 <strong>QR Code:</strong> Anyone can scan the QR on the back to view your full verified profile</li>
             <li>🖨️ <strong>Print:</strong> Download and print your ID card for physical use</li>

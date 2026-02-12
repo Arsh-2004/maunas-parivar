@@ -109,11 +109,11 @@ const Community = () => {
         </div>
       </section>
 
-      {/* Upadharak (Titles & Rankings) Section */}
+      {/* Upadhidhaarak (Titles & Rankings) Section */}
       <section className="upadhi-section">
         <div className="container">
           <div className="section-header">
-            <h2>{language === 'en' ? 'Upadharak' : 'उपाधारक'}</h2>
+            <h2>{language === 'en' ? 'Upadhidhaarak' : 'उपाधिधारक'}</h2>
             <div className="underline"></div>
           </div>
           <div className="upadhi-grid">

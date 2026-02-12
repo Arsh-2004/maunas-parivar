@@ -630,6 +630,58 @@
   }
 }
 
+/* Mobile Touch Optimizations */
+@media (max-width: 768px) {
+  .id-btn {
+    min-height: 48px; /* Better touch target */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    touch-action: manipulation;
+  }
+
+  .id-btn:active {
+    transform: scale(0.96);
+  }
+
+  .id-card-flipper {
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+  }
+
+  /* Prevent text selection on mobile during flip */
+  .id-card-flipper * {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Better button spacing on mobile */
+  .id-card-actions {
+    gap: 15px;
+  }
+
+  /* Larger flip hint for mobile */
+  .id-card-flip-hint {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  /* Info box more prominent on mobile */
+  .id-card-info-box {
+    border-left: 4px solid #4CAF50;
+  }
+}
+
+/* Landscape mode on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .digital-id-card-section {
+    padding: 20px;
+    margin: 20px auto;
+  }
+
+  .id-card-container {
+    max-width: 90%;
+  }
+}
+
 /* Print Styles */
 @media print {
   body {
