@@ -400,19 +400,17 @@ const DigitalIDCard = ({ user }) => {
           >
             <span>🔄</span> Flip Card
           </button>
-          {user.idCardPath && (
-            <button 
-              onClick={downloadIDCard}
-              className="id-btn id-btn-download"
-              title={/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 
-                "Will open in new tab - Long press image to save" : 
-                "Download both sides of your ID card"}
-            >
-              <span>📥</span> {/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 
-                'Get ID Card (Mobile)' : 
-                'Download Both Sides'}
-            </button>
-          )}
+          <button 
+            onClick={downloadIDCard}
+            className="id-btn id-btn-download"
+            title={/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 
+              "Will open in new tab - Long press image to save" : 
+              "Download both sides of your ID card"}
+          >
+            <span>📥</span> {/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 
+              'Get ID Card (Mobile)' : 
+              'Download Both Sides'}
+          </button>
         </div>
 
         <div className="id-card-info-box">
