@@ -216,6 +216,38 @@ const Home = () => {
               <h3 className="member-name">{language === 'en' ? 'Shri Suresh Singh Ji' : 'श्री सुरेश सिंह जी'}</h3>
               <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
             </div>
+            <div className="team-card">
+              <div className="team-image">
+                <img 
+                  src="/assets/ashishsingh.jpeg" 
+                  alt="Ashish Singh"
+                  className="team-photo"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
+              </div>
+              <h3 className="member-name">{language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Bhadohi' : 'भदोही'}</p>
+            </div>
+            <div className="team-card">
+              <div className="team-image">
+                <img 
+                  src="/assets/shailendra.jpeg" 
+                  alt="Shailendra Pratap Singh"
+                  className="team-photo"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
+              </div>
+              <h3 className="member-name">{language === 'en' ? 'Shri Shailendra Pratap Singh Ji' : 'श्री शैलेन्द्र प्रताप सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
+            </div>
           </div>
           <div className="text-center" style={{ marginTop: '30px' }}>
             <Link to="/community" className="btn btn-primary">{language === 'en' ? 'View All Members' : 'सभी सदस्यों को देखें'}</Link>

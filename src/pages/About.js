@@ -8,6 +8,58 @@ const About = () => {
   const [committeeMembers, setCommitteeMembers] = useState({});
   const [loading, setLoading] = useState(false);
 
+  // Function to get static members for Prabandhan Committee based on language
+  const getPrabandhanMembers = () => [
+    {
+      _id: '1',
+      fullName: language === 'en' ? 'Shri Ravi Kumar Singh Ji' : 'श्री रवि कुमार सिंह जी',
+      position: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      city: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/national-president.jpeg'
+    },
+    {
+      _id: '2',
+      fullName: language === 'en' ? 'Dr J P Singh Ji' : 'डॉ जे पी सिंह जी',
+      position: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      city: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/national-vice-president.jpeg'
+    },
+    {
+      _id: '3',
+      fullName: language === 'en' ? 'Dr Om Prakash Singh Ji' : 'डॉ ओम प्रकाश सिंह जी',
+      position: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      city: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/National Secretary.jpeg'
+    },
+    {
+      _id: '4',
+      fullName: language === 'en' ? 'Shri Suresh Singh Ji' : 'श्री सुरेश सिंह जी',
+      position: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      city: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/National Treasurer.jpeg'
+    },
+    {
+      _id: '5',
+      fullName: language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी',
+      position: language === 'en' ? 'Bhadohi' : 'भदोही',
+      city: language === 'en' ? 'Bhadohi' : 'भदोही',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/ashishsingh.jpeg'
+    },
+    {
+      _id: '6',
+      fullName: language === 'en' ? 'Shri Shailendra Pratap Singh Ji' : 'श्री शैलेन्द्र प्रताप सिंह जी',
+      position: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      city: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/shailendra.jpeg'
+    }
+  ];
+
   const committees = [
     {
       id: 'sanrakshak',
@@ -36,11 +88,22 @@ const About = () => {
     if (selectedCommittee) {
       fetchCommitteeMembers(selectedCommittee);
     }
-  }, [selectedCommittee]);
+  }, [selectedCommittee, language]);
 
   const fetchCommitteeMembers = async (committeeId) => {
     try {
       setLoading(true);
+      
+      // For prabandhan committee, use static members
+      if (committeeId === 'prabandhan') {
+        setCommitteeMembers(prev => ({
+          ...prev,
+          [committeeId]: getPrabandhanMembers()
+        }));
+        setLoading(false);
+        return;
+      }
+      
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/committee-members/${committeeId}`);
       const data = await response.json();
       
@@ -58,10 +121,19 @@ const About = () => {
       }
     } catch (error) {
       console.error('Error fetching committee members:', error);
-      setCommitteeMembers(prev => ({
-        ...prev,
-        [committeeId]: []
-      }));
+      
+      // For prabandhan committee, use static members even on error
+      if (committeeId === 'prabandhan') {
+        setCommitteeMembers(prev => ({
+          ...prev,
+          [committeeId]: getPrabandhanMembers()
+        }));
+      } else {
+        setCommitteeMembers(prev => ({
+          ...prev,
+          [committeeId]: []
+        }));
+      }
     } finally {
       setLoading(false);
     }
