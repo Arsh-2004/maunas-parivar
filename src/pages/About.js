@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import './About.css';
 
@@ -84,13 +84,7 @@ const About = () => {
     }
   ];
 
-  useEffect(() => {
-    if (selectedCommittee) {
-      fetchCommitteeMembers(selectedCommittee);
-    }
-  }, [selectedCommittee, language]);
-
-  const fetchCommitteeMembers = async (committeeId) => {
+  const fetchCommitteeMembers = useCallback(async (committeeId) => {
     try {
       setLoading(true);
       
@@ -137,7 +131,13 @@ const About = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [language]);
+
+  useEffect(() => {
+    if (selectedCommittee) {
+      fetchCommitteeMembers(selectedCommittee);
+    }
+  }, [selectedCommittee, fetchCommitteeMembers]);
 
   return (
     <div className="about-page">
