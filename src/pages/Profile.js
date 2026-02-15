@@ -430,14 +430,6 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Digital ID Card Component */}
-            {user.status === 'approved' && (
-              <div className="digital-id-card-section">
-                <h3>{language === 'en' ? '📱 Digital ID Card' : '📱 डिजिटल आईडी कार्ड'}</h3>
-                <DigitalIDCard user={user} />
-              </div>
-            )}
-
             <button className="edit-btn" onClick={() => {
               // Reset form data with current user data when entering edit mode
               setFormData({

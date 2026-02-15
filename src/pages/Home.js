@@ -148,7 +148,7 @@ const Home = () => {
       <section className="team-section">
         <div className="container">
           <div className="section-header">
-            <h2>{language === 'en' ? 'Our Leadership' : 'हमारी नेतृत्व'}</h2>
+            <h2>{language === 'en' ? 'Management Committee' : 'प्रबन्धन कमेटी'}</h2>
             <div className="underline"></div>
           </div>
           <div className="team-grid">
@@ -165,8 +165,8 @@ const Home = () => {
                 />
                 <div className="image-placeholder" style={{display: 'none'}}>👤</div>
               </div>
-              <h3 className="member-name">{language === 'en' ? 'Ravi Singh' : 'रवि सिंह'}</h3>
-              <p className="designation">{language === 'en' ? 'National President' : 'राष्ट्रीय अध्यक्ष'}</p>
+              <h3 className="member-name">{language === 'en' ? 'Shri Ravi Kumar Singh Ji' : 'श्री रवि कुमार सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
             </div>
             <div className="team-card">
               <div className="team-image">
@@ -181,8 +181,8 @@ const Home = () => {
                 />
                 <div className="image-placeholder" style={{display: 'none'}}>👤</div>
               </div>
-              <h3 className="member-name">{language === 'en' ? 'Dr J P Singh' : 'डॉ जे पी सिंह'}</h3>
-              <p className="designation">{language === 'en' ? 'National Vice President' : 'राष्ट्रीय उपाध्यक्ष'}</p>
+              <h3 className="member-name">{language === 'en' ? 'Dr J P Singh Ji' : 'डॉ जे पी सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
             </div>
             <div className="team-card">
               <div className="team-image">
@@ -197,8 +197,8 @@ const Home = () => {
                 />
                 <div className="image-placeholder" style={{display: 'none'}}>👤</div>
               </div>
-              <h3 className="member-name">{language === 'en' ? 'Dr Om Prakash Singh' : 'डॉ ओम प्रकाश सिंह'}</h3>
-              <p className="designation">{language === 'en' ? 'National Secretary' : 'राष्ट्रीय सचिव'}</p>
+              <h3 className="member-name">{language === 'en' ? 'Dr Om Prakash Singh Ji' : 'डॉ ओम प्रकाश सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
             </div>
             <div className="team-card">
               <div className="team-image">
@@ -213,8 +213,8 @@ const Home = () => {
                 />
                 <div className="image-placeholder" style={{display: 'none'}}>👤</div>
               </div>
-              <h3 className="member-name">{language === 'en' ? 'Shri Suresh Singh' : 'श्री सुरेश सिंह'}</h3>
-              <p className="designation">{language === 'en' ? 'National Treasurer' : 'राष्ट्रीय कोषाध्यक्ष'}</p>
+              <h3 className="member-name">{language === 'en' ? 'Shri Suresh Singh Ji' : 'श्री सुरेश सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
             </div>
           </div>
           <div className="text-center" style={{ marginTop: '30px' }}>

@@ -4,7 +4,7 @@
   width: 100%;
   max-width: 600px;
   margin: 40px auto;
-  padding: 30px;
+  padding: 30px 30px 50px 30px;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
@@ -70,6 +70,13 @@
   cursor: pointer;
   border-radius: 15px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .id-card-flipper {
+    min-height: 320px;
+    max-height: 380px;
+  }
 }
 
 .id-card-flipper.flipped {
@@ -312,7 +319,8 @@
 .id-card-actions {
   display: flex;
   gap: 12px;
-  margin-top: 25px;
+  margin-top: 30px;
+  margin-bottom: 20px;
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -436,8 +444,8 @@
 
   .id-member-photo,
   .id-photo-placeholder {
-    width: 80px;
-    height: 100px;
+    width: 60px;
+    height: 75px;
   }
 
   .id-detail-row,
@@ -463,57 +471,97 @@
 
 @media (max-width: 480px) {
   .digital-id-card-section {
-    padding: 12px;
-    margin: 15px 8px;
+    padding: 8px;
+    margin: 8px;
     border-radius: 12px;
   }
 
   .id-card-flipper {
-    min-height: 380px;
+    min-height: 250px;
+    max-height: 300px;
     height: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transform-style: flat !important;
+    perspective: none !important;
+  }
+
+  .id-card-flipper.flipped {
+    transform: none !important;
+  }
+
+  .id-card-face {
+    position: relative !important;
+    backface-visibility: visible !important;
+  }
+
+  .id-card-back-face {
+    transform: none !important;
+    display: none;
+  }
+
+  .id-card-flipper.flipped .id-card-front-face {
+    display: none;
+  }
+
+  .id-card-flipper.flipped .id-card-back-face {
+    display: block;
   }
 
   .id-card-content-front,
   .id-card-content-back {
-    padding: 15px;
+    padding: 8px;
+  }
+
+  .id-card-header-section {
+    margin-bottom: 8px;
   }
 
   .id-card-main-title {
-    font-size: 18px;
-    gap: 6px;
+    font-size: 14px;
+    margin-bottom: 3px;
+    gap: 4px;
   }
 
   .id-icon {
-    font-size: 22px;
+    font-size: 16px;
   }
 
   .id-org-name {
-    font-size: 18px;
+    font-size: 14px;
   }
 
   .id-org-subtitle {
-    font-size: 11px;
+    font-size: 9px;
+  }
+
+  .id-card-type-label {
+    font-size: 8px;
   }
 
   .id-member-photo,
   .id-photo-placeholder {
-    width: 70px;
-    height: 90px;
+    width: 50px;
+    height: 65px;
   }
 
   .id-detail-row,
   .id-back-detail-row {
-    font-size: 9.5px;
-    padding: 5px 7px;
+    font-size: 8px;
+    padding: 4px 6px;
+    margin: 2px 0;
   }
 
   .id-detail-label {
-    font-size: 8.5px;
+    font-size: 7px;
   }
 
   .id-detail-value {
-    font-size: 9.5px;
+    font-size: 8px;
+  }
+
+  .id-card-flip-hint {
+    font-size: 9px;
+    margin-top: 5px;
   }
 
   .id-btn {
@@ -524,24 +572,35 @@
   .id-card-actions {
     gap: 10px;
     flex-direction: column;
+    margin-top: 12px;
+    margin-bottom: 5px;
+    background: rgba(255, 255, 255, 0.98);
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   }
 
   .id-card-actions .id-btn {
     width: 100%;
+    padding: 18px 20px;
+    font-size: 16px;
+    font-weight: 800;
   }
 
+  .id-btn-download {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5) !important;
+    animation: glow 2s infinite;
+  }
+
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5); }
+    50% { box-shadow: 0 8px 30px rgba(16, 185, 129, 0.8); }
+  }
+
+  /* Hide info box on mobile to save space */
   .id-card-info-box {
-    padding: 15px 18px;
-    margin-top: 20px;
-  }
-
-  .id-card-info-box h4 {
-    font-size: 1rem;
-  }
-
-  .id-card-info-box li {
-    font-size: 0.85rem;
-    margin-bottom: 10px;
+    display: none !important;
   }
 
   .id-qr-container svg {
@@ -613,8 +672,21 @@
   }
 
   .id-qr-container svg {
-    width: 80px !important;
-    height: 80px !important;
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  .id-qr-text {
+    font-size: 8px;
+  }
+
+  .id-back-header h4 {
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+
+  .id-back-header p {
+    font-size: 8px;
   }
 
   .id-card-info-box {
@@ -662,6 +734,14 @@
   .id-card-flip-hint {
     font-size: 12px;
     padding: 8px;
+  }
+
+  /* Mobile download button on card */
+  .id-btn-overlay-download {
+    font-size: 15px;
+    padding: 14px 20px;
+    min-height: 48px;
+    font-weight: 800;
   }
 
   /* Info box more prominent on mobile */

@@ -421,7 +421,6 @@ const DigitalIDCard = ({ user }) => {
               'Get both front and back sides in one image'}</li>
             <li>🔄 <strong>Flip:</strong> Click the card or flip button to see both sides</li>
             <li>📱 <strong>QR Code:</strong> Anyone can scan the QR on the back to view your full verified profile</li>
-            <li>🖨️ <strong>Print:</strong> Download and print your ID card for physical use</li>
           </ul>
         </div>
       </div>
