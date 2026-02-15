@@ -131,7 +131,7 @@ const About = () => {
     } finally {
       setLoading(false);
     }
-  }, [language]);
+  }, [language, getPrabandhanMembers]);
 
   useEffect(() => {
     if (selectedCommittee) {
