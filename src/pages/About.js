@@ -9,7 +9,7 @@ const About = () => {
   const [loading, setLoading] = useState(false);
 
   // Function to get static members for Prabandhan Committee based on language
-  const getPrabandhanMembers = () => [
+  const getPrabandhanMembers = useCallback(() => [
     {
       _id: '1',
       fullName: language === 'en' ? 'Shri Ravi Kumar Singh Ji' : 'श्री रवि कुमार सिंह जी',
@@ -58,7 +58,7 @@ const About = () => {
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/shailendra.jpeg'
     }
-  ];
+  ], [language]);
 
   const committees = [
     {
@@ -131,7 +131,7 @@ const About = () => {
     } finally {
       setLoading(false);
     }
-  }, [language, getPrabandhanMembers]);
+  }, [getPrabandhanMembers]);
 
   useEffect(() => {
     if (selectedCommittee) {
