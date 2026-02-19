@@ -44,19 +44,19 @@ const About = () => {
     },
     {
       _id: '5',
-      fullName: language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी',
-      position: language === 'en' ? 'Bhadohi' : 'भदोही',
-      city: language === 'en' ? 'Bhadohi' : 'भदोही',
-      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
-      photoPath: '/assets/ashishsingh.jpeg'
-    },
-    {
-      _id: '6',
       fullName: language === 'en' ? 'Shri Shailendra Pratap Singh Ji' : 'श्री शैलेन्द्र प्रताप सिंह जी',
       position: language === 'en' ? 'Varanasi' : 'वाराणसी',
       city: language === 'en' ? 'Varanasi' : 'वाराणसी',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/shailendra.jpeg'
+    },
+    {
+      _id: '6',
+      fullName: language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी',
+      position: language === 'en' ? 'Bhadohi' : 'भदोही',
+      city: language === 'en' ? 'Bhadohi' : 'भदोही',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/ashishsingh.jpeg'
     }
   ], [language]);
 
@@ -187,8 +187,8 @@ const About = () => {
               <h3>{language === 'en' ? 'Maunas Kshatriya Traditions' : 'मौनस क्षत्रियों की परंपरा'}</h3>
               <p>
                 {language === 'en'
-                  ? 'The Kshatriya Maunas community has a glorious and prestigious history rooted in centuries-old traditions. Known for valor, administrative skills, and dedication to protecting righteousness, Maunas Kshatriyas have played significant roles in various kingdoms and regions throughout Indian history.'
-                  : 'क्षत्रिय मौनस वंश का एक गौरवशाली और प्रतिष्ठित इतिहास है जो सदियों पुरानी परंपराओं में निहित है। वीरता, प्रशासनिक कौशल और धर्म की रक्षा के लिए समर्पण के लिए जाने जाते हैं, मौनस क्षत्रियों ने भारतीय इतिहास में विभिन्न राज्यों और क्षेत्रों में महत्वपूर्ण भूमिका निभाई है, जो भारतीय इतिहास में दर्ज है।'}
+                  ? 'The Kshatriya clan of the Monas has a glorious and distinguished history, rooted in Jesus Christ. They are known for their bravery, prowess, protection of religion, and charity. Monas Kshatriyas have played a significant role in various kingdoms and regions throughout Indian history, which are recorded in Indian history.'
+                  : 'क्षत्रिय मौनस वंश का एक गौरवशाली और प्रतिष्ठित इतिहास है जो सदियों पुरानी परंपराओं में निहित है। वीरता, प्रशासनिक कौशल, धर्म की रक्षा और समर्पण के लिए जाने जाते हैं। मौनस क्षत्रियों ने भारतीय इतिहास में विभिन्न राज्यों और क्षेत्रों में महत्वपूर्ण भूमिका निभाई है, जो भारतीय इतिहास में दर्ज है।'}
               </p>
               <p>
                 {language === 'en'

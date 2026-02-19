@@ -193,6 +193,17 @@ const Community = () => {
       prakosth: 'व्यापार प्रकोष्ठ',
       photoPath: null,
       registeredAt: new Date('2024-03-01')
+    },
+    {
+      _id: 'prakosth-khel-1',
+      fullName: language === 'en' ? 'Shri Yajuvendra Singh Ji' : 'श्री यजुवेंद्र सिंह जी',
+      city: language === 'en' ? 'Gajadharppur' : 'गजाधरपुर',
+      state: language === 'en' ? 'Bhadohi' : 'भदोही',
+      occupation: language === 'en' ? 'Sports & Military Cell Member' : 'खेल एवं सैनिक प्रकोष्ठ सदस्य',
+      membershipTier: 'silver',
+      prakosth: 'खेल एवं सैनिक प्रकोष्ठ',
+      photoPath: '/assets/श्री यजुवेंद्र सिंह जी.jpeg',
+      registeredAt: new Date('2026-02-19')
     }
   ];
 
@@ -275,7 +286,6 @@ const Community = () => {
                   <div className="image-placeholder">{prakosth.icon}</div>
                 </div>
                 <div className="member-info">
-                  <h3>{prakosth.name}</h3>
                   <p className="member-position">{prakosth.title}</p>
                 </div>
               </div>
@@ -301,36 +311,41 @@ const Community = () => {
                 prakosthMembers.map((member) => (
                   <div 
                     key={member._id} 
-                    className={`membership-card ${member.membershipTier || 'silver'}`}
-                    style={{ borderColor: getTierColor(member.membershipTier || 'silver') }}
+                    style={{
+                      background: 'white',
+                      borderRadius: '16px',
+                      boxShadow: '0 4px 18px rgba(0,0,0,0.10)',
+                      padding: '18px 18px 20px',
+                      textAlign: 'center',
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                    }}
                   >
-                    <div className="tier-badge" style={{ background: getTierColor(member.membershipTier || 'silver') }}>
-                      {getTierIcon(member.membershipTier || 'silver')} {(member.membershipTier || 'silver').toUpperCase()}
-                    </div>
-                    
                     {member.photoPath ? (
                       <img 
                         src={member.photoPath} 
                         alt={member.fullName}
-                        className="member-photo"
+                        style={{
+                          width: '100%',
+                          height: '350px',
+                          objectFit: 'cover',
+                          objectPosition: 'center center',
+                          borderRadius: '12px',
+                          border: '3px solid #FF6B35',
+                          display: 'block',
+                        }}
                       />
                     ) : (
-                      <div className="member-photo-placeholder">
-                        <span style={{ fontSize: '4rem' }}>👤</span>
-                      </div>
+                      <div style={{
+                        width: '100%', height: '220px', borderRadius: '12px',
+                        border: '3px solid #FF6B35',
+                        background: 'linear-gradient(135deg, #FF6B35, #F7931E)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '4rem'
+                      }}>👤</div>
                     )}
-                    
-                    <div className="member-info">
-                      <h3>{member.fullName}</h3>
-                      <p className="member-city">📍 {member.city}, {member.state}</p>
-                      <p className="member-occupation">💼 {member.occupation}</p>
-                      {member.education && (
-                        <p className="member-education">🎓 {member.education}</p>
-                      )}
-                    </div>
-                    
-                    <div className="member-footer">
-                      <span>{language === 'en' ? 'Member since' : 'सदस्य बने'} {new Date(member.registeredAt).getFullYear()}</span>
+                    <div style={{ paddingTop: '14px' }}>
+                      <h3 style={{ margin: '0 0 5px', fontSize: '1.05rem', color: '#222', fontWeight: 700 }}>{member.fullName}</h3>
+                      <p style={{ margin: 0, fontSize: '0.92rem', color: '#FF6B35', fontWeight: 600 }}>{member.city}, {member.state}</p>
                     </div>
                   </div>
                 ))

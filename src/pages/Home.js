@@ -103,7 +103,7 @@ const Home = () => {
       <section className="activities-section">
         <div className="container">
           <div className="section-header">
-            <h2>{language === 'en' ? 'Recent Activities' : 'हाल की गतिविधियां'}</h2>
+            <h2>{language === 'en' ? 'Recent Activities' : 'हमारी गतिविधियां'}</h2>
             <div className="underline"></div>
           </div>
           <div className="activities-grid">
@@ -113,8 +113,8 @@ const Home = () => {
               </div>
               <div className="activity-content">
                 <h3>{language === 'en' ? 'Community Gathering' : 'सामुदायिक समारोह'}</h3>
-                <p className="date">{language === 'en' ? 'November 15, 2024' : '15 नवंबर, 2024'}</p>
-                <p>{language === 'en' ? 'Our annual community gathering was successfully organized with participation from over 500 members.' : '500 से अधिक सदस्यों की भागीदारी के साथ हमारा वार्षिक सामुदायिक समारोह सफलतापूर्वक आयोजित किया गया।'}</p>
+                {/* <p className="date">{language === 'en' ? 'November 15, 2024' : '15 नवंबर, 2024'}</p> */}
+                <p>{language === 'en' ? 'Organizing community celebrations for the participation of every member of your clan and for the development of the clan.' : 'अपने वंश के प्रत्येक सदस्यों की भागीदारी एवं कुल के विकास हेतु सामुदायिक समारोह का आयोजन करना।'}</p>
               </div>
             </div>
             <div className="activity-card">
@@ -123,8 +123,8 @@ const Home = () => {
               </div>
               <div className="activity-content">
                 <h3>{language === 'en' ? 'Award Distribution' : 'मेधावी सम्मान'}</h3>
-                <p className="date">{language === 'en' ? 'October 20, 2024' : '20 अक्टूबर, 2024'}</p>
-                <p>{language === 'en' ? 'Awards were distributed to 50 meritorious students from our community.' : 'हमारे समुदाय से 50 मेधावी छात्रों को पुरस्कार वितरित किए गए।'}</p>
+                {/* <p className="date">{language === 'en' ? 'October 20, 2024' : '20 अक्टूबर, 2024'}</p> */}
+                <p>{language === 'en' ? 'To encourage meritorious students, prizes were distributed to 15 meritorious Kshatriya students by our community.' : 'मेधावी छात्रों के प्रोत्साहन हेतु हमारे समुदाय द्वारा 15 मेधावी क्षत्रिय छात्रों को पुरस्कार वितरित किया गया।'}</p>
               </div>
             </div>
             <div className="activity-card">
@@ -132,9 +132,9 @@ const Home = () => {
                 <div className="image-placeholder">🎉</div>
               </div>
               <div className="activity-content">
-                <h3>{language === 'en' ? 'Cultural Festival' : 'सांस्कृतिक समारोह'}</h3>
-                <p className="date">{language === 'en' ? 'September 10, 2024' : '10 सितंबर, 2024'}</p>
-                <p>{language === 'en' ? 'A celebration of our heritage with traditional performances, exhibitions, and community bonding.' : 'पारंपरिक प्रदर्शन, प्रदर्शनियों और सामुदायिक बंधन के साथ हमारी विरासत का उत्सव।'}</p>
+                <h3>{language === 'en' ? 'Our programs' : 'हमारे कार्यक्रम'}</h3>
+                {/* <p className="date">{language === 'en' ? 'September 10, 2024' : '10 सितंबर, 2024'}</p> */}
+                <p>{language === 'en' ? 'To promote mutual brotherhood and cooperation, organize Monus Family Meet program at different places every month.' : 'आपसी भाईचारा एवं परस्पर सहयोग बढ़ाने हेतु प्रत्येक माह स्थान - स्थान पर मौनस परिवार मिलन कार्यक्रम का आयोजन करना।'}</p>
               </div>
             </div>
           </div>
@@ -148,7 +148,7 @@ const Home = () => {
       <section className="team-section">
         <div className="container">
           <div className="section-header">
-            <h2>{language === 'en' ? 'Management Committee' : 'प्रबन्धन कमेटी'}</h2>
+            <h2>{language === 'en' ? 'Main Management Committee' : 'मुख्य प्रबंधन कमेटी'}</h2>
             <div className="underline"></div>
           </div>
           <div className="team-grid">
@@ -219,22 +219,6 @@ const Home = () => {
             <div className="team-card">
               <div className="team-image">
                 <img 
-                  src="/assets/ashishsingh.jpeg" 
-                  alt="Ashish Singh"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Bhadohi' : 'भदोही'}</p>
-            </div>
-            <div className="team-card">
-              <div className="team-image">
-                <img 
                   src="/assets/shailendra.jpeg" 
                   alt="Shailendra Pratap Singh"
                   className="team-photo"
@@ -247,6 +231,22 @@ const Home = () => {
               </div>
               <h3 className="member-name">{language === 'en' ? 'Shri Shailendra Pratap Singh Ji' : 'श्री शैलेन्द्र प्रताप सिंह जी'}</h3>
               <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
+            </div>
+            <div className="team-card">
+              <div className="team-image">
+                <img 
+                  src="/assets/ashishsingh.jpeg" 
+                  alt="Ashish Singh"
+                  className="team-photo"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
+              </div>
+              <h3 className="member-name">{language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Bhadohi' : 'भदोही'}</p>
             </div>
           </div>
           <div className="text-center" style={{ marginTop: '30px' }}>

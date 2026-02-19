@@ -93,7 +93,7 @@ export const translations = {
     // Community Page
     community: {
       title: 'हमारा समुदाय',
-      subtitle: 'विरासत में एकता | एक साथ मजबूत',
+      subtitle: 'एक बने नेक बने । साथ दें सहयोग करें',
       managementTeam: 'प्रबंधन दल',
       memberDirectory: 'सदस्य निर्देशिका',
       stats: {
