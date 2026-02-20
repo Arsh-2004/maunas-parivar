@@ -57,6 +57,60 @@ const About = () => {
       city: language === 'en' ? 'Bhadohi' : 'भदोही',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/ashishsingh.jpeg'
+    },
+    {
+      _id: '7',
+      fullName: language === 'en' ? 'Shri Rajan Singh Ji' : 'श्री राजन सिंह जी',
+      position: language === 'en' ? 'Gird Badgaon Bhadohi' : 'गिर्द बड़गांव भदोही',
+      city: language === 'en' ? 'Bhadohi' : 'भदोही',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/rajan-singh.jpeg'
+    },
+    {
+      _id: '8',
+      fullName: language === 'en' ? 'Shri Rohit Singh Ji' : 'श्री रोहित सिंह जी',
+      position: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      city: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/rohit-singh.jpeg'
+    }
+  ], [language]);
+
+  const getSanchalanMembers = useCallback(() => [
+    {
+      _id: 's1',
+      fullName: language === 'en' ? 'Shri Ravindra Singh Ji' : 'श्री रविंद्र सिंह जी',
+      position: language === 'en' ? 'Dwariyapur Bhadohi' : 'द्वारिकापुर भदोही',
+      city: language === 'en' ? 'Bhadohi' : 'भदोही',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/ravindra-singh.jpeg'
+    },
+    {
+      _id: 's2',
+      fullName: language === 'en' ? 'Shri Manoj Kumar Singh Ji' : 'श्री मनोज कुमार सिंह जी',
+      position: language === 'en' ? 'Ajaypur Bhadohi' : 'अजयपुर भदोही',
+      city: language === 'en' ? 'Bhadohi' : 'भदोही',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/manoj-kumar-singh.jpeg'
+    },
+    {
+      _id: 's3',
+      fullName: language === 'en' ? 'Shri Shiv Shankar Singh Ji' : 'श्री शिव शंकर सिंह जी',
+      position: language === 'en' ? 'Modh Bhadohi' : 'मोढ़ भदोही',
+      city: language === 'en' ? 'Bhadohi' : 'भदोही',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/shiv-shankar-singh.jpeg'
+    }
+  ], [language]);
+
+  const getSanrakshakMembers = useCallback(() => [
+    {
+      _id: 'snr1',
+      fullName: language === 'en' ? 'Shri Sukhraj Singh Ji' : 'श्री सुखराज सिंह जी',
+      position: language === 'en' ? 'Girdkot Prayagraj' : 'गिर्दकोट प्रयागराज',
+      city: language === 'en' ? 'Prayagraj' : 'प्रयागराज',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/sukhraj-singh.jpeg'
     }
   ], [language]);
 
@@ -97,6 +151,26 @@ const About = () => {
         setLoading(false);
         return;
       }
+
+      // For sanchalan committee, use static members
+      if (committeeId === 'sanchalan') {
+        setCommitteeMembers(prev => ({
+          ...prev,
+          [committeeId]: getSanchalanMembers()
+        }));
+        setLoading(false);
+        return;
+      }
+
+      // For sanrakshak committee, use static members
+      if (committeeId === 'sanrakshak') {
+        setCommitteeMembers(prev => ({
+          ...prev,
+          [committeeId]: getSanrakshakMembers()
+        }));
+        setLoading(false);
+        return;
+      }
       
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/committee-members/${committeeId}`);
       const data = await response.json();
@@ -122,6 +196,16 @@ const About = () => {
           ...prev,
           [committeeId]: getPrabandhanMembers()
         }));
+      } else if (committeeId === 'sanchalan') {
+        setCommitteeMembers(prev => ({
+          ...prev,
+          [committeeId]: getSanchalanMembers()
+        }));
+      } else if (committeeId === 'sanrakshak') {
+        setCommitteeMembers(prev => ({
+          ...prev,
+          [committeeId]: getSanrakshakMembers()
+        }));
       } else {
         setCommitteeMembers(prev => ({
           ...prev,
@@ -131,7 +215,7 @@ const About = () => {
     } finally {
       setLoading(false);
     }
-  }, [getPrabandhanMembers]);
+  }, [getPrabandhanMembers, getSanchalanMembers, getSanrakshakMembers]);
 
   useEffect(() => {
     if (selectedCommittee) {
@@ -187,8 +271,8 @@ const About = () => {
               <h3>{language === 'en' ? 'Maunas Kshatriya Traditions' : 'मौनस क्षत्रियों की परंपरा'}</h3>
               <p>
                 {language === 'en'
-                  ? 'The Kshatriya clan of the Monas has a glorious and distinguished history, rooted in Jesus Christ. They are known for their bravery, prowess, protection of religion, and charity. Monas Kshatriyas have played a significant role in various kingdoms and regions throughout Indian history, which are recorded in Indian history.'
-                  : 'क्षत्रिय मौनस वंश का एक गौरवशाली और प्रतिष्ठित इतिहास है जो सदियों पुरानी परंपराओं में निहित है। वीरता, प्रशासनिक कौशल, धर्म की रक्षा और समर्पण के लिए जाने जाते हैं। मौनस क्षत्रियों ने भारतीय इतिहास में विभिन्न राज्यों और क्षेत्रों में महत्वपूर्ण भूमिका निभाई है, जो भारतीय इतिहास में दर्ज है।'}
+                  ? 'The Kshatriya Monas clan has a proud and prestigious history rooted in centuries-old traditions. Our descendants are known for their bravery, administrative skills, devotion to Dharma, and dedication. Monas Kshatriyas have played a significant role in various states and regions throughout Indian history, a role that is recorded in Indian history.'
+                  : 'क्षत्रिय मौनस वंश का एक गौरवशाली और प्रतिष्ठित इतिहास है जो सदियों पुरानी परंपराओं में निहित है। हमारे वंशज वीरता, प्रशासनिक कौशल, धर्म की रक्षा और समर्पण के लिए जाने जाते हैं। मौनस क्षत्रियों ने भारतीय इतिहास में विभिन्न राज्यों और क्षेत्रों में महत्वपूर्ण भूमिका निभाई है, जो भारतीय इतिहास में दर्ज है।'}
               </p>
               <p>
                 {language === 'en'

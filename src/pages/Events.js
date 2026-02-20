@@ -67,39 +67,20 @@ const Events = () => {
               <div className="events-grid">
                 {upcomingEvents.map((event) => (
                   <div key={event._id} className="event-card upcoming">
-                    <div className="event-image">
+                    <div className="event-img-wrap">
                       {event.imagePath ? (
-                        <img 
-                          src={event.imagePath} 
-                          alt={event.title} 
-                        />
+                        <img src={event.imagePath} alt={event.title} className="event-photo" />
                       ) : (
-                        <div className="image-placeholder">
-                          <span className="gallery-icon">🎉</span>
-                        </div>
+                        <div className="event-photo-placeholder">🎉</div>
                       )}
+                      <span className="event-badge upcoming-badge">{language === 'en' ? 'Upcoming' : 'आगामी'}</span>
                     </div>
-                    <div className="event-content">
-                      <div className="event-header">
-                        <h3>{event.title}</h3>
-                        <span className="event-badge upcoming-badge">
-                          {language === 'en' ? 'Upcoming' : 'आगामी'}
-                        </span>
-                      </div>
-                      <p className="event-description">{event.description}</p>
-                      <div className="event-details">
-                        <div className="detail-item">
-                          <span className="icon">📅</span>
-                          <span>{new Date(event.date).toLocaleDateString(language === 'en' ? 'en-IN' : 'hi-IN', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          })}</span>
-                        </div>
-                        <div className="detail-item">
-                          <span className="icon">📍</span>
-                          <span>{event.location}</span>
-                        </div>
+                    <div className="event-body">
+                      <h3>{event.title}</h3>
+                      <p className="event-desc">{event.description}</p>
+                      <div className="event-meta">
+                        <span>📅 {new Date(event.date).toLocaleDateString(language === 'en' ? 'en-IN' : 'hi-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                        <span>📍 {event.location}</span>
                       </div>
                     </div>
                   </div>
@@ -115,37 +96,23 @@ const Events = () => {
                 {language === 'en' ? 'Past Events' : 'पिछले कार्यक्रम'}
               </h2>
               
-              <div className="past-events-grid">
+              <div className="events-grid">
                 {pastEvents.map((event) => (
                   <div key={event._id} className="event-card past">
-                    <div className="event-image">
+                    <div className="event-img-wrap">
                       {event.imagePath ? (
-                        <img 
-                          src={event.imagePath} 
-                          alt={event.title} 
-                        />
+                        <img src={event.imagePath} alt={event.title} className="event-photo" />
                       ) : (
-                        <div className="image-placeholder">
-                          <span className="gallery-icon">📅</span>
-                        </div>
+                        <div className="event-photo-placeholder">📅</div>
                       )}
+                      <span className="event-badge past-badge">{language === 'en' ? 'Past' : 'पिछला'}</span>
                     </div>
-                    <div className="event-content">
+                    <div className="event-body">
                       <h3>{event.title}</h3>
-                      <p className="event-description">{event.description}</p>
-                      <div className="event-details">
-                        <div className="detail-item">
-                          <span className="icon">📅</span>
-                          <span>{new Date(event.date).toLocaleDateString(language === 'en' ? 'en-IN' : 'hi-IN', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          })}</span>
-                        </div>
-                        <div className="detail-item">
-                          <span className="icon">📍</span>
-                          <span>{event.location}</span>
-                        </div>
+                      <p className="event-desc">{event.description}</p>
+                      <div className="event-meta">
+                        <span>📅 {new Date(event.date).toLocaleDateString(language === 'en' ? 'en-IN' : 'hi-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                        <span>📍 {event.location}</span>
                       </div>
                     </div>
                   </div>

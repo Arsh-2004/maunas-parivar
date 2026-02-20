@@ -378,16 +378,29 @@ section {
   box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
 }
 
-.upadhi-card.active h3,
 .upadhi-card.active .honorary-title {
   color: white;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .upadhi-icon {
-  font-size: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 15px;
-  display: inline-block;
+}
+
+.upadhi-icon svg {
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+  transition: transform 0.3s ease;
+}
+
+.upadhi-card:hover .upadhi-icon svg {
+  transform: scale(1.15);
+}
+
+.upadhi-card.active .upadhi-icon svg {
+  filter: drop-shadow(0 2px 8px rgba(255,255,255,0.4));
 }
 
 .upadhi-card h3 {
@@ -440,6 +453,16 @@ section {
   background: linear-gradient(135deg, #FF6B35, #F7931E);
   color: white;
   border-color: #FF6B35;
+}
+
+.tier-filters button.bronze {
+  color: #CD7F32;
+  border-color: #CD7F32;
+}
+
+.tier-filters button.bronze.active {
+  background: #CD7F32;
+  color: white;
 }
 
 .tier-filters button.silver {
@@ -600,6 +623,158 @@ section {
   font-size: 1.2rem;
   color: #666;
   padding: 40px;
+}
+
+/* Members Modal */
+.members-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.members-modal {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.members-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px;
+  border-bottom: 2px solid #f0f0f0;
+  background: linear-gradient(135deg, #FF6B35, #F7931E);
+  border-radius: 20px 20px 0 0;
+}
+
+.members-modal-header h3 {
+  color: white;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.members-modal-close {
+  background: rgba(255,255,255,0.25);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.members-modal-close:hover {
+  background: rgba(255,255,255,0.45);
+}
+
+.members-modal-body {
+  padding: 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.members-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 25px;
+}
+
+.members-modal-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.members-modal-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(255, 107, 53, 0.15);
+  border-color: rgba(255, 107, 53, 0.2);
+}
+
+.members-modal-photo {
+  width: 100%;
+  max-width: 180px;
+  height: 220px;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 12px;
+  border: 3px solid #FF6B35;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  margin: 0 auto 16px;
+  display: block;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.members-modal-card:hover .members-modal-photo {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+
+.members-modal-photo-placeholder {
+  width: 100%;
+  max-width: 180px;
+  height: 220px;
+  border-radius: 12px;
+  border: 3px solid #FF6B35;
+  background: linear-gradient(135deg, #FF6B35, #F7931E);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  margin: 0 auto 16px;
+}
+
+.members-modal-tier {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.members-modal-card h4 {
+  color: #1a1a1a;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.members-modal-card p {
+  color: #FF6B35;
+  font-size: 0.9rem;
+  margin: 3px 0;
+  font-weight: 600;
 }
 
 /* Responsive Design */

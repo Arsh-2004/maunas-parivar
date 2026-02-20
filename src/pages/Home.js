@@ -109,7 +109,7 @@ const Home = () => {
           <div className="activities-grid">
             <div className="activity-card">
               <div className="activity-image">
-                <div className="image-placeholder">📅</div>
+                <img src="/assets/img_1.jpeg" alt="Community Gathering" className="activity-img" />
               </div>
               <div className="activity-content">
                 <h3>{language === 'en' ? 'Community Gathering' : 'सामुदायिक समारोह'}</h3>
@@ -119,7 +119,7 @@ const Home = () => {
             </div>
             <div className="activity-card">
               <div className="activity-image">
-                <div className="image-placeholder">🎓</div>
+                <img src="/assets/img_2.jpeg" alt="Award Distribution" className="activity-img" />
               </div>
               <div className="activity-content">
                 <h3>{language === 'en' ? 'Award Distribution' : 'मेधावी सम्मान'}</h3>
@@ -129,7 +129,7 @@ const Home = () => {
             </div>
             <div className="activity-card">
               <div className="activity-image">
-                <div className="image-placeholder">🎉</div>
+                <img src="/assets/img_3.jpeg" alt="Our Programs" className="activity-img" />
               </div>
               <div className="activity-content">
                 <h3>{language === 'en' ? 'Our programs' : 'हमारे कार्यक्रम'}</h3>
@@ -148,6 +148,7 @@ const Home = () => {
       <section className="team-section">
         <div className="container">
           <div className="section-header">
+            <h6 className="section-label">{language === 'en' ? 'Management Committee' : 'प्रबंधन कमेटी'}</h6>
             <h2>{language === 'en' ? 'Main Management Committee' : 'मुख्य प्रबंधन कमेटी'}</h2>
             <div className="underline"></div>
           </div>
@@ -247,6 +248,38 @@ const Home = () => {
               </div>
               <h3 className="member-name">{language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी'}</h3>
               <p className="designation">{language === 'en' ? 'Bhadohi' : 'भदोही'}</p>
+            </div>
+            <div className="team-card">
+              <div className="team-image">
+                <img 
+                  src="/assets/rajan-singh.jpeg" 
+                  alt="Rajan Singh"
+                  className="team-photo"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
+              </div>
+              <h3 className="member-name">{language === 'en' ? 'Shri Rajan Singh Ji' : 'श्री राजन सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Gird Badgaon Bhadohi' : 'गिर्द बड़गांव भदोही'}</p>
+            </div>
+            <div className="team-card">
+              <div className="team-image">
+                <img 
+                  src="/assets/rohit-singh.jpeg" 
+                  alt="Rohit Singh"
+                  className="team-photo"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
+              </div>
+              <h3 className="member-name">{language === 'en' ? 'Shri Rohit Singh Ji' : 'श्री रोहित सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
             </div>
           </div>
           <div className="text-center" style={{ marginTop: '30px' }}>

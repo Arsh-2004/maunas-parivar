@@ -110,7 +110,7 @@ const Gallery = () => {
                       </div>
                     )}
                   </div>
-                  <div className="gallery-overlay">
+                  <div className="gallery-caption">
                     <h3>{photo.title}</h3>
                     {photo.description && <p>{photo.description}</p>}
                   </div>
@@ -126,10 +126,12 @@ const Gallery = () => {
         <div className="lightbox-overlay" onClick={closeLightbox}>
           <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
             <button className="lightbox-close" onClick={closeLightbox}>×</button>
-            <img 
-              src={selectedPhoto.imagePath} 
-              alt={selectedPhoto.title} 
-            />
+            <div className="lightbox-img-wrap">
+              <img 
+                src={selectedPhoto.imagePath} 
+                alt={selectedPhoto.title} 
+              />
+            </div>
             <div className="lightbox-info">
               <h2>{selectedPhoto.title}</h2>
               {selectedPhoto.description && <p>{selectedPhoto.description}</p>}

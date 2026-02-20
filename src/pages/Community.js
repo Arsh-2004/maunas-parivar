@@ -10,7 +10,7 @@ const Community = () => {
   const t = (path) => getTranslation(language, path);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // all, silver, gold, diamond
+  const [filter, setFilter] = useState('all'); // all, bronze, silver, gold, diamond
   const [selectedUpadhi, setSelectedUpadhi] = useState(null); // for filtering by honorary title
   const [selectedPrakosth, setSelectedPrakosth] = useState(null); // for filtering by prakosth
   const [showPrakosth, setShowPrakosth] = useState(false); // collapsible prakosth section
@@ -38,7 +38,7 @@ const Community = () => {
   };
 
   const prakosths = [
-    { id: 'buddhijivi', name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Intellectual Cell' : 'बुद्धिजीवी प्रकोष्ठ', icon: '🧘' },
+    { id: 'buddhijivi', name: language === 'en' ? 'Dr. Ram Sudhar Singh Ji' : 'डॉ राम सुधार सिंह जी', title: language === 'en' ? 'Intellectual Cell' : 'बुद्धिजीवी प्रकोष्ठ', icon: '🧘' },
     { id: 'manav-seva', name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Human Service Cell' : 'मानव सेवा प्रकोष्ठ', icon: '🤝' },
     { id: 'chikitsa', name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Medical Cell' : 'चिकित्सा प्रकोष्ठ', icon: '⚕️' },
     { id: 'vidhi', name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Legal Cell' : 'विधि प्रकोष्ठ', icon: '⚖️' },
@@ -51,13 +51,76 @@ const Community = () => {
   ];
 
   const upadhiRankings = [
-    { name: language === 'en' ? 'Dr. Rajesh Sharma' : 'डॉ. राजेश शर्मा', honoraryTitle: 'मौनस शिरोमणि', icon: '🎓' },
-    { name: language === 'en' ? 'Col. Vikram Singh' : 'कर्नल विक्रम सिंह', honoraryTitle: 'मौनस कुबेर', icon: '⭐' },
-    { name: language === 'en' ? 'Advocate Anil Kumar' : 'अधिवक्ता अनिल कुमार', honoraryTitle: 'मौनस रत्न', icon: '⚖️' },
-    { name: language === 'en' ? 'Prof. Suresh Kumar' : 'प्रो. सुरेश कुमार', honoraryTitle: 'मौनस कुलभूषण', icon: '👨‍🎓' },
-    { name: language === 'en' ? 'Sri Mahendra Chaudhary' : 'श्री महेंद्र चौधरी', honoraryTitle: 'मौनस कुलदीपक', icon: '💼' },
-    { name: language === 'en' ? 'Dr. Pradeep Singh' : 'डॉ. प्रदीप सिंह', honoraryTitle: 'मौनस नायक', icon: '⚕️' },
+    { honoraryTitle: 'मौनस शिरोमणि' },
+    { honoraryTitle: 'मौनस कुबेर' },
+    { honoraryTitle: 'मौनस रत्न' },
+    { honoraryTitle: 'मौनस कुलभूषण' },
+    { honoraryTitle: 'मौनस कुलदीपक' },
+    { honoraryTitle: 'मौनस नायक' },
   ];
+
+  const getUpadhiIcon = (title) => {
+    switch(title) {
+      case 'मौनस शिरोमणि':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60">
+            <polygon points="4,52 14,18 26,36 32,10 38,36 50,18 60,52" fill="#FFD700" stroke="#FF8C00" strokeWidth="2"/>
+            <rect x="4" y="52" width="56" height="8" rx="3" fill="#FF8C00"/>
+            <circle cx="32" cy="10" r="4" fill="#FF6B35"/>
+            <circle cx="14" cy="18" r="3" fill="#FF6B35"/>
+            <circle cx="50" cy="18" r="3" fill="#FF6B35"/>
+          </svg>
+        );
+      case 'मौनस कुबेर':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60">
+            <circle cx="32" cy="32" r="28" fill="#FFD700" stroke="#FF8C00" strokeWidth="2"/>
+            <circle cx="32" cy="32" r="22" fill="none" stroke="#FF8C00" strokeWidth="1.5"/>
+            <text x="32" y="42" textAnchor="middle" fontSize="26" fontWeight="bold" fill="#FF8C00" fontFamily="Arial">₹</text>
+          </svg>
+        );
+      case 'मौनस रत्न':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60">
+            <polygon points="32,4 56,22 48,58 16,58 8,22" fill="#B9F2FF" stroke="#00BFFF" strokeWidth="2"/>
+            <polygon points="32,4 56,22 32,20 8,22" fill="#7adcf5" stroke="#00BFFF" strokeWidth="1"/>
+            <line x1="32" y1="20" x2="16" y2="58" stroke="#00BFFF" strokeWidth="1" opacity="0.5"/>
+            <line x1="32" y1="20" x2="48" y2="58" stroke="#00BFFF" strokeWidth="1" opacity="0.5"/>
+            <line x1="32" y1="20" x2="32" y2="58" stroke="#00BFFF" strokeWidth="1" opacity="0.5"/>
+          </svg>
+        );
+      case 'मौनस कुलभूषण':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60">
+            <polygon points="32,4 38,22 58,22 43,34 49,54 32,42 15,54 21,34 6,22 26,22" fill="#FFD700" stroke="#FF8C00" strokeWidth="2"/>
+          </svg>
+        );
+      case 'मौनस कुलदीपक':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60">
+            <ellipse cx="32" cy="54" rx="16" ry="6" fill="#FF8C00"/>
+            <path d="M32,6 C22,18 18,30 22,42 C25,50 39,50 42,42 C46,30 42,18 32,6Z" fill="#FF6B35"/>
+            <path d="M32,14 C26,24 24,34 27,42 C29,47 35,47 37,42 C40,34 38,24 32,14Z" fill="#FFD700"/>
+            <path d="M32,22 C29,29 28,35 30,40 C31,43 33,43 34,40 C36,35 35,29 32,22Z" fill="white" opacity="0.7"/>
+          </svg>
+        );
+      case 'मौनस नायक':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60">
+            <path d="M32,4 L56,14 L56,34 C56,48 44,58 32,62 C20,58 8,48 8,34 L8,14 Z" fill="#FF6B35" stroke="#CC4400" strokeWidth="2"/>
+            <path d="M32,16 L44,21 L44,34 C44,42 38,48 32,50 C26,48 20,42 20,34 L20,21 Z" fill="#FFD700"/>
+            <line x1="32" y1="24" x2="32" y2="42" stroke="#FF6B35" strokeWidth="3" strokeLinecap="round"/>
+            <line x1="24" y1="32" x2="40" y2="32" stroke="#FF6B35" strokeWidth="3" strokeLinecap="round"/>
+          </svg>
+        );
+      default:
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60">
+            <circle cx="32" cy="32" r="28" fill="#FF6B35"/>
+          </svg>
+        );
+    }
+  };
 
   // Placeholder members for each honorary title
   const placeholderMembers = [
@@ -136,15 +199,15 @@ const Community = () => {
     // Placeholder members for prakosths
     {
       _id: 'prakosth-1',
-      fullName: language === 'en' ? 'Prof. Ramesh Pandey' : 'प्रो. रमेश पांडेय',
-      city: language === 'en' ? 'Banaras' : 'बनारस',
+      fullName: language === 'en' ? 'Dr. Ram Sudhar Singh Ji' : 'डॉ राम सुधार सिंह जी',
+      city: language === 'en' ? 'Varanasi' : 'वाराणसी',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
-      occupation: language === 'en' ? 'Professor' : 'प्रोफेसर',
+      occupation: language === 'en' ? 'Intellectual Cell Member' : 'बुद्धिजीवी प्रकोष्ठ सदस्य',
       education: 'post-graduate',
-      membershipTier: 'silver',
+      membershipTier: 'gold',
       prakosth: 'बुद्धिजीवी प्रकोष्ठ',
-      photoPath: null,
-      registeredAt: new Date('2024-02-01')
+      photoPath: '/assets/ram-sudhar-singh.jpeg',
+      registeredAt: new Date('2026-02-20')
     },
     {
       _id: 'prakosth-2',
@@ -212,6 +275,7 @@ const Community = () => {
 
   const getTierColor = (tier) => {
     switch(tier) {
+      case 'bronze': return '#CD7F32';
       case 'silver': return '#C0C0C0';
       case 'gold': return '#FFD700';
       case 'diamond': return '#B9F2FF';
@@ -221,6 +285,7 @@ const Community = () => {
 
   const getTierIcon = (tier) => {
     switch(tier) {
+      case 'bronze': return '🥉';
       case 'silver': return '🥈';
       case 'gold': return '🥇';
       case 'diamond': return '💎';
@@ -274,11 +339,7 @@ const Community = () => {
                 key={index} 
                 className={`team-member-card ${selectedPrakosth === prakosth.title ? 'active' : ''}`}
                 onClick={() => {
-                  if (selectedPrakosth === prakosth.title) {
-                    setSelectedPrakosth(null);
-                  } else {
-                    setSelectedPrakosth(prakosth.title);
-                  }
+                  setSelectedPrakosth(selectedPrakosth === prakosth.title ? null : prakosth.title);
                 }}
                 style={{ cursor: 'pointer' }}
               >
@@ -291,69 +352,42 @@ const Community = () => {
               </div>
             ))}
           </div>
-          {selectedPrakosth && (
-            <>
-            <div className="filter-info" style={{ textAlign: 'center', marginTop: '20px', padding: '10px', background: '#f0f0f0', borderRadius: '8px' }}>
-              <p style={{ margin: 0, fontSize: '14px' }}>
-                {language === 'en' ? 'Members of: ' : 'सदस्य: '} <strong>{selectedPrakosth}</strong>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); setSelectedPrakosth(null); }} 
-                  style={{ marginLeft: '10px', padding: '5px 15px', cursor: 'pointer', borderRadius: '5px', border: 'none', background: '#ff6b35', color: 'white' }}
-                >
-                  {language === 'en' ? 'Close' : 'बंद करें'}
-                </button>
-              </p>
-            </div>
-            <div className="membership-cards-grid" style={{ marginTop: '30px' }}>
-              {prakosthMembers.length === 0 ? (
-                <p className="no-members" style={{ gridColumn: '1 / -1' }}>{language === 'en' ? 'No members found in this cell' : 'इस प्रकोष्ठ में कोई सदस्य नहीं मिला'}</p>
-              ) : (
-                prakosthMembers.map((member) => (
-                  <div 
-                    key={member._id} 
-                    style={{
-                      background: 'white',
-                      borderRadius: '16px',
-                      boxShadow: '0 4px 18px rgba(0,0,0,0.10)',
-                      padding: '18px 18px 20px',
-                      textAlign: 'center',
-                      transition: 'transform 0.2s, box-shadow 0.2s',
-                    }}
-                  >
-                    {member.photoPath ? (
-                      <img 
-                        src={member.photoPath} 
-                        alt={member.fullName}
-                        style={{
-                          width: '100%',
-                          height: '350px',
-                          objectFit: 'cover',
-                          objectPosition: 'center center',
-                          borderRadius: '12px',
-                          border: '3px solid #FF6B35',
-                          display: 'block',
-                        }}
-                      />
-                    ) : (
-                      <div style={{
-                        width: '100%', height: '220px', borderRadius: '12px',
-                        border: '3px solid #FF6B35',
-                        background: 'linear-gradient(135deg, #FF6B35, #F7931E)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '4rem'
-                      }}>👤</div>
-                    )}
-                    <div style={{ paddingTop: '14px' }}>
-                      <h3 style={{ margin: '0 0 5px', fontSize: '1.05rem', color: '#222', fontWeight: 700 }}>{member.fullName}</h3>
-                      <p style={{ margin: 0, fontSize: '0.92rem', color: '#FF6B35', fontWeight: 600 }}>{member.city}, {member.state}</p>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-            </>
-          )}
           </>
+          )}
+
+          {/* Prakosth Members Modal */}
+          {selectedPrakosth && (
+            <div className="members-modal-overlay" onClick={() => setSelectedPrakosth(null)}>
+              <div className="members-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="members-modal-header">
+                  <h3>{selectedPrakosth}</h3>
+                  <button className="members-modal-close" onClick={() => setSelectedPrakosth(null)}>✕</button>
+                </div>
+                <div className="members-modal-body">
+                  {prakosthMembers.length === 0 ? (
+                    <p className="no-members">{language === 'en' ? 'No members found in this cell' : 'इस प्रकोष्ठ में कोई सदस्य नहीं मिला'}</p>
+                  ) : (
+                    <div className="members-modal-grid">
+                      {prakosthMembers.map((member) => (
+                        <div key={member._id} className="members-modal-card">
+                          {member.photoPath ? (
+                            <img
+                              src={member.photoPath}
+                              alt={member.fullName}
+                              className="members-modal-photo"
+                            />
+                          ) : (
+                            <div className="members-modal-photo-placeholder">👤</div>
+                          )}
+                          <h4>{member.fullName}</h4>
+                          <p>📍 {member.city}, {member.state}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </section>
@@ -384,78 +418,53 @@ const Community = () => {
                 }}
                 style={{ cursor: 'pointer' }}
               >
-                <div className="upadhi-icon">{member.icon}</div>
+                <div className="upadhi-icon">{getUpadhiIcon(member.honoraryTitle)}</div>
                 <div className="upadhi-info">
-                  <h3>{member.name}</h3>
                   <p className="honorary-title">{member.honoraryTitle}</p>
                 </div>
               </div>
             ))}
           </div>
-          {selectedUpadhi && (
-            <>
-            <div className="filter-info" style={{ textAlign: 'center', marginTop: '20px', padding: '10px', background: '#f0f0f0', borderRadius: '8px' }}>
-              <p style={{ margin: 0, fontSize: '14px' }}>
-                {language === 'en' ? 'Members with: ' : 'सदस्य: '} <strong>{selectedUpadhi}</strong>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); setSelectedUpadhi(null); }} 
-                  style={{ marginLeft: '10px', padding: '5px 15px', cursor: 'pointer', borderRadius: '5px', border: 'none', background: '#ff6b35', color: 'white' }}
-                >
-                  {language === 'en' ? 'Close' : 'बंद करें'}
-                </button>
-              </p>
-            </div>
-            <div className="membership-cards-grid" style={{ marginTop: '30px' }}>
-              {upadhiMembers.length === 0 ? (
-                <p className="no-members" style={{ gridColumn: '1 / -1' }}>{language === 'en' ? 'No members found with this title' : 'इस उपाधि के साथ कोई सदस्य नहीं मिला'}</p>
-              ) : (
-                upadhiMembers.map((member) => (
-                  <div 
-                    key={member._id} 
-                    className={`membership-card ${member.membershipTier || 'silver'}`}
-                    style={{ borderColor: getTierColor(member.membershipTier || 'silver') }}
-                  >
-                    <div className="tier-badge" style={{ background: getTierColor(member.membershipTier || 'silver') }}>
-                      {getTierIcon(member.membershipTier || 'silver')} {(member.membershipTier || 'silver').toUpperCase()}
-                    </div>
-                    
-                    {member.photoPath ? (
-                      <img 
-                        src={member.photoPath} 
-                        alt={member.fullName}
-                        className="member-photo"
-                      />
-                    ) : (
-                      <div className="member-photo-placeholder">
-                        <span style={{ fontSize: '4rem' }}>👤</span>
-                      </div>
-                    )}
-                    
-                    {member.honoraryTitle && (
-                      <div className="member-honorary-badge">
-                        {member.honoraryTitle}
-                      </div>
-                    )}
-                    
-                    <div className="member-info">
-                      <h3>{member.fullName}</h3>
-                      <p className="member-city">📍 {member.city}, {member.state}</p>
-                      <p className="member-occupation">💼 {member.occupation}</p>
-                      {member.education && (
-                        <p className="member-education">🎓 {member.education}</p>
-                      )}
-                    </div>
-                    
-                    <div className="member-footer">
-                      <span>{language === 'en' ? 'Member since' : 'सदस्य बने'} {new Date(member.registeredAt).getFullYear()}</span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-            </>
-          )}
           </>
+          )}
+
+          {/* Upadhi Members Modal */}
+          {selectedUpadhi && (
+            <div className="members-modal-overlay" onClick={() => setSelectedUpadhi(null)}>
+              <div className="members-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="members-modal-header">
+                  <h3>{selectedUpadhi}</h3>
+                  <button className="members-modal-close" onClick={() => setSelectedUpadhi(null)}>✕</button>
+                </div>
+                <div className="members-modal-body">
+                  {upadhiMembers.length === 0 ? (
+                    <p className="no-members">{language === 'en' ? 'No members found with this title' : 'इस उपाधि के साथ कोई सदस्य नहीं मिला'}</p>
+                  ) : (
+                    <div className="members-modal-grid">
+                      {upadhiMembers.map((member) => (
+                        <div key={member._id} className="members-modal-card">
+                          {member.photoPath ? (
+                            <img
+                              src={member.photoPath}
+                              alt={member.fullName}
+                              className="members-modal-photo"
+                            />
+                          ) : (
+                            <div className="members-modal-photo-placeholder">👤</div>
+                          )}
+                          <div className="members-modal-tier" style={{ background: getTierColor(member.membershipTier || 'silver') }}>
+                            {getTierIcon(member.membershipTier || 'silver')} {(member.membershipTier || 'silver').toUpperCase()}
+                          </div>
+                          <h4>{member.fullName}</h4>
+                          <p>📍 {member.city}, {member.state}</p>
+                          <p>💼 {member.occupation}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </section>
@@ -477,8 +486,16 @@ const Community = () => {
             <button 
               className={filter === 'all' ? 'active' : ''}
               onClick={() => setFilter('all')}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
             >
-              {language === 'en' ? 'Members' : 'सदस्य'}
+              <img src="/assets/general.jpeg" alt="General" style={{ width: '24px', height: '28px', objectFit: 'contain', borderRadius: '4px', flexShrink: 0 }} />
+              {language === 'en' ? 'General' : 'General'}
+            </button>
+            <button 
+              className={filter === 'bronze' ? 'active bronze' : 'bronze'}
+              onClick={() => setFilter('bronze')}
+            >
+              🥉 Bronze
             </button>
             <button 
               className={filter === 'silver' ? 'active silver' : 'silver'}
