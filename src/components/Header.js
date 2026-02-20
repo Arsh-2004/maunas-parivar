@@ -1,54 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { getTranslation } from '../translations';
 import './Header.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userPhoto, setUserPhoto] = useState(null);
-  const [userTier, setUserTier] = useState(null);
   const { language, toggleLanguage } = useLanguage();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const t = (path) => getTranslation(language, path);
 
   const isAdminPage = location.pathname === '/admin';
-
-  // Fetch user photo and tier
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (isAuthenticated()) {
-        const phone = localStorage.getItem('userPhone');
-        if (phone) {
-          try {
-            const response = await fetch(`${API_URL}/users/profile/${phone}`);
-            const data = await response.json();
-            console.log('Header - Full response data:', data);
-            console.log('Header - User object:', data.user);
-            console.log('Header - PhotoPath value:', data.user?.photoPath);
-            if (data.success && data.user) {
-              if (data.user.photoPath) {
-                console.log('Header - Setting photo to:', data.user.photoPath);
-                setUserPhoto(data.user.photoPath);
-              } else {
-                console.log('Header - No photoPath found in user object');
-              }
-              console.log('Header - Setting userTier to:', data.user.membershipTier);
-              setUserTier(data.user.membershipTier);
-            }
-          } catch (err) {
-            console.error('Error fetching user data:', err);
-          }
-        }
-      }
-    };
-    fetchUserData();
-  }, [isAuthenticated]);
+  const userPhoto = user?.photoPath || null;
+  const userTier = user?.membershipTier || null;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -57,8 +24,6 @@ const Header = () => {
   const handleLogout = () => {
     logout();
     setIsMenuOpen(false);
-    setUserPhoto(null);
-    setUserTier(null);
     navigate('/');
   };
 
@@ -154,18 +119,16 @@ const Header = () => {
               <Link to="/about" onClick={() => setIsMenuOpen(false)}>{t('header.about')}</Link>
               {isAuthenticated() && !isAdminPage && (
                 <>
-                  {console.log('Header - Current userTier:', userTier, 'isAuthenticated:', isAuthenticated())}
-                  {/* Show tier-specific dashboard links */}
                   {userTier === 'diamond' && (
                     <Link to="/diamond-dashboard" onClick={() => setIsMenuOpen(false)}>
                       💎 {language === 'en' ? 'Diamond Panel' : 'डायमंड पैनल'}
                     </Link>
                   )}
-                  {userTier === 'gold' && (
+                  {/* {userTier === 'gold' && (
                     <Link to="/gold-dashboard" onClick={() => setIsMenuOpen(false)}>
                       🥇 {language === 'en' ? 'Gold Panel' : 'गोल्ड पैनल'}
                     </Link>
-                  )}
+                  )} */}
                   <Link to="/community" onClick={() => setIsMenuOpen(false)}>{t('header.community')}</Link>
                   <Link to="/events" onClick={() => setIsMenuOpen(false)}>{t('header.events')}</Link>
                   <Link to="/gallery" onClick={() => setIsMenuOpen(false)}>{t('header.gallery')}</Link>
@@ -178,19 +141,18 @@ const Header = () => {
                     <>
                       <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="profile-link">
                         {userPhoto ? (
-                          <img 
-                            src={userPhoto} 
-                            alt="Profile" 
-                            className="header-user-photo"
-                            onError={(e) => {
-                              console.error('Image failed to load:', userPhoto);
-                              e.target.style.display = 'none';
-                              e.target.parentElement.innerHTML = '<span class="header-user-icon">👤</span>';
-                            }}
-                            onLoad={() => {
-                              console.log('Image loaded successfully:', userPhoto);
-                            }}
-                          />
+                          <>
+                            <img 
+                              src={userPhoto} 
+                              alt="Profile" 
+                              className="header-user-photo"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextSibling && (e.target.nextSibling.style.display = 'inline-flex');
+                              }}
+                            />
+                            <span className="header-user-icon" style={{ display: 'none' }}>👤</span>
+                          </>
                         ) : (
                           <span className="header-user-icon">👤</span>
                         )}

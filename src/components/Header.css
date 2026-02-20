@@ -31,12 +31,6 @@
   font-size: 0.9rem;
 }
 
-.container {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
 .top-bar-content {
   display: flex;
   justify-content: space-between;
@@ -234,6 +228,10 @@
 .profile-link:hover .header-user-icon {
   transform: scale(1.1);
   border-color: #F7931E;
+}
+
+.profile-link::after {
+  display: none !important;
 }
 
 .nav-links a::after {

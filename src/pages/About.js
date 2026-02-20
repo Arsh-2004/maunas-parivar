@@ -409,60 +409,65 @@ const About = () => {
             {committees.map((committee) => (
               <div 
                 key={committee.id}
-                className={`committee-card ${selectedCommittee === committee.id ? 'active' : ''}`}
-                onClick={() => setSelectedCommittee(selectedCommittee === committee.id ? null : committee.id)}
+                className="committee-card"
+                onClick={() => setSelectedCommittee(committee.id)}
               >
                 <div className="committee-icon">{committee.icon}</div>
                 <h3>{language === 'en' ? committee.nameEn : committee.nameHi}</h3>
                 <p className="committee-desc">{committee.description}</p>
                 <span className="click-hint">
-                  {language === 'en' ? (selectedCommittee === committee.id ? 'Hide Members' : 'View Members') : (selectedCommittee === committee.id ? 'सदस्य छुपाएं' : 'सदस्य देखें')}
+                  {language === 'en' ? 'View Members' : 'सदस्य देखें'}
                 </span>
               </div>
             ))}
           </div>
 
-          {/* Committee Members Display */}
+          {/* Committee Members Modal */}
           {selectedCommittee && (
-            <div className="committee-members-section">
-              <div className="members-header">
-                <h3>
-                  {committees.find(c => c.id === selectedCommittee) && 
-                   (language === 'en' ? committees.find(c => c.id === selectedCommittee).nameEn : committees.find(c => c.id === selectedCommittee).nameHi)}
-                  {' - '}{language === 'en' ? 'Members' : 'सदस्य'}
-                </h3>
-              </div>
-
-              {loading ? (
-                <div className="loading-message">
-                  {language === 'en' ? 'Loading members...' : 'सदस्य लोड हो रहे हैं...'}
+            <div className="committee-modal-overlay" onClick={() => setSelectedCommittee(null)}>
+              <div className="committee-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="committee-modal-header">
+                  <h3>
+                    {committees.find(c => c.id === selectedCommittee) &&
+                      (language === 'en'
+                        ? committees.find(c => c.id === selectedCommittee).nameEn
+                        : committees.find(c => c.id === selectedCommittee).nameHi)}
+                    {' — '}{language === 'en' ? 'Members' : 'सदस्य'}
+                  </h3>
+                  <button className="committee-modal-close" onClick={() => setSelectedCommittee(null)}>✕</button>
                 </div>
-              ) : committeeMembers[selectedCommittee] && committeeMembers[selectedCommittee].length > 0 ? (
-                <div className="members-grid">
-                  {committeeMembers[selectedCommittee].map((member) => (
-                    <div key={member._id} className="member-card">
-                      {member.photoPath && (
-                        <img 
-                          src={member.photoPath} 
-                          alt={member.fullName}
-                          className="member-photo"
-                        />
-                      )}
-                      <div className="member-details">
-                        <h4>{member.fullName}</h4>
-                        <p className="member-position">{member.position || 'Member'}</p>
-                        <p className="member-contact">📍 {member.city}, {member.state}</p>
-                        {member.phone && <p className="member-phone">📱 {member.phone}</p>}
-                      </div>
+                <div className="committee-modal-body">
+                  {loading ? (
+                    <p className="committee-modal-loading">
+                      {language === 'en' ? 'Loading members...' : 'सदस्य लोड हो रहे हैं...'}
+                    </p>
+                  ) : committeeMembers[selectedCommittee] && committeeMembers[selectedCommittee].length > 0 ? (
+                    <div className="committee-modal-grid">
+                      {committeeMembers[selectedCommittee].map((member) => (
+                        <div key={member._id} className="committee-modal-card">
+                          {member.photoPath ? (
+                            <img
+                              src={member.photoPath}
+                              alt={member.fullName}
+                              className="committee-modal-photo"
+                            />
+                          ) : (
+                            <div className="committee-modal-photo-placeholder">👤</div>
+                          )}
+                          <h4>{member.fullName}</h4>
+                          <p className="committee-modal-position">{member.position || (language === 'en' ? 'Member' : 'सदस्य')}</p>
+                          <p className="committee-modal-location">📍 {member.city}, {member.state}</p>
+                          {member.phone && <p className="committee-modal-phone">📱 {member.phone}</p>}
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  ) : (
+                    <div className="committee-modal-empty">
+                      <p>{language === 'en' ? 'No members added yet for this committee.' : 'इस कमेटी के लिए अभी कोई सदस्य नहीं जोड़े गए हैं।'}</p>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="no-members-message">
-                  <p>{language === 'en' ? 'No members added yet for this committee' : 'इस कमेटी के लिए अभी कोई सदस्य नहीं जोड़े गए हैं'}</p>
-                  <p className="hint">{language === 'en' ? 'Members will be displayed here' : 'सदस्यों को यहाँ दिखाया जाएगा'}</p>
-                </div>
-              )}
+              </div>
             </div>
           )}
         </div>
