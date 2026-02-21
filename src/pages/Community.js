@@ -208,18 +208,30 @@ const Community = () => {
       prakosth: 'बुद्धिजीवी प्रकोष्ठ',
       photoPath: '/assets/ram-sudhar-singh.jpeg',
       registeredAt: new Date('2026-02-20')
-    },
+    }, 
     {
       _id: 'prakosth-2',
-      fullName: language === 'en' ? 'Smt. Kavita Devi' : 'श्रीमती कविता देवी',
-      city: language === 'en' ? 'Ayodhya' : 'अयोध्या',
+      fullName: language === 'en' ? 'Dr. Jaydeep Singh Ji' : 'डॉ जयदीप सिंह जी',
+      city: language === 'en' ? 'Guwahati' : 'गुवाहाटी',
+      state: language === 'en' ? 'Assam' : 'आसाम',
+      occupation: language === 'en' ? 'Intellectual Cell Member' : 'बुद्धिजीवी प्रकोष्ठ सदस्य',
+      education: 'post-graduate',
+      membershipTier: 'gold',
+      prakosth: 'बुद्धिजीवी प्रकोष्ठ',
+      photoPath: '/assets/डॉ जयदीप सिंह जी.jpeg',
+      registeredAt: new Date('2026-02-20')
+    }, 
+    {
+      _id: 'prakosth-manav-seva-1',
+      fullName: language === 'en' ? 'Shri K K Singh Ji' : 'श्री के के सिंह जी',
+      city: language === 'en' ? 'Sarbatkhani, Bhadohi' : 'सरबतखानी, भदोही',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
-      occupation: language === 'en' ? 'Social Worker' : 'समाजसेवी',
+      occupation: language === 'en' ? 'Human Service Cell Member' : 'मानव सेवा प्रकोष्ठ सदस्य',
       education: 'graduate',
       membershipTier: 'gold',
       prakosth: 'मानव सेवा प्रकोष्ठ',
-      photoPath: null,
-      registeredAt: new Date('2023-12-15')
+      photoPath: '/assets/श्री के के सिंह जी.jpeg',
+      registeredAt: new Date('2026-02-21')
     },
     {
       _id: 'prakosth-3',

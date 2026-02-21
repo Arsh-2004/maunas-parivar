@@ -136,6 +136,15 @@ const About = () => {
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/shiv-shankar-singh.jpeg'
     }
+    ,
+    {
+      _id: 'snr3',
+      fullName: language === 'en' ? 'Shri Parasnath Singh Ji' : 'श्री पारसनाथ सिंह जी',
+      position: language === 'en' ? 'Bagah' : 'बगहा',
+      city: language === 'en' ? 'Mirzapur' : 'मिर्जापुर',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/श्री पारसनाथ सिंह जी.jpeg'
+    }
   ], [language]);
 
   const committees = [
@@ -311,7 +320,7 @@ const About = () => {
             </div>
             <div className="history-image">
               <div className="image-placeholder">
-                <img src="/assets/विरासत और परंपरा.jpeg" alt="सदियों की विरासत" />
+                <img src="/assets/सदियों की विरासत.jpeg" alt="सदियों की विरासत" />
                 <p>{language === 'en' ? 'Centuries of Heritage' : 'सदियों की विरासत'}</p>
               </div>
             </div>
