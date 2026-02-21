@@ -1,10 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 import './DigitalIDCard.css';
 
 const DigitalIDCard = ({ user }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
   const qrRef = useRef();
 
   if (!user) {
@@ -25,7 +24,10 @@ const DigitalIDCard = ({ user }) => {
     const isMobile = isMobileDevice();
     
     try {
-      const cardElement = document.querySelector('.id-card-flipper');
+      // On mobile capture only front face; on desktop capture full side-by-side
+      const cardElement = isMobile
+        ? document.querySelector('#id-card-capture-target .id-card-front-face')
+        : document.getElementById('id-card-capture-target');
       
       if (!cardElement) {
         alert('Card element not found');
@@ -47,29 +49,13 @@ const DigitalIDCard = ({ user }) => {
         font-size: 16px;
         text-align: center;
       `;
-      loadingMsg.innerHTML = isMobile ? 
+      loadingMsg.innerHTML = isMobile ?
         '⏳ Generating ID Card...<br><small>Please wait</small>' :
         '⏳ Preparing download...';
       document.body.appendChild(loadingMsg);
 
-      // Create a container for both sides
-      const downloadContainer = document.createElement('div');
-      downloadContainer.style.position = 'fixed';
-      downloadContainer.style.left = '-9999px';
-      downloadContainer.style.top = '0';
-      downloadContainer.style.background = 'white';
-      downloadContainer.style.padding = '40px';
-      document.body.appendChild(downloadContainer);
-
-      // Clone the card for capturing
-      const clonedCard = cardElement.cloneNode(true);
-      clonedCard.style.transform = 'none';
-      clonedCard.style.perspective = 'none';
-      
-      downloadContainer.appendChild(clonedCard);
-
       // Wait for images to load
-      const images = downloadContainer.getElementsByTagName('img');
+      const images = cardElement.getElementsByTagName('img');
       await Promise.all(
         Array.from(images).map(img => {
           if (img.complete) return Promise.resolve();
@@ -80,67 +66,28 @@ const DigitalIDCard = ({ user }) => {
         })
       );
 
-      // Capture FRONT side
-      const frontFace = clonedCard.querySelector('.id-card-front-face');
-      frontFace.style.transform = 'rotateY(0deg)';
-      frontFace.style.display = 'block';
-      frontFace.style.position = 'relative';
-      
-      const backFace = clonedCard.querySelector('.id-card-back-face');
-      backFace.style.display = 'none';
-
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      const frontCanvas = await html2canvas(frontFace, {
+      // Capture the whole side-by-side card in one shot
+      // Use scrollWidth/scrollHeight to capture full content (fixes text clipping)
+      const capturedCanvas = await html2canvas(cardElement, {
         backgroundColor: '#ffffff',
-        scale: 3,
+        scale: 2,
         useCORS: true,
         allowTaint: true,
         logging: false,
-        width: frontFace.offsetWidth,
-        height: frontFace.offsetHeight
+        scrollX: 0,
+        scrollY: 0,
+        width: cardElement.scrollWidth,
+        height: cardElement.scrollHeight,
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: document.documentElement.scrollHeight
       });
 
-      // Capture BACK side
-      frontFace.style.display = 'none';
-      backFace.style.display = 'block';
-      backFace.style.transform = 'rotateY(0deg)';
-      backFace.style.position = 'relative';
-
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      const backCanvas = await html2canvas(backFace, {
-        backgroundColor: '#ffffff',
-        scale: 3,
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        width: backFace.offsetWidth,
-        height: backFace.offsetHeight
-      });
-
-      // Combine both sides vertically
-      const combinedCanvas = document.createElement('canvas');
-      const padding = 40;
-      combinedCanvas.width = Math.max(frontCanvas.width, backCanvas.width);
-      combinedCanvas.height = frontCanvas.height + backCanvas.height + padding;
-      
-      const ctx = combinedCanvas.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-      
-      // Draw front side
-      ctx.drawImage(frontCanvas, (combinedCanvas.width - frontCanvas.width) / 2, 0);
-      
-      // Draw back side
-      ctx.drawImage(backCanvas, (combinedCanvas.width - backCanvas.width) / 2, frontCanvas.height + padding);
-
-      // Remove temporary container
-      document.body.removeChild(downloadContainer);
       document.body.removeChild(loadingMsg);
 
       // Convert canvas to data URL
-      const imageDataUrl = combinedCanvas.toDataURL('image/png', 1.0);
+      const imageDataUrl = capturedCanvas.toDataURL('image/png', 1.0);
 
       if (isMobile) {
         // MOBILE: Open in new tab so user can long-press and save
@@ -238,20 +185,20 @@ const DigitalIDCard = ({ user }) => {
         }
       } else {
         // DESKTOP: Direct download
-        combinedCanvas.toBlob((blob) => {
+        capturedCanvas.toBlob((blob) => {
           const url = URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
           link.download = `Maunas-Parivar-ID-Card-${user.fullName.replace(/\s+/g, '-')}-${user.phone}.png`;
           document.body.appendChild(link);
           link.click();
-          
+
           // Cleanup
           setTimeout(() => {
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
           }, 100);
-          
+
           alert('✅ ID Card downloaded successfully!');
         }, 'image/png', 1.0);
       }
@@ -284,11 +231,8 @@ const DigitalIDCard = ({ user }) => {
       </div>
 
       <div className="id-card-display-container">
-        {/* 3D Flip Card */}
-        <div 
-          className={`id-card-flipper ${isFlipped ? 'flipped' : ''}`}
-          onClick={() => setIsFlipped(!isFlipped)}
-        >
+        {/* Side-by-Side Card */}
+        <div className="id-card-side-by-side" id="id-card-capture-target">
           {/* Front Side */}
           <div className="id-card-face id-card-front-face">
             <div className="id-card-bg-gradient"></div>
@@ -324,17 +268,19 @@ const DigitalIDCard = ({ user }) => {
                 </div>
                 <div className="id-detail-row">
                   <span className="id-detail-label">स्थिति/Status</span>
-                  <span className="id-detail-value id-tier-badge">
-                    {user.membershipTier === 'gold' ? '🥇 GOLD' : 
-                     user.membershipTier === 'diamond' ? '💎 DIAMOND' : 
-                     '🥈 SILVER'}
+                  <span className="id-detail-value">
+                    <span className="id-tier-badge">
+                      {user.membershipTier === 'diamond' ? '💎 DIAMOND' :
+                       user.membershipTier === 'gold' ? '🥇 GOLD' :
+                       user.membershipTier === 'silver' ? '🥈 SILVER' :
+                       user.membershipTier === 'bronze' ? '🥉 BRONZE' :
+                       user.membershipTier === 'general' ? '🌟 GENERAL' : '🥈 SILVER'}
+                    </span>
                   </span>
                 </div>
               </div>
 
-              <div className="id-card-flip-hint">
-                <span>👆 Click to see back →</span>
-              </div>
+
             </div>
           </div>
 
@@ -385,9 +331,6 @@ const DigitalIDCard = ({ user }) => {
                 </div>
               </div>
 
-              <div className="id-card-flip-hint">
-                <span>← Click to see front</span>
-              </div>
             </div>
           </div>
         </div>
@@ -395,21 +338,15 @@ const DigitalIDCard = ({ user }) => {
         {/* Action Buttons */}
         <div className="id-card-actions">
           <button 
-            className="id-btn id-btn-flip"
-            onClick={() => setIsFlipped(!isFlipped)}
-          >
-            <span>🔄</span> Flip Card
-          </button>
-          <button 
             onClick={downloadIDCard}
             className="id-btn id-btn-download"
             title={/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 
               "Will open in new tab - Long press image to save" : 
-              "Download both sides of your ID card"}
+              "Download ID Card (both sides)"}
           >
             <span>📥</span> {/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 
               'Get ID Card (Mobile)' : 
-              'Download Both Sides'}
+              'Download ID Card'}
           </button>
         </div>
 
@@ -419,8 +356,7 @@ const DigitalIDCard = ({ user }) => {
             <li>💾 <strong>Download:</strong> {/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 
               'Tap button to open in new tab, then long-press image and select "Save Image"' : 
               'Get both front and back sides in one image'}</li>
-            <li>🔄 <strong>Flip:</strong> Click the card or flip button to see both sides</li>
-            <li>📱 <strong>QR Code:</strong> Anyone can scan the QR on the back to view your full verified profile</li>
+            <li>� <strong>QR Code:</strong> Anyone can scan the QR on the right side to view your full verified profile</li>
           </ul>
         </div>
       </div>

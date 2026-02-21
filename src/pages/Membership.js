@@ -729,6 +729,28 @@ const Membership = () => {
                 <li>{language === 'en' ? '✓ View completed events' : '✓ पूर्ण किए गए कार्यक्रम देखें'}</li>
               </ul>
             </div>
+            <div className="tier-card bronze">
+              <div className="tier-icon">🥉</div>
+              <h3>{language === 'en' ? 'Bronze Tier' : 'ब्रांज स्तर'}</h3>
+              <ul className="tier-benefits">
+                <li>{language === 'en' ? '✓ Access to Community tab' : '✓ समुदाय टैब देखें'}</li>
+                <li>{language === 'en' ? '✓ View basic member profiles' : '✓ बुनियादी सदस्य प्रोफ़ाइल देखें'}</li>
+                <li>{language === 'en' ? '✓ Participate in community discussions' : '✓ सामुदायिक चर्चाओं में भाग लें'}</li>
+                <li>{language === 'en' ? '✓ Receive community newsletters' : '✓ सामुदायिक समाचार पत्र प्राप्त करें'}</li>
+              </ul>
+            </div>
+            <div className="tier-card general">
+              <div className="tier-icon" style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <img src="/assets/general.jpeg" alt="General" style={{width: '80px', height: '80px', objectFit: 'contain', borderRadius: '50%', background: '#f5f5f5'}} />
+              </div>
+              <h3>{language === 'en' ? 'General Tier' : 'जनरल स्तर'}</h3>
+              <ul className="tier-benefits">
+                <li>{language === 'en' ? '✓ Basic profile access' : '✓ बुनियादी प्रोफ़ाइल एक्सेस'}</li>
+                <li>{language === 'en' ? '✓ View public announcements' : '✓ सार्वजनिक घोषणाएं देखें'}</li>
+                <li>{language === 'en' ? '✓ Community identity card' : '✓ सामुदायिक पहचान पत्र'}</li>
+                <li>{language === 'en' ? '✓ Entry-level membership' : '✓ प्रारंभिक स्तर की सदस्यता'}</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -741,10 +763,22 @@ const Membership = () => {
           </div>
           <p className="help-subtitle">
             {language === 'en' 
-              ? 'Your contributions help us grow and support the community better'
-              : 'आपके योगदान हमें बढ़ने और समुदाय की बेहतर सेवा करने में मदद करते हैं'}
+              ? 'Your contributions help enhance the clan\'s renown and better serve the community.'
+              : 'आपके योगदान कुल के यश को बढ़ाने और समुदाय की बेहतर सेवा करने में मदद करते हैं।'}
           </p>
           <div className="support-tiers-grid">
+            <div className="support-card general">
+              <div className="support-icon" style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <img src="/assets/general.jpeg" alt="General" style={{width: '70px', height: '70px', objectFit: 'contain', borderRadius: '50%', background: '#f5f5f5'}} />
+              </div>
+              <h3>{language === 'en' ? 'General Support' : 'जनरल सहयोग'}</h3>
+              <p className="support-amount">₹0</p>
+              <p className="support-description">
+                {language === 'en'
+                  ? 'Community unity is the foundation of development'
+                  : 'सामुदायिक एकता ही विकास का आधार'}
+              </p>
+            </div>
             <div className="support-card bronze">
               <div className="support-icon">🥉</div>
               <h3>{language === 'en' ? 'Bronze Support' : 'ब्रांज सहयोग'}</h3>

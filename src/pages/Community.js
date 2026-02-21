@@ -41,7 +41,7 @@ const Community = () => {
     { id: 'buddhijivi', name: language === 'en' ? 'Dr. Ram Sudhar Singh Ji' : 'डॉ राम सुधार सिंह जी', title: language === 'en' ? 'Intellectual Cell' : 'बुद्धिजीवी प्रकोष्ठ', icon: '🧘' },
     { id: 'manav-seva', name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Human Service Cell' : 'मानव सेवा प्रकोष्ठ', icon: '🤝' },
     { id: 'chikitsa', name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Medical Cell' : 'चिकित्सा प्रकोष्ठ', icon: '⚕️' },
-    { id: 'vidhi', name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Legal Cell' : 'विधि प्रकोष्ठ', icon: '⚖️' },
+    { id: 'vidhi', title: language === 'en' ? 'Legal Cell' : 'विधि प्रकोष्ठ', icon: '⚖️' },
     { id: 'vyapar', name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Business Cell' : 'व्यापार प्रकोष्ठ', icon: '💼' },
     { id: 'kisaan', name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Farmer Cell' : 'किसान प्रकोष्ठ', icon: '🚜' },
     { id: 'khel', name: language === 'en' ? 'Placeholder' : 'नाम के लिए रखे', title: language === 'en' ? 'Sports & Military Cell' : 'खेल एवं सैनिक प्रकोष्ठ', icon: '⛹️' },
@@ -235,15 +235,15 @@ const Community = () => {
     },
     {
       _id: 'prakosth-4',
-      fullName: language === 'en' ? 'Adv. Rajendra Singh' : 'अधि. राजेंद्र सिंह',
-      city: language === 'en' ? 'Prayagraj' : 'प्रयागराज',
+      fullName: language === 'en' ? 'Shri Rajkumar Singh Ji' : 'श्री राजकुमार सिंह जी',
+      city: language === 'en' ? 'Bithauli, Prayagraj' : 'बिठौली, प्रयागराज',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
-      occupation: language === 'en' ? 'High Court Lawyer' : 'उच्च न्यायालय वकील',
+      occupation: language === 'en' ? 'Advocate' : 'एडवोकेट',
       education: 'post-graduate',
       membershipTier: 'gold',
       prakosth: 'विधि प्रकोष्ठ',
-      photoPath: null,
-      registeredAt: new Date('2023-11-25')
+      photoPath: '/assets/श्री राजकुमार सिंह जी.jpeg',
+      registeredAt: new Date('2026-02-21')
     },
     {
       _id: 'prakosth-5',

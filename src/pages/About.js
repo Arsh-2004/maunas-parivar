@@ -44,6 +44,14 @@ const About = () => {
     },
     {
       _id: '5',
+      fullName: language === 'en' ? 'Shri Rohit Singh Ji' : 'श्री रोहित सिंह जी',
+      position: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      city: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/rohit-singh.jpeg'
+    },
+    {
+      _id: '6',
       fullName: language === 'en' ? 'Shri Shailendra Pratap Singh Ji' : 'श्री शैलेन्द्र प्रताप सिंह जी',
       position: language === 'en' ? 'Varanasi' : 'वाराणसी',
       city: language === 'en' ? 'Varanasi' : 'वाराणसी',
@@ -51,7 +59,7 @@ const About = () => {
       photoPath: '/assets/shailendra.jpeg'
     },
     {
-      _id: '6',
+      _id: '7',
       fullName: language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी',
       position: language === 'en' ? 'Bhadohi' : 'भदोही',
       city: language === 'en' ? 'Bhadohi' : 'भदोही',
@@ -59,24 +67,32 @@ const About = () => {
       photoPath: '/assets/ashishsingh.jpeg'
     },
     {
-      _id: '7',
+      _id: '8',
       fullName: language === 'en' ? 'Shri Rajan Singh Ji' : 'श्री राजन सिंह जी',
       position: language === 'en' ? 'Gird Badgaon Bhadohi' : 'गिर्द बड़गांव भदोही',
       city: language === 'en' ? 'Bhadohi' : 'भदोही',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/rajan-singh.jpeg'
-    },
-    {
-      _id: '8',
-      fullName: language === 'en' ? 'Shri Rohit Singh Ji' : 'श्री रोहित सिंह जी',
-      position: language === 'en' ? 'Varanasi' : 'वाराणसी',
-      city: language === 'en' ? 'Varanasi' : 'वाराणसी',
-      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
-      photoPath: '/assets/rohit-singh.jpeg'
     }
   ], [language]);
 
   const getSanchalanMembers = useCallback(() => [
+    {
+      _id: 's0',
+      fullName: language === 'en' ? 'Shri Ravindra Kumar Singh Ji' : 'श्री रवींद्र कुमार सिंह जी',
+      position: language === 'en' ? ' Awaleshpur' : ' अवलेशपुर',
+      city: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/president-ravindra-kumar-singh.jpg'
+    },
+    {
+      _id: 's0b',
+      fullName: language === 'en' ? 'Shri Bade Bahadur Singh Ji' : 'श्री बड़े बहादुर सिंह जी',
+      position: language === 'en' ? 'Golakhra Bhadohi' : 'गोलखरा भदोही',
+      city: language === 'en' ? 'Bhadohi' : 'भदोही',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/bade_bahadur.jpeg'
+    },
     {
       _id: 's1',
       fullName: language === 'en' ? 'Shri Ravindra Singh Ji' : 'श्री रविंद्र सिंह जी',
@@ -95,11 +111,11 @@ const About = () => {
     },
     {
       _id: 's3',
-      fullName: language === 'en' ? 'Shri Shiv Shankar Singh Ji' : 'श्री शिव शंकर सिंह जी',
-      position: language === 'en' ? 'Modh Bhadohi' : 'मोढ़ भदोही',
+      fullName: language === 'en' ? 'Shri Suresh Kumar Singh Ji' : 'श्री सुरेश कुमार सिंह जी',
+      position: language === 'en' ? 'Tikaitpur Bhadohi' : 'टिकैतपुर भदोही',
       city: language === 'en' ? 'Bhadohi' : 'भदोही',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
-      photoPath: '/assets/shiv-shankar-singh.jpeg'
+      photoPath: '/assets/सुरेश कुमार सिंह.jpeg'
     }
   ], [language]);
 
@@ -111,6 +127,14 @@ const About = () => {
       city: language === 'en' ? 'Prayagraj' : 'प्रयागराज',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/sukhraj-singh.jpeg'
+    },
+    {
+      _id: 'snr2',
+      fullName: language === 'en' ? 'Shri Shiv Shankar Singh Ji' : 'श्री शिव शंकर सिंह जी',
+      position: language === 'en' ? 'Modh Bhadohi' : 'मोढ़ भदोही',
+      city: language === 'en' ? 'Bhadohi' : 'भदोही',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/shiv-shankar-singh.jpeg'
     }
   ], [language]);
 
@@ -287,7 +311,7 @@ const About = () => {
             </div>
             <div className="history-image">
               <div className="image-placeholder">
-                <span>🏛️</span>
+                <img src="/assets/विरासत और परंपरा.jpeg" alt="सदियों की विरासत" />
                 <p>{language === 'en' ? 'Centuries of Heritage' : 'सदियों की विरासत'}</p>
               </div>
             </div>
@@ -482,19 +506,15 @@ const About = () => {
           </div>
           <div className="achievements-grid">
             <div className="achievement-card">
-              <div className="achievement-number">5000+</div>
-              <div className="achievement-label">{language === 'en' ? 'Active Members' : 'सक्रिय सदस्य'}</div>
-            </div>
-            <div className="achievement-card">
               <div className="achievement-number">50+</div>
               <div className="achievement-label">{language === 'en' ? 'Events Organized' : 'आयोजित कार्यक्रम'}</div>
             </div>
             <div className="achievement-card">
-              <div className="achievement-number">200+</div>
+              <div className="achievement-number">15+</div>
               <div className="achievement-label">{language === 'en' ? 'Scholarships Provided' : 'छात्रवृत्ति प्रदान की गई'}</div>
             </div>
             <div className="achievement-card">
-              <div className="achievement-number">15+</div>
+              <div className="achievement-number">3+</div>
               <div className="achievement-label">{language === 'en' ? 'Cities Connected' : 'शहर जुड़े हुए'}</div>
             </div>
           </div>

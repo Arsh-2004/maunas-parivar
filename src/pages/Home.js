@@ -59,7 +59,7 @@ const Home = () => {
             </div>
             <div className="about-image">
               <div className="image-placeholder">
-                <span>🏰</span>
+                <img src="/assets/विरासत और परंपरा.jpeg" alt="विरासत और परंपरा" />
                 <p>{language === 'en' ? 'Heritage and Tradition' : 'विरासत और परंपरा'}</p>
               </div>
             </div>
@@ -148,8 +148,8 @@ const Home = () => {
       <section className="team-section">
         <div className="container">
           <div className="section-header">
-            <h6 className="section-label">{language === 'en' ? 'Management Committee' : 'प्रबंधन कमेटी'}</h6>
-            <h2>{language === 'en' ? 'Main Management Committee' : 'मुख्य प्रबंधन कमेटी'}</h2>
+            <h6 className="section-label">{language === 'en' ? 'Main' : 'मुख्य'}</h6>
+            <h2>{language === 'en' ? 'Management Committee' : 'प्रबंधन कमेटी'}</h2>
             <div className="underline"></div>
           </div>
           <div className="team-grid">
@@ -220,6 +220,22 @@ const Home = () => {
             <div className="team-card">
               <div className="team-image">
                 <img 
+                  src="/assets/rohit-singh.jpeg" 
+                  alt="Rohit Singh"
+                  className="team-photo"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
+              </div>
+              <h3 className="member-name">{language === 'en' ? 'Shri Rohit Singh Ji' : 'श्री रोहित सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
+            </div>
+            <div className="team-card">
+              <div className="team-image">
+                <img 
                   src="/assets/shailendra.jpeg" 
                   alt="Shailendra Pratap Singh"
                   className="team-photo"
@@ -249,38 +265,8 @@ const Home = () => {
               <h3 className="member-name">{language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी'}</h3>
               <p className="designation">{language === 'en' ? 'Bhadohi' : 'भदोही'}</p>
             </div>
-            <div className="team-card">
-              <div className="team-image">
-                <img 
-                  src="/assets/rajan-singh.jpeg" 
-                  alt="Rajan Singh"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Shri Rajan Singh Ji' : 'श्री राजन सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Gird Badgaon Bhadohi' : 'गिर्द बड़गांव भदोही'}</p>
-            </div>
-            <div className="team-card">
-              <div className="team-image">
-                <img 
-                  src="/assets/rohit-singh.jpeg" 
-                  alt="Rohit Singh"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Shri Rohit Singh Ji' : 'श्री रोहित सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
-            </div>
+          
+            
           </div>
           <div className="text-center" style={{ marginTop: '30px' }}>
             <Link to="/community" className="btn btn-primary">{language === 'en' ? 'View All Members' : 'सभी सदस्यों को देखें'}</Link>

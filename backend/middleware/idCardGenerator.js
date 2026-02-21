@@ -33,8 +33,9 @@ const generateIDCard = async (user) => {
     console.log('🎨 Starting ID card generation for user:', user.fullName);
     
     // Create a canvas for ID card - Professional size (3.5" x 2.25" at 300 DPI = 1050 x 675 pixels)
-    const width = 1050;
+    const width = 2100;
     const height = 675;
+    const half = 1050;
     console.log('📐 Canvas dimensions:', width, 'x', height);
     
     const cnv = createCanvas(width, height);
@@ -45,22 +46,33 @@ const generateIDCard = async (user) => {
 
     // ===== PROFESSIONAL CARD DESIGN =====
     
-    // Main background - Professional gradient
+    // Main background - left half only (front face)
     const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
     bgGradient.addColorStop(0, '#1a3a52');
     bgGradient.addColorStop(1, '#0f2940');
     ctx.fillStyle = bgGradient;
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(0, 0, half, height);
 
-    // Add subtle accent stripe on left
+    // ===== RIGHT HALF BACKGROUND (Back Face) =====
+    const bgGradientBack = ctx.createLinearGradient(half, 0, half, height);
+    bgGradientBack.addColorStop(0, '#f093fb');
+    bgGradientBack.addColorStop(1, '#f5576c');
+    ctx.fillStyle = bgGradientBack;
+    ctx.fillRect(half, 0, half, height);
+
+    // Divider line between front and back
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(half - 1, 0, 3, height);
+
+    // Add subtle accent stripe on left (front face only)
     ctx.fillStyle = '#e94560';
     ctx.fillRect(0, 0, 8, height);
 
-    // ===== TOP SECTION - HEADER =====
+    // ===== TOP SECTION - FRONT HEADER =====
     
-    // White header background
+    // White header background (front half only)
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, width, 85);
+    ctx.fillRect(0, 0, half, 85);
 
     // Organization Name (Top left)
     ctx.fillStyle = '#0f2940';
@@ -74,12 +86,12 @@ const generateIDCard = async (user) => {
     ctx.textAlign = 'right';
     ctx.fillText('Member ID Card', width - 20, 35);
 
-    // Thin divider line
+    // Thin divider line (front half only)
     ctx.strokeStyle = '#e94560';
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(20, 60);
-    ctx.lineTo(width - 20, 60);
+    ctx.lineTo(half - 20, 60);
     ctx.stroke();
 
     // ===== MIDDLE SECTION - PHOTO & INFO =====
@@ -133,7 +145,7 @@ const generateIDCard = async (user) => {
     
     const infoX = photoX + photoSize + 40;
     const infoY = 115;
-    const colWidth = (width - infoX - 30);
+    const colWidth = (half - infoX - 30);
     
     // Information box background - cleaner design
     ctx.fillStyle = '#ffffff';
@@ -185,35 +197,107 @@ const generateIDCard = async (user) => {
     ctx.font = 'bold 11px Arial';
     ctx.fillText(user.membershipTier.toUpperCase(), infoX + 100, detailY);
 
-    // ===== BOTTOM SECTION - ID & VALIDITY =====
+    // ===== BOTTOM SECTION - ID & VALIDITY (Front Half) =====
     
     // Unique ID generation
     const uniqueId = `MP-${user.phone.slice(-6).toUpperCase()}-${user._id.toString().slice(-4).toUpperCase()}`;
     
-    // Clean footer with subtle background
+    // Clean footer with subtle background (front half only)
     ctx.fillStyle = '#f5f5f5';
-    ctx.fillRect(0, height - 65, width, 65);
+    ctx.fillRect(0, height - 65, half, 65);
     
-    // Red accent line
+    // Red accent line (front)
     ctx.fillStyle = '#e94560';
-    ctx.fillRect(0, height - 65, width, 3);
+    ctx.fillRect(0, height - 65, half, 3);
     
-    // ID Card Number - centered
+    // ID Card Number - centered in front half
     ctx.fillStyle = '#0f2940';
     ctx.font = 'bold 14px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(`ID: ${uniqueId}`, width / 2, height - 35);
+    ctx.fillText(`ID: ${uniqueId}`, half / 2, height - 35);
 
-    // Validity info - smaller text
+    // Validity info
     const approvedDate = user.approvedAt ? new Date(user.approvedAt).toLocaleDateString('en-IN') : new Date().toLocaleDateString('en-IN');
-    
     ctx.fillStyle = '#999999';
     ctx.font = '10px Arial';
     ctx.textAlign = 'left';
     ctx.fillText(`Issued: ${approvedDate}`, 20, height - 10);
-
     ctx.textAlign = 'right';
-    ctx.fillText('Valid for 5 years', width - 20, height - 10);
+    ctx.fillText('Valid for 5 years', half - 20, height - 10);
+
+    // ===== BACK PANEL (Right Half) =====
+
+    // Back header
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.fillRect(half + 0, 0, half, 90);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 28px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('\u0938\u0926\u0938\u094d\u092f \u0935\u093f\u0935\u0930\u0923', half + half / 2, 40);
+
+    ctx.font = '14px Arial';
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.fillText('Member Information', half + half / 2, 65);
+
+    // Divider under back header
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(half + 30, 80);
+    ctx.lineTo(half + half - 30, 80);
+    ctx.stroke();
+
+    // QR placeholder circle
+    const qrX = half + half / 2;
+    const qrY = 220;
+    const qrR = 90;
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.beginPath();
+    ctx.arc(qrX, qrY, qrR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.fillStyle = '#f5576c';
+    ctx.font = 'bold 13px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('QR CODE', qrX, qrY - 10);
+    ctx.font = '11px Arial';
+    ctx.fillText('Scan on App', qrX, qrY + 10);
+    ctx.fillStyle = 'rgba(245,87,108,0.5)';
+    ctx.font = '10px Arial';
+    ctx.fillText('to view profile', qrX, qrY + 28);
+
+    // Back details
+    const backDetailX = half + 30;
+    let backDetailY = 360;
+    const backLineH = 42;
+
+    const drawBackLine = (label, value) => {
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fillRect(backDetailX, backDetailY - 18, half - 60, 36);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.75)';
+      ctx.font = 'bold 11px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText(label, backDetailX + 10, backDetailY + 4);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px Arial';
+      ctx.textAlign = 'right';
+      ctx.fillText(String(value || 'N/A').substring(0, 30), backDetailX + half - 90, backDetailY + 4);
+
+      backDetailY += backLineH;
+    };
+
+    const dobFormatted = user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('en-IN') : 'N/A';
+    drawBackLine('\u092a\u093f\u0924\u093e / Father', user.fatherName);
+    drawBackLine('\u091c\u0928\u094d\u092e / DOB', dobFormatted);
+    drawBackLine('\u0936\u0939\u0930 / City', user.city);
+    drawBackLine('\u0930\u093e\u091c\u094d\u092f / State', user.state);
+    drawBackLine('\u0938\u0926\u0938\u094d\u092f ID', uniqueId);
 
     // Convert canvas to buffer
     console.log('🖼️ Converting canvas to JPEG buffer...');
