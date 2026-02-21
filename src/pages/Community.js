@@ -205,7 +205,7 @@ const Community = () => {
       occupation: language === 'en' ? 'Intellectual Cell Member' : 'बुद्धिजीवी प्रकोष्ठ सदस्य',
       education: 'post-graduate',
       membershipTier: 'gold',
-      prakosth: 'बुद्धिजीवी प्रकोष्ठ',
+      prakosth: 'buddhijivi',
       photoPath: '/assets/ram-sudhar-singh.jpeg',
       registeredAt: new Date('2026-02-20')
     }, 
@@ -217,7 +217,7 @@ const Community = () => {
       occupation: language === 'en' ? 'Intellectual Cell Member' : 'बुद्धिजीवी प्रकोष्ठ सदस्य',
       education: 'post-graduate',
       membershipTier: 'gold',
-      prakosth: 'बुद्धिजीवी प्रकोष्ठ',
+      prakosth: 'buddhijivi',
       photoPath: '/assets/डॉ जयदीप सिंह जी.jpeg',
       registeredAt: new Date('2026-02-20')
     }, 
@@ -229,7 +229,7 @@ const Community = () => {
       occupation: language === 'en' ? 'Human Service Cell Member' : 'मानव सेवा प्रकोष्ठ सदस्य',
       education: 'graduate',
       membershipTier: 'gold',
-      prakosth: 'मानव सेवा प्रकोष्ठ',
+      prakosth: 'manav-seva',
       photoPath: '/assets/श्री के के सिंह जी.jpeg',
       registeredAt: new Date('2026-02-21')
     },
@@ -241,7 +241,7 @@ const Community = () => {
       occupation: language === 'en' ? 'Surgeon' : 'शल्य चिकित्सक',
       education: 'post-graduate',
       membershipTier: 'diamond',
-      prakosth: 'चिकित्सा प्रकोष्ठ',
+      prakosth: 'chikitsa',
       photoPath: null,
       registeredAt: new Date('2024-01-10')
     },
@@ -253,7 +253,7 @@ const Community = () => {
       occupation: language === 'en' ? 'Advocate' : 'एडवोकेट',
       education: 'post-graduate',
       membershipTier: 'gold',
-      prakosth: 'विधि प्रकोष्ठ',
+      prakosth: 'vidhi',
       photoPath: '/assets/श्री राजकुमार सिंह जी.jpeg',
       registeredAt: new Date('2026-02-21')
     },
@@ -265,7 +265,7 @@ const Community = () => {
       occupation: language === 'en' ? 'Businessman' : 'व्यवसायी',
       education: 'graduate',
       membershipTier: 'diamond',
-      prakosth: 'व्यापार प्रकोष्ठ',
+      prakosth: 'vyapar',
       photoPath: null,
       registeredAt: new Date('2024-03-01')
     },
@@ -276,7 +276,7 @@ const Community = () => {
       state: language === 'en' ? 'Bhadohi' : 'भदोही',
       occupation: language === 'en' ? 'Sports & Military Cell Member' : 'खेल एवं सैनिक प्रकोष्ठ सदस्य',
       membershipTier: 'silver',
-      prakosth: 'खेल एवं सैनिक प्रकोष्ठ',
+      prakosth: 'khel',
       photoPath: '/assets/श्री यजुवेंद्र सिंह जी.jpeg',
       registeredAt: new Date('2026-02-19')
     }
@@ -349,9 +349,9 @@ const Community = () => {
             {prakosths.map((prakosth, index) => (
               <div 
                 key={index} 
-                className={`team-member-card ${selectedPrakosth === prakosth.title ? 'active' : ''}`}
+                className={`team-member-card ${selectedPrakosth === prakosth.id ? 'active' : ''}`}
                 onClick={() => {
-                  setSelectedPrakosth(selectedPrakosth === prakosth.title ? null : prakosth.title);
+                  setSelectedPrakosth(selectedPrakosth === prakosth.id ? null : prakosth.id);
                 }}
                 style={{ cursor: 'pointer' }}
               >
@@ -372,7 +372,7 @@ const Community = () => {
             <div className="members-modal-overlay" onClick={() => setSelectedPrakosth(null)}>
               <div className="members-modal" onClick={(e) => e.stopPropagation()}>
                 <div className="members-modal-header">
-                  <h3>{selectedPrakosth}</h3>
+                  <h3>{prakosths.find(p => p.id === selectedPrakosth)?.title || selectedPrakosth}</h3>
                   <button className="members-modal-close" onClick={() => setSelectedPrakosth(null)}>✕</button>
                 </div>
                 <div className="members-modal-body">
