@@ -3,6 +3,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { getTranslation } from '../translations';
 import './Contact.css';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 const Contact = () => {
   const { language } = useLanguage();
   const t = (path) => getTranslation(language, path);
@@ -14,6 +16,8 @@ const Contact = () => {
     subject: '',
     message: ''
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error'
 
   const handleChange = (e) => {
     setFormData({
@@ -22,13 +26,28 @@ const Contact = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const thankYouMsg = language === 'en' 
-      ? 'Thank you for contacting us! We will get back to you soon.' 
-      : 'हमसे संपर्क करने के लिए धन्यवाद! हम जल्द ही आपसे संपर्क करेंगे।';
-    alert(thankYouMsg);
-    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    setSubmitting(true);
+    setSubmitStatus(null);
+    try {
+      const response = await fetch(`${API_URL}/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      const data = await response.json();
+      if (data.success) {
+        setSubmitStatus('success');
+        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch (err) {
+      setSubmitStatus('error');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -110,7 +129,21 @@ const Contact = () => {
                   ></textarea>
                 </div>
 
-                <button type="submit" className="submit-btn">{t('contact.sendBtn')}</button>
+                <button type="submit" className="submit-btn" disabled={submitting}>
+                  {submitting 
+                    ? (language === 'en' ? 'Sending...' : 'भेजा जा रहा है...') 
+                    : t('contact.sendBtn')}
+                </button>
+                {submitStatus === 'success' && (
+                  <div className="form-success-msg">
+                    ✅ {language === 'en' ? 'Message sent successfully! We will get back to you soon.' : 'संदेश सफलतापूर्वक भेजा गया! हम जल्द ही आपसे संपर्क करेंगे।'}
+                  </div>
+                )}
+                {submitStatus === 'error' && (
+                  <div className="form-error-msg">
+                    ❌ {language === 'en' ? 'Failed to send message. Please try again.' : 'संदेश भेजने में विफल। कृपया पुनः प्रयास करें।'}
+                  </div>
+                )}
               </form>
             </div>
 

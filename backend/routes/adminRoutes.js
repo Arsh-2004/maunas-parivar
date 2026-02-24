@@ -711,4 +711,37 @@ router.post('/regenerate-id-card/:id', adminAuth, async (req, res) => {
   }
 });
 
+// Get all contact messages
+const Contact = require('../models/Contact');
+
+router.get('/contacts', adminAuth, async (req, res) => {
+  try {
+    const contacts = await Contact.find().sort({ submittedAt: -1 });
+    res.json({ success: true, count: contacts.length, contacts });
+  } catch (error) {
+    console.error('Fetch contacts error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch contact messages' });
+  }
+});
+
+// Mark contact message as read
+router.patch('/contacts/:id/read', adminAuth, async (req, res) => {
+  try {
+    await Contact.findByIdAndUpdate(req.params.id, { isRead: true });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to update message' });
+  }
+});
+
+// Delete contact message
+router.delete('/contacts/:id', adminAuth, async (req, res) => {
+  try {
+    await Contact.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to delete message' });
+  }
+});
+
 module.exports = router;

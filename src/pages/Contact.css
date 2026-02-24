@@ -98,6 +98,34 @@
   box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
 }
 
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.form-success-msg {
+  margin-top: 15px;
+  padding: 12px 16px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.form-error-msg {
+  margin-top: 15px;
+  padding: 12px 16px;
+  background: #fdecea;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
 /* Contact Information */
 .contact-info-wrapper h2 {
   color: #333;

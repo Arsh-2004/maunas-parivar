@@ -23,6 +23,7 @@ const AdminDashboard = () => {
   const [events, setEvents] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [oathAgreements, setOathAgreements] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [eventForm, setEventForm] = useState({ title: '', description: '', date: '', location: '', image: null });
   const [galleryForm, setGalleryForm] = useState({ title: '', description: '', category: 'general', image: null });
   const [showUserModal, setShowUserModal] = useState(false);
@@ -57,6 +58,7 @@ const AdminDashboard = () => {
         fetchEvents();
         fetchGallery();
         fetchOathAgreements();
+        fetchContacts();
       } else {
         setError(language === 'en' ? 'Invalid admin password' : 'गलत व्यवस्थापक पासवर्ड');
       }
@@ -80,6 +82,22 @@ const AdminDashboard = () => {
     }
   }, [adminPassword]);
 
+  // Fetch contact messages
+  const fetchContacts = useCallback(async () => {
+    try {
+      const storedPassword = localStorage.getItem('adminPassword');
+      const response = await fetch(`${API_URL}/admin/contacts`, {
+        headers: { 'x-admin-password': storedPassword || adminPassword }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setContacts(data.contacts);
+      }
+    } catch (err) {
+      console.error('Error fetching contacts:', err);
+    }
+  }, [adminPassword]);
+
   // Check stored admin session
   useEffect(() => {
     const storedPassword = localStorage.getItem('adminPassword');
@@ -91,8 +109,9 @@ const AdminDashboard = () => {
       fetchEvents();
       fetchGallery();
       fetchOathAgreements();
+      fetchContacts();
     }
-  }, [fetchOathAgreements]);
+  }, [fetchOathAgreements, fetchContacts]);
 
   // Fetch users
   const fetchUsers = async (searchTerm = '') => {
@@ -486,6 +505,17 @@ const AdminDashboard = () => {
           onClick={() => setActiveTab('gallery')}
         >
           {language === 'en' ? 'Gallery' : 'गैलरी'}
+        </button>
+        <button 
+          className={activeTab === 'contacts' ? 'active' : ''}
+          onClick={() => setActiveTab('contacts')}
+        >
+          {language === 'en' ? 'Contact Messages' : 'संदेश'}
+          {contacts.filter(c => !c.isRead).length > 0 && (
+            <span style={{ background: '#e07b39', color: '#fff', borderRadius: '50%', padding: '2px 7px', marginLeft: '6px', fontSize: '12px' }}>
+              {contacts.filter(c => !c.isRead).length}
+            </span>
+          )}
         </button>
       </div>
 
@@ -982,6 +1012,93 @@ const AdminDashboard = () => {
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {activeTab === 'contacts' && (
+        <div className="oath-agreements-section">
+          <h2>{language === 'en' ? '📩 Contact Messages' : '📩 संपर्क संदेश'}</h2>
+          <div className="stats-grid">
+            <div className="stat-card total-card">
+              <div className="stat-number">{contacts.length}</div>
+              <div className="stat-label">{language === 'en' ? 'Total Messages' : 'कुल संदेश'}</div>
+            </div>
+            <div className="stat-card pending-card">
+              <div className="stat-number">{contacts.filter(c => !c.isRead).length}</div>
+              <div className="stat-label">{language === 'en' ? 'Unread' : 'अपठित'}</div>
+            </div>
+          </div>
+
+          {contacts.length === 0 ? (
+            <p className="no-data">{language === 'en' ? 'No contact messages yet' : 'अभी तक कोई संदेश नहीं'}</p>
+          ) : (
+            <div className="members-table-container">
+              <table className="members-table">
+                <thead>
+                  <tr>
+                    <th>{language === 'en' ? 'Name' : 'नाम'}</th>
+                    <th>{language === 'en' ? 'Email' : 'ईमेल'}</th>
+                    <th>{language === 'en' ? 'Phone' : 'फोन'}</th>
+                    <th>{language === 'en' ? 'Subject' : 'विषय'}</th>
+                    <th>{language === 'en' ? 'Message' : 'संदेश'}</th>
+                    <th>{language === 'en' ? 'Date' : 'दिनांक'}</th>
+                    <th>{language === 'en' ? 'Status' : 'स्थिति'}</th>
+                    <th>{language === 'en' ? 'Actions' : 'कार्यवाही'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {contacts.map((contact) => (
+                    <tr key={contact._id} style={{ background: contact.isRead ? 'transparent' : '#fff8f0' }}>
+                      <td><strong>{contact.name}</strong></td>
+                      <td><a href={`mailto:${contact.email}`}>{contact.email}</a></td>
+                      <td>{contact.phone || '-'}</td>
+                      <td>{contact.subject}</td>
+                      <td style={{ maxWidth: '200px', wordBreak: 'break-word' }}>{contact.message}</td>
+                      <td>{new Date(contact.submittedAt).toLocaleDateString('en-IN')}</td>
+                      <td>
+                        <span style={{ color: contact.isRead ? '#888' : '#e07b39', fontWeight: contact.isRead ? 'normal' : 'bold' }}>
+                          {contact.isRead ? (language === 'en' ? 'Read' : 'पढ़ा') : (language === 'en' ? 'Unread' : 'अपठित')}
+                        </span>
+                      </td>
+                      <td style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        {!contact.isRead && (
+                          <button
+                            className="approve-btn"
+                            style={{ padding: '4px 10px', fontSize: '12px' }}
+                            onClick={async () => {
+                              const pwd = localStorage.getItem('adminPassword');
+                              await fetch(`${API_URL}/admin/contacts/${contact._id}/read`, {
+                                method: 'PATCH',
+                                headers: { 'x-admin-password': pwd }
+                              });
+                              fetchContacts();
+                            }}
+                          >
+                            {language === 'en' ? 'Mark Read' : 'पढ़ा हुआ'}
+                          </button>
+                        )}
+                        <button
+                          className="delete-btn"
+                          style={{ padding: '4px 10px', fontSize: '12px' }}
+                          onClick={async () => {
+                            if (!window.confirm(language === 'en' ? 'Delete this message?' : 'इस संदेश को हटाएं?')) return;
+                            const pwd = localStorage.getItem('adminPassword');
+                            await fetch(`${API_URL}/admin/contacts/${contact._id}`, {
+                              method: 'DELETE',
+                              headers: { 'x-admin-password': pwd }
+                            });
+                            fetchContacts();
+                          }}
+                        >
+                          {language === 'en' ? 'Delete' : 'हटाएं'}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 
