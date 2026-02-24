@@ -62,6 +62,47 @@ section {
   border-radius: 2px;
 }
 
+/* Community Dropdown Selector */
+.community-dropdown-section {
+  background: #fff;
+  padding: 30px 0 10px;
+}
+
+.community-dropdown-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.community-dropdown {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23F7931E' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 22px;
+  border: 2px solid #F7931E;
+  border-radius: 8px;
+  padding: 12px 48px 12px 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  min-width: 320px;
+  box-shadow: 0 2px 10px rgba(247, 147, 30, 0.18);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.community-dropdown:focus {
+  outline: none;
+  border-color: #FF6B35;
+  box-shadow: 0 0 0 3px rgba(247, 147, 30, 0.2);
+}
+
+.community-dropdown:hover {
+  border-color: #FF6B35;
+}
+
 /* Management Team */
 .management-section {
   background: #f9f9f9;

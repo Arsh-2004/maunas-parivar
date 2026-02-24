@@ -44,6 +44,9 @@ const Membership = () => {
   const [availableCities, setAvailableCities] = useState([]);
   const [showOtherState, setShowOtherState] = useState(false);
   const [showOtherCity, setShowOtherCity] = useState(false);
+  const [educationCategory, setEducationCategory] = useState('');
+  const [otherEducationText, setOtherEducationText] = useState('');
+  const [subDegreeOther, setSubDegreeOther] = useState('');
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmCheckbox, setConfirmCheckbox] = useState(false);
@@ -74,6 +77,102 @@ const Membership = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const graduateDegrees = [
+    { value: 'B.A. (Bachelor of Arts)', en: 'B.A. (Bachelor of Arts)', hi: 'बी.ए. (कला स्नातक)' },
+    { value: 'B.Sc (Bachelor of Science)', en: 'B.Sc (Bachelor of Science)', hi: 'बी.एससी (विज्ञान स्नातक)' },
+    { value: 'B.Com (Bachelor of Commerce)', en: 'B.Com (Bachelor of Commerce)', hi: 'बी.कॉम (वाणिज्य स्नातक)' },
+    { value: 'B.Tech / B.E. (Engineering)', en: 'B.Tech / B.E. (Engineering)', hi: 'बी.टेक / बी.ई. (इंजीनियरिंग)' },
+    { value: 'BBA (Business Administration)', en: 'BBA (Business Administration)', hi: 'बीबीए (व्यवसाय प्रशासन)' },
+    { value: 'BCA (Computer Applications)', en: 'BCA (Computer Applications)', hi: 'बीसीए (कंप्यूटर एप्लीकेशन)' },
+    { value: 'LLB (Law)', en: 'LLB (Law)', hi: 'एलएलबी (विधि)' },
+    { value: 'MBBS (Medicine)', en: 'MBBS (Medicine)', hi: 'एमबीबीएस (चिकित्सा)' },
+    { value: 'BDS (Dental)', en: 'BDS (Dental)', hi: 'बीडीएस (दंत चिकित्सा)' },
+    { value: 'B.Pharm (Pharmacy)', en: 'B.Pharm (Pharmacy)', hi: 'बी.फार्म (फार्मेसी)' },
+    { value: 'B.Arch (Architecture)', en: 'B.Arch (Architecture)', hi: 'बी.आर्च (वास्तुकला)' },
+    { value: 'B.Ed (Education)', en: 'B.Ed (Education)', hi: 'बी.एड (शिक्षा)' },
+    { value: 'B.Nursing', en: 'B.Nursing', hi: 'बी.नर्सिंग' },
+    { value: 'B.Des (Design)', en: 'B.Des (Design)', hi: 'बी.डेस (डिज़ाइन)' },
+    { value: 'B.Sc Agriculture', en: 'B.Sc Agriculture', hi: 'बी.एससी कृषि' },
+    { value: 'B.Sc Nursing', en: 'B.Sc Nursing', hi: 'बी.एससी नर्सिंग' },
+    { value: 'Other Graduate Degree', en: 'Other Graduate Degree', hi: 'अन्य स्नातक डिग्री' },
+  ];
+
+  const postGraduateDegrees = [
+    { value: 'M.A. (Master of Arts)', en: 'M.A. (Master of Arts)', hi: 'एम.ए. (कला स्नातकोत्तर)' },
+    { value: 'M.Sc (Master of Science)', en: 'M.Sc (Master of Science)', hi: 'एम.एससी (विज्ञान स्नातकोत्तर)' },
+    { value: 'M.Com (Master of Commerce)', en: 'M.Com (Master of Commerce)', hi: 'एम.कॉम (वाणिज्य स्नातकोत्तर)' },
+    { value: 'M.Tech / M.E. (Engineering)', en: 'M.Tech / M.E. (Engineering)', hi: 'एम.टेक / एम.ई. (इंजीनियरिंग)' },
+    { value: 'MBA (Business Administration)', en: 'MBA (Business Administration)', hi: 'एमबीए (व्यवसाय प्रशासन)' },
+    { value: 'MCA (Computer Applications)', en: 'MCA (Computer Applications)', hi: 'एमसीए (कंप्यूटर एप्लीकेशन)' },
+    { value: 'LLM (Law)', en: 'LLM (Law)', hi: 'एलएलएम (विधि)' },
+    { value: 'MD (Medicine)', en: 'MD (Medicine)', hi: 'एमडी (चिकित्सा)' },
+    { value: 'MS (Master of Surgery)', en: 'MS (Master of Surgery)', hi: 'एमएस (शल्य चिकित्सा)' },
+    { value: 'M.Pharm (Pharmacy)', en: 'M.Pharm (Pharmacy)', hi: 'एम.फार्म (फार्मेसी)' },
+    { value: 'M.Arch (Architecture)', en: 'M.Arch (Architecture)', hi: 'एम.आर्च (वास्तुकला)' },
+    { value: 'M.Ed (Education)', en: 'M.Ed (Education)', hi: 'एम.एड (शिक्षा)' },
+    { value: 'M.Nursing', en: 'M.Nursing', hi: 'एम.नर्सिंग' },
+    { value: 'M.Des (Design)', en: 'M.Des (Design)', hi: 'एम.डेस (डिज़ाइन)' },
+    { value: 'M.Sc Agriculture', en: 'M.Sc Agriculture', hi: 'एम.एससी कृषि' },
+    { value: 'Ph.D (Doctorate)', en: 'Ph.D (Doctorate)', hi: 'पीएच.डी (डॉक्टरेट)' },
+    { value: 'Other PG Degree', en: 'Other PG Degree', hi: 'अन्य स्नातकोत्तर डिग्री' },
+  ];
+
+  const diplomaDegrees = [
+    { value: 'Diploma in Engineering', en: 'Diploma in Engineering', hi: 'डिप्लोमा इन इंजीनियरिंग' },
+    { value: 'Diploma in Computer Science', en: 'Diploma in Computer Science', hi: 'डिप्लोमा इन कंप्यूटर साइंस' },
+    { value: 'Diploma in Mechanical Engineering', en: 'Diploma in Mechanical Engineering', hi: 'डिप्लोमा इन मैकेनिकल इंजीनियरिंग' },
+    { value: 'Diploma in Civil Engineering', en: 'Diploma in Civil Engineering', hi: 'डिप्लोमा इन सिविल इंजीनियरिंग' },
+    { value: 'Diploma in Electrical Engineering', en: 'Diploma in Electrical Engineering', hi: 'डिप्लोमा इन इलेक्ट्रिकल इंजीनियरिंग' },
+    { value: 'Diploma in Electronics', en: 'Diploma in Electronics', hi: 'डिप्लोमा इन इलेक्ट्रॉनिक्स' },
+    { value: 'Diploma in Pharmacy', en: 'Diploma in Pharmacy', hi: 'डिप्लोमा इन फार्मेसी' },
+    { value: 'Diploma in Nursing', en: 'Diploma in Nursing', hi: 'डिप्लोमा इन नर्सिंग' },
+    { value: 'Diploma in Hotel Management', en: 'Diploma in Hotel Management', hi: 'डिप्लोमा इन होटल मैनेजमेंट' },
+    { value: 'Diploma in Fashion Design', en: 'Diploma in Fashion Design', hi: 'डिप्लोमा इन फैशन डिज़ाइन' },
+    { value: 'Diploma in Interior Design', en: 'Diploma in Interior Design', hi: 'डिप्लोमा इन इंटीरियर डिज़ाइन' },
+    { value: 'Diploma in Automobile Engineering', en: 'Diploma in Automobile Engineering', hi: 'डिप्लोमा इन ऑटोमोबाइल इंजीनियरिंग' },
+    { value: 'Diploma in IT', en: 'Diploma in IT', hi: 'डिप्लोमा इन आईटी' },
+    { value: 'Diploma in Agriculture', en: 'Diploma in Agriculture', hi: 'डिप्लोमा इन कृषि' },
+    { value: 'Other Diploma', en: 'Other Diploma', hi: 'अन्य डिप्लोमा' },
+  ];
+
+  const handleEducationCategoryChange = (e) => {
+    const val = e.target.value;
+    setEducationCategory(val);
+    setOtherEducationText('');
+    setSubDegreeOther('');
+    if (['below-10th', '10th', '12th'].includes(val)) {
+      setFormData({ ...formData, education: val });
+    } else {
+      setFormData({ ...formData, education: '' });
+    }
+  };
+
+  const handleEducationDegreeChange = (e) => {
+    const val = e.target.value;
+    if (val === 'Other Graduate Degree') {
+      setSubDegreeOther('graduate');
+      setOtherEducationText('');
+      setFormData({ ...formData, education: '' });
+    } else if (val === 'Other PG Degree') {
+      setSubDegreeOther('pg');
+      setOtherEducationText('');
+      setFormData({ ...formData, education: '' });
+    } else if (val === 'Other Diploma') {
+      setSubDegreeOther('diploma');
+      setOtherEducationText('');
+      setFormData({ ...formData, education: '' });
+    } else {
+      setSubDegreeOther('');
+      setOtherEducationText('');
+      setFormData({ ...formData, education: val });
+    }
+  };
+
+  const handleOtherEducationChange = (e) => {
+    setOtherEducationText(e.target.value);
+    setFormData({ ...formData, education: e.target.value });
   };
 
   const handleStateChange = (e) => {
@@ -288,9 +387,13 @@ const Membership = () => {
     }
     
     // Education validation
-    if (!formData.education) {
+    if (!educationCategory) {
       showNotification('error', language === 'en' ? '❌ Please select your educational qualification' : '❌ कृपया अपनी शैक्षिक योग्यता चुनें');
       document.getElementById('education').focus();
+      return;
+    }
+    if (['graduate', 'post-graduate', 'diploma', 'others'].includes(educationCategory) && !formData.education) {
+      showNotification('error', language === 'en' ? '❌ Please select or enter your specific degree' : '❌ कृपया अपनी विशिष्ट डिग्री चुनें या लिखें');
       return;
     }
 
@@ -409,6 +512,9 @@ const Membership = () => {
         setShowModal(true);
         setShowReviewModal(false);
         setShowConfirmation(false);
+        setEducationCategory('');
+        setOtherEducationText('');
+        setSubDegreeOther('');
         setFormData({
           fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '', education: '',
           phone: '', password: '', confirmPassword: '', address: '', village: '', block: '', tehsil: '', district: '', city: '', state: '', pincode: '', occupation: '',
@@ -1154,9 +1260,9 @@ const Membership = () => {
                   </label>
                   <select
                     id="education"
-                    name="education"
-                    value={formData.education}
-                    onChange={handleChange}
+                    name="educationCategory"
+                    value={educationCategory}
+                    onChange={handleEducationCategoryChange}
                     required
                   >
                     <option value="">
@@ -1184,6 +1290,107 @@ const Membership = () => {
                       {language === 'en' ? 'Others' : 'अन्य'}
                     </option>
                   </select>
+
+                  {educationCategory === 'diploma' && (
+                    <>
+                      <select
+                        style={{ marginTop: '8px' }}
+                        value={subDegreeOther === 'diploma' ? 'Other Diploma' : formData.education}
+                        onChange={handleEducationDegreeChange}
+                        required
+                      >
+                        <option value="">
+                          {language === 'en' ? 'Select Diploma' : 'डिप्लोमा चुनें'}
+                        </option>
+                        {diplomaDegrees.map(d => (
+                          <option key={d.value} value={d.value}>
+                            {language === 'en' ? d.en : d.hi}
+                          </option>
+                        ))}
+                      </select>
+                      {subDegreeOther === 'diploma' && (
+                        <input
+                          type="text"
+                          style={{ marginTop: '8px' }}
+                          placeholder={language === 'en' ? 'Enter your diploma name' : 'अपने डिप्लोमा का नाम लिखें'}
+                          value={otherEducationText}
+                          onChange={handleOtherEducationChange}
+                          required
+                        />
+                      )}
+                    </>
+                  )}
+
+                  {educationCategory === 'graduate' && (
+                    <>
+                      <select
+                        style={{ marginTop: '8px' }}
+                        value={subDegreeOther === 'graduate' ? 'Other Graduate Degree' : formData.education}
+                        onChange={handleEducationDegreeChange}
+                        required
+                      >
+                        <option value="">
+                          {language === 'en' ? 'Select Graduate Degree' : 'स्नातक डिग्री चुनें'}
+                        </option>
+                        {graduateDegrees.map(d => (
+                          <option key={d.value} value={d.value}>
+                            {language === 'en' ? d.en : d.hi}
+                          </option>
+                        ))}
+                      </select>
+                      {subDegreeOther === 'graduate' && (
+                        <input
+                          type="text"
+                          style={{ marginTop: '8px' }}
+                          placeholder={language === 'en' ? 'Enter your graduate degree name' : 'अपनी स्नातक डिग्री का नाम लिखें'}
+                          value={otherEducationText}
+                          onChange={handleOtherEducationChange}
+                          required
+                        />
+                      )}
+                    </>
+                  )}
+
+                  {educationCategory === 'post-graduate' && (
+                    <>
+                      <select
+                        style={{ marginTop: '8px' }}
+                        value={subDegreeOther === 'pg' ? 'Other PG Degree' : formData.education}
+                        onChange={handleEducationDegreeChange}
+                        required
+                      >
+                        <option value="">
+                          {language === 'en' ? 'Select Post Graduate Degree' : 'स्नातकोत्तर डिग्री चुनें'}
+                        </option>
+                        {postGraduateDegrees.map(d => (
+                          <option key={d.value} value={d.value}>
+                            {language === 'en' ? d.en : d.hi}
+                          </option>
+                        ))}
+                      </select>
+                      {subDegreeOther === 'pg' && (
+                        <input
+                          type="text"
+                          style={{ marginTop: '8px' }}
+                          placeholder={language === 'en' ? 'Enter your post graduate degree name' : 'अपनी स्नातकोत्तर डिग्री का नाम लिखें'}
+                          value={otherEducationText}
+                          onChange={handleOtherEducationChange}
+                          required
+                        />
+                      )}
+                    </>
+                  )}
+
+                  {educationCategory === 'others' && (
+                    <input
+                      type="text"
+                      style={{ marginTop: '8px' }}
+                      placeholder={language === 'en' ? 'Enter your degree / qualification' : 'अपनी डिग्री / योग्यता लिखें'}
+                      value={otherEducationText}
+                      onChange={handleOtherEducationChange}
+                      required
+                    />
+                  )}
                 </div>
               </div>
 

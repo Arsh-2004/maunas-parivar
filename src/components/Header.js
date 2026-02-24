@@ -129,7 +129,22 @@ const Header = () => {
                       🥇 {language === 'en' ? 'Gold Panel' : 'गोल्ड पैनल'}
                     </Link>
                   )} */}
-                  <Link to="/community" onClick={() => setIsMenuOpen(false)}>{t('header.community')}</Link>
+                  <div className="nav-dropdown">
+                    <span className="nav-dropdown-trigger">
+                      {t('header.community')} <span className="nav-dropdown-arrow">▾</span>
+                    </span>
+                    <div className="nav-dropdown-menu">
+                      <Link to="/community?section=prakosth" onClick={() => setIsMenuOpen(false)}>
+                        {language === 'en' ? 'Our Cells (Prakosth)' : 'हमारा प्रकोष्ठ'}
+                      </Link>
+                      <Link to="/community?section=upadhi" onClick={() => setIsMenuOpen(false)}>
+                        {language === 'en' ? 'Upadhidhaarak' : 'उपाधिधारक'}
+                      </Link>
+                      <Link to="/community?section=members" onClick={() => setIsMenuOpen(false)}>
+                        {language === 'en' ? 'Our Members' : 'हमारे सदस्य'}
+                      </Link>
+                    </div>
+                  </div>
                   <Link to="/events" onClick={() => setIsMenuOpen(false)}>{t('header.events')}</Link>
                   <Link to="/gallery" onClick={() => setIsMenuOpen(false)}>{t('header.gallery')}</Link>
                 </>

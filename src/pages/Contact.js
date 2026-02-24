@@ -120,7 +120,7 @@ const Contact = () => {
                 <div className="info-card">
                   <div className="info-icon">📍</div>
                   <h3>{t('contact.address')}</h3>
-                  <p>{language === 'en' ? 'Rajasthan, India' : 'राजस्थान, भारत'}</p>
+                  <p>{language === 'en' ? 'Devtayan Surabhi Nagar Colony, Awaleshpur, Varanasi U.P.' : 'देवतायन सुरभि नगर कॉलोनी, अवलेशपुर वाराणसी उ०प्र०'}</p>
                 </div>
 
                 <div className="info-card">
@@ -137,12 +137,7 @@ const Contact = () => {
                   <p>+91 9876543211</p>
                 </div>
 
-                <div className="info-card">
-                  <div className="info-icon">🕐</div>
-                  <h3>{t('contact.officeHours')}</h3>
-                  <p>{language === 'en' ? 'Monday - Saturday' : 'सोमवार - शनिवार'}</p>
-                  <p>9:00 AM - 6:00 PM</p>
-                </div>
+                
               </div>
 
               <div className="social-connect">

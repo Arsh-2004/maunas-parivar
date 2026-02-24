@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { getTranslation } from '../translations';
 import './Community.css';
@@ -8,14 +9,24 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 const Community = () => {
   const { language } = useLanguage();
   const t = (path) => getTranslation(language, path);
+  const location = useLocation();
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, bronze, silver, gold, diamond
   const [selectedUpadhi, setSelectedUpadhi] = useState(null); // for filtering by honorary title
   const [selectedPrakosth, setSelectedPrakosth] = useState(null); // for filtering by prakosth
-  const [showPrakosth, setShowPrakosth] = useState(false); // collapsible prakosth section
-  const [showUpadhi, setShowUpadhi] = useState(false); // collapsible upadhi section
-  const [showMembers, setShowMembers] = useState(false); // collapsible members section
+  const [activeSection, setActiveSection] = useState(''); // dropdown selected section
+
+  // Read section from URL query param
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const section = params.get('section');
+    if (section) {
+      setActiveSection(section);
+      setSelectedPrakosth(null);
+      setSelectedUpadhi(null);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     fetchMembers();
@@ -333,18 +344,36 @@ const Community = () => {
         </div>
       </section>
 
+      {/* Section Dropdown Selector */}
+      <section className="community-dropdown-section">
+        <div className="container">
+          <div className="community-dropdown-wrapper">
+            <select
+              className="community-dropdown"
+              value={activeSection}
+              onChange={(e) => {
+                setActiveSection(e.target.value);
+                setSelectedPrakosth(null);
+                setSelectedUpadhi(null);
+              }}
+            >
+              <option value="">{language === 'en' ? '-- Select Section --' : '-- विभाग चुनें --'}</option>
+              <option value="prakosth">{language === 'en' ? 'Our Cells (Hamara Prakosth)' : 'हमारा प्रकोष्ठ'}</option>
+              <option value="upadhi">{language === 'en' ? 'Upadhidhaarak (Titles & Honours)' : 'उपाधिधारक'}</option>
+              <option value="members">{language === 'en' ? 'Our Members' : 'हमारे सदस्य'}</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
       {/* Management Team - Hamara Prakosth */}
+      {activeSection === 'prakosth' && (
       <section className="management-section">
         <div className="container">
-          <div className="section-header" style={{ cursor: 'pointer' }} onClick={() => setShowPrakosth(!showPrakosth)}>
-            <h2>
-              {language === 'en' ? 'Our Cells' : 'हमारा प्रकोष्ठ'}
-              <span style={{ marginLeft: '10px', fontSize: '1.5rem' }}>{showPrakosth ? '▼' : '▶'}</span>
-            </h2>
+          <div className="section-header">
+            <h2>{language === 'en' ? 'Our Cells' : 'हमारा प्रकोष्ठ'}</h2>
             <div className="underline"></div>
           </div>
-          {showPrakosth && (
-          <>
           <div className="team-grid">
             {prakosths.map((prakosth, index) => (
               <div 
@@ -364,8 +393,6 @@ const Community = () => {
               </div>
             ))}
           </div>
-          </>
-          )}
 
           {/* Prakosth Members Modal */}
           {selectedPrakosth && (
@@ -403,31 +430,22 @@ const Community = () => {
           )}
         </div>
       </section>
+      )}
 
       {/* Upadhidhaarak (Titles & Rankings) Section */}
+      {activeSection === 'upadhi' && (
       <section className="upadhi-section">
         <div className="container">
-          <div className="section-header" style={{ cursor: 'pointer' }} onClick={() => setShowUpadhi(!showUpadhi)}>
-            <h2>
-              {language === 'en' ? 'Upadhidhaarak' : 'उपाधिधारक'}
-              <span style={{ marginLeft: '10px', fontSize: '1.5rem' }}>{showUpadhi ? '▼' : '▶'}</span>
-            </h2>
+          <div className="section-header">
+            <h2>{language === 'en' ? 'Upadhidhaarak' : 'उपाधिधारक'}</h2>
             <div className="underline"></div>
           </div>
-          {showUpadhi && (
-          <>
           <div className="upadhi-grid">
             {upadhiRankings.map((member, index) => (
               <div 
                 key={index} 
                 className={`upadhi-card ${selectedUpadhi === member.honoraryTitle ? 'active' : ''}`}
-                onClick={() => {
-                  if (selectedUpadhi === member.honoraryTitle) {
-                    setSelectedUpadhi(null); // deselect if clicking the same one
-                  } else {
-                    setSelectedUpadhi(member.honoraryTitle);
-                  }
-                }}
+                onClick={() => setSelectedUpadhi(selectedUpadhi === member.honoraryTitle ? null : member.honoraryTitle)}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="upadhi-icon">{getUpadhiIcon(member.honoraryTitle)}</div>
@@ -437,8 +455,6 @@ const Community = () => {
               </div>
             ))}
           </div>
-          </>
-          )}
 
           {/* Upadhi Members Modal */}
           {selectedUpadhi && (
@@ -480,19 +496,17 @@ const Community = () => {
           )}
         </div>
       </section>
+      )}
 
       {/* Members Directory */}
+      {activeSection === 'members' && (
       <section className="members-section">
         <div className="container">
-          <div className="section-header" style={{ cursor: 'pointer' }} onClick={() => setShowMembers(!showMembers)}>
-            <h2>
-              {language === 'en' ? 'Our Members' : 'हमारे सदस्य'}
-              <span style={{ marginLeft: '10px', fontSize: '1.5rem' }}>{showMembers ? '▼' : '▶'}</span>
-            </h2>
+          <div className="section-header">
+            <h2>{language === 'en' ? 'Our Members' : 'हमारे सदस्य'}</h2>
             <div className="underline"></div>
           </div>
 
-          {showMembers && (
           <>
           <div className="tier-filters">
             <button 
@@ -580,9 +594,9 @@ const Community = () => {
             </div>
           )}
           </>
-          )}
         </div>
       </section>
+      )}
     </div>
   );
 };

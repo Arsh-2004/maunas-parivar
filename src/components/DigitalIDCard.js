@@ -318,12 +318,12 @@ const DigitalIDCard = ({ user }) => {
                   </span>
                 </div>
                 <div className="id-back-detail-row">
-                  <span className="id-detail-label">शहर/City</span>
-                  <span className="id-detail-value">{user.city || 'N/A'}</span>
-                </div>
-                <div className="id-back-detail-row">
-                  <span className="id-detail-label">जिला/District</span>
-                  <span className="id-detail-value">{user.district || 'N/A'}</span>
+                  <span className="id-detail-label">पता/Address</span>
+                  <span className="id-detail-value id-detail-address">
+                    {[user.village, user.block, user.tehsil, user.district, user.city, user.state, user.pincode]
+                      .filter(Boolean)
+                      .join(', ') || 'N/A'}
+                  </span>
                 </div>
                 <div className="id-back-detail-row">
                   <span className="id-detail-label">सदस्य ID</span>

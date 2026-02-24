@@ -288,7 +288,7 @@
 .id-back-detail-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   padding: 6px 10px;
   background: #fff5f0;
   border-radius: 5px;
@@ -312,6 +312,11 @@
   text-align: right;
   word-break: break-word;
   flex: 1;
+}
+
+.id-back-detail-row .id-detail-address {
+  font-size: 9.5px;
+  line-height: 1.4;
 }
 
 /* ===== Action Buttons - matching site btn style ===== */
