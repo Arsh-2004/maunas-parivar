@@ -10,23 +10,12 @@ const Community = () => {
   const { language } = useLanguage();
   const t = (path) => getTranslation(language, path);
   const location = useLocation();
+  const activeSection = new URLSearchParams(location.search).get('section') || '';
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, bronze, silver, gold, diamond
   const [selectedUpadhi, setSelectedUpadhi] = useState(null); // for filtering by honorary title
   const [selectedPrakosth, setSelectedPrakosth] = useState(null); // for filtering by prakosth
-  const [activeSection, setActiveSection] = useState(''); // dropdown selected section
-
-  // Read section from URL query param
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const section = params.get('section');
-    if (section) {
-      setActiveSection(section);
-      setSelectedPrakosth(null);
-      setSelectedUpadhi(null);
-    }
-  }, [location.search]);
 
   useEffect(() => {
     fetchMembers();
@@ -344,30 +333,8 @@ const Community = () => {
         </div>
       </section>
 
-      {/* Section Dropdown Selector */}
-      <section className="community-dropdown-section">
-        <div className="container">
-          <div className="community-dropdown-wrapper">
-            <select
-              className="community-dropdown"
-              value={activeSection}
-              onChange={(e) => {
-                setActiveSection(e.target.value);
-                setSelectedPrakosth(null);
-                setSelectedUpadhi(null);
-              }}
-            >
-              <option value="">{language === 'en' ? '-- Select Section --' : '-- विभाग चुनें --'}</option>
-              <option value="prakosth">{language === 'en' ? 'Our Cells (Hamara Prakosth)' : 'हमारा प्रकोष्ठ'}</option>
-              <option value="upadhi">{language === 'en' ? 'Upadhidhaarak (Titles & Honours)' : 'उपाधिधारक'}</option>
-              <option value="members">{language === 'en' ? 'Our Members' : 'हमारे सदस्य'}</option>
-            </select>
-          </div>
-        </div>
-      </section>
-
       {/* Management Team - Hamara Prakosth */}
-      {activeSection === 'prakosth' && (
+      {(!activeSection || activeSection === 'prakosth') && (
       <section className="management-section">
         <div className="container">
           <div className="section-header">
@@ -433,7 +400,7 @@ const Community = () => {
       )}
 
       {/* Upadhidhaarak (Titles & Rankings) Section */}
-      {activeSection === 'upadhi' && (
+      {(!activeSection || activeSection === 'upadhi') && (
       <section className="upadhi-section">
         <div className="container">
           <div className="section-header">
@@ -499,7 +466,7 @@ const Community = () => {
       )}
 
       {/* Members Directory */}
-      {activeSection === 'members' && (
+      {(!activeSection || activeSection === 'members') && (
       <section className="members-section">
         <div className="container">
           <div className="section-header">

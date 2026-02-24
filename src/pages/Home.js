@@ -67,38 +67,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Objectives Section */}
-      <section className="objectives-section">
-        <div className="container">
-          <div className="section-header">
-            <h2>{language === 'en' ? 'Our Objectives' : 'हमारे उद्देश्य'}</h2>
-            <div className="underline"></div>
-          </div>
-          <div className="objectives-grid">
-            <div className="objective-card">
-              <div className="icon">🤝</div>
-              <h3>{language === 'en' ? 'Social Welfare' : 'सामाजिक कल्याण'}</h3>
-              <p>{language === 'en' ? 'Promote social harmony and provide assistance to needy members' : 'सामाजिक सद्भावना को बढ़ावा देना और जरूरतमंद सदस्यों को सहायता प्रदान करना'}</p>
-            </div>
-            <div className="objective-card">
-              <div className="icon">📚</div>
-              <h3>{language === 'en' ? 'Education & Training' : 'शिक्षा और प्रशिक्षण'}</h3>
-              <p>{language === 'en' ? 'Support educational initiatives and skill development programs' : 'शैक्षिक और कौशल विकास कार्यक्रमों का समर्थन करना'}</p>
-            </div>
-            <div className="objective-card">
-              <div className="icon">🎭</div>
-              <h3>{language === 'en' ? 'Cultural Heritage' : 'सांस्कृतिक विरासत'}</h3>
-              <p>{language === 'en' ? 'Preserve and promote our rich cultural traditions and values' : 'हमारी समृद्ध सांस्कृतिक परंपराओं और मूल्यों को संरक्षित और प्रचारित करना'}</p>
-            </div>
-            <div className="objective-card">
-              <div className="icon">💪</div>
-              <h3>{language === 'en' ? 'Community Empowerment' : 'सामुदायिक सशक्तिकरण'}</h3>
-              <p>{language === 'en' ? 'Empower members through networking and collaborative opportunities' : 'आपसी भाईचारा एवं परस्पर सहयोग के माध्यम से सदस्यों को सशक्त बनाना'}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Recent Activities */}
       <section className="activities-section">
         <div className="container">
@@ -268,8 +236,40 @@ const Home = () => {
           
             
           </div>
-          <div className="text-center" style={{ marginTop: '30px' }}>
+          {/* <div className="text-center" style={{ marginTop: '30px' }}>
             <Link to="/community" className="btn btn-primary">{language === 'en' ? 'View All Members' : 'सभी सदस्यों को देखें'}</Link>
+          </div> */}
+        </div>
+      </section>
+
+      {/* Objectives Section */}
+      <section className="objectives-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>{language === 'en' ? 'Our Objectives' : 'हमारे उद्देश्य'}</h2>
+            <div className="underline"></div>
+          </div>
+          <div className="objectives-grid">
+            <div className="objective-card">
+              <div className="icon">🤝</div>
+              <h3>{language === 'en' ? 'Social Welfare' : 'सामाजिक कल्याण'}</h3>
+              <p>{language === 'en' ? 'Promote social harmony and provide assistance to needy members' : 'सामाजिक सद्भावना को बढ़ावा देना और जरूरतमंद सदस्यों को सहायता प्रदान करना'}</p>
+            </div>
+            <div className="objective-card">
+              <div className="icon">📚</div>
+              <h3>{language === 'en' ? 'Education & Training' : 'शिक्षा और प्रशिक्षण'}</h3>
+              <p>{language === 'en' ? 'Support educational initiatives and skill development programs' : 'शैक्षिक और कौशल विकास कार्यक्रमों का समर्थन करना'}</p>
+            </div>
+            <div className="objective-card">
+              <div className="icon">🎭</div>
+              <h3>{language === 'en' ? 'Cultural Heritage' : 'सांस्कृतिक विरासत'}</h3>
+              <p>{language === 'en' ? 'Preserve and promote our rich cultural traditions and values' : 'हमारी समृद्ध सांस्कृतिक परंपराओं और मूल्यों को संरक्षित और प्रचारित करना'}</p>
+            </div>
+            <div className="objective-card">
+              <div className="icon">💪</div>
+              <h3>{language === 'en' ? 'Community Empowerment' : 'सामुदायिक सशक्तिकरण'}</h3>
+              <p>{language === 'en' ? 'Empower members through networking and collaborative opportunities' : 'आपसी भाईचारा एवं परस्पर सहयोग के माध्यम से सदस्यों को सशक्त बनाना'}</p>
+            </div>
           </div>
         </div>
       </section>
