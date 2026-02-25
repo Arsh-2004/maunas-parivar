@@ -159,15 +159,13 @@ const Contact = () => {
                 <div className="info-card">
                   <div className="info-icon">📧</div>
                   <h3>{t('contact.email')}</h3>
-                  <p>info@maunasparivar.com</p>
-                  <p>support@maunasparivar.com</p>
+                  <p>kshatriyamaunasparivar@gmail.com</p>
                 </div>
 
                 <div className="info-card">
                   <div className="info-icon">📞</div>
                   <h3>{t('contact.phone')}</h3>
-                  <p>+91 9876543210</p>
-                  <p>+91 9876543211</p>
+                  <p>+91 8840709296</p>
                 </div>
 
                 

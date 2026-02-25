@@ -51,6 +51,9 @@ const Membership = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmCheckbox, setConfirmCheckbox] = useState(false);
   const [notification, setNotification] = useState({ type: '', text: '', show: false });
+  const [dobDay, setDobDay] = useState('');
+  const [dobMonth, setDobMonth] = useState('');
+  const [dobYear, setDobYear] = useState('');
 
   // Scroll to registration form if hash is present
   useEffect(() => {
@@ -78,6 +81,38 @@ const Membership = () => {
       [e.target.name]: e.target.value
     });
   };
+
+  const handleDobChange = (field, value) => {
+    const newDay   = field === 'day'   ? value : dobDay;
+    const newMonth = field === 'month' ? value : dobMonth;
+    const newYear  = field === 'year'  ? value : dobYear;
+    if (field === 'day')   setDobDay(value);
+    if (field === 'month') setDobMonth(value);
+    if (field === 'year')  setDobYear(value);
+    if (newDay && newMonth && newYear) {
+      setFormData(prev => ({
+        ...prev,
+        dateOfBirth: `${newYear}-${newMonth}-${newDay}`
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, dateOfBirth: '' }));
+    }
+  };
+
+  const months = [
+    { value: '01', en: '01 - January',  hi: '01 - जनवरी' },
+    { value: '02', en: '02 - February', hi: '02 - फ़रवरी' },
+    { value: '03', en: '03 - March',    hi: '03 - मार्च' },
+    { value: '04', en: '04 - April',    hi: '04 - अप्रैल' },
+    { value: '05', en: '05 - May',      hi: '05 - मई' },
+    { value: '06', en: '06 - June',     hi: '06 - जून' },
+    { value: '07', en: '07 - July',     hi: '07 - जुलाई' },
+    { value: '08', en: '08 - August',   hi: '08 - अगस्त' },
+    { value: '09', en: '09 - September',hi: '09 - सितंबर' },
+    { value: '10', en: '10 - October',  hi: '10 - अक्तूबर' },
+    { value: '11', en: '11 - November', hi: '11 - नवंबर' },
+    { value: '12', en: '12 - December', hi: '12 - दिसंबर' },
+  ];
 
   const graduateDegrees = [
     { value: 'B.A. (Bachelor of Arts)', en: 'B.A. (Bachelor of Arts)', hi: 'बी.ए. (कला स्नातक)' },
@@ -266,9 +301,11 @@ const Membership = () => {
     }
     
     // Date of birth validation
-    if (!formData.dateOfBirth) {
-      showNotification('error', language === 'en' ? '❌ Please select your date of birth' : '❌ कृपया अपनी जन्म तिथि चुनें');
-      document.getElementById('dateOfBirth').focus();
+    if (!dobDay || !dobMonth || !dobYear) {
+      showNotification('error', language === 'en' ? '❌ Please select your complete date of birth' : '❌ कृपया अपनी पूरी जन्म तिथि चुनें');
+      if (!dobYear) document.getElementById('dobYear').focus();
+      else if (!dobMonth) document.getElementById('dobMonth').focus();
+      else document.getElementById('dobDay').focus();
       return;
     }
     
@@ -281,12 +318,12 @@ const Membership = () => {
     
     if (actualAge < 18) {
       showNotification('error', language === 'en' ? '❌ You must be at least 18 years old to register' : '❌ पंजीकरण के लिए आपकी आयु कम से कम 18 वर्ष होनी चाहिए');
-      document.getElementById('dateOfBirth').focus();
+      document.getElementById('dobYear').focus();
       return;
     }
     if (actualAge > 120) {
       showNotification('error', language === 'en' ? '❌ Please enter a valid date of birth' : '❌ कृपया वैध जन्म तिथि दर्ज करें');
-      document.getElementById('dateOfBirth').focus();
+      document.getElementById('dobYear').focus();
       return;
     }
     
@@ -515,6 +552,9 @@ const Membership = () => {
         setEducationCategory('');
         setOtherEducationText('');
         setSubDegreeOther('');
+        setDobDay('');
+        setDobMonth('');
+        setDobYear('');
         setFormData({
           fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '', education: '',
           phone: '', password: '', confirmPassword: '', address: '', village: '', block: '', tehsil: '', district: '', city: '', state: '', pincode: '', occupation: '',
@@ -610,7 +650,7 @@ const Membership = () => {
               <div className="review-row">
                 <div className="review-col">
                   <strong>{language === 'en' ? 'Date of Birth:' : 'जन्म तिथि:'}</strong>
-                  <p>{formData.dateOfBirth}</p>
+                  <p>{dobDay && dobMonth && dobYear ? `${dobDay} - ${months.find(m => m.value === dobMonth)?.[language] || dobMonth} - ${dobYear}` : formData.dateOfBirth}</p>
                 </div>
                 <div className="review-col">
                   <strong>{language === 'en' ? 'Gender:' : 'लिंग:'}</strong>
@@ -979,15 +1019,46 @@ const Membership = () => {
 
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="dateOfBirth">{t('membership.dateOfBirth')}</label>
-                  <input
-                    type="date"
-                    id="dateOfBirth"
-                    name="dateOfBirth"
-                    value={formData.dateOfBirth}
-                    onChange={handleChange}
-                    required
-                  />
+                  <label>{t('membership.dateOfBirth')}</label>
+                  <div className="dob-dropdowns">
+                    <select
+                      id="dobYear"
+                      value={dobYear}
+                      onChange={e => handleDobChange('year', e.target.value)}
+                      required
+                    >
+                      <option value="">{language === 'en' ? 'Year' : 'वर्ष'}</option>
+                      {Array.from({ length: new Date().getFullYear() - 1939 }, (_, i) => new Date().getFullYear() - i)
+                        .map(y => (
+                          <option key={y} value={String(y)}>{y}</option>
+                        ))}
+                    </select>
+                    <select
+                      id="dobMonth"
+                      value={dobMonth}
+                      onChange={e => handleDobChange('month', e.target.value)}
+                      required
+                    >
+                      <option value="">{language === 'en' ? 'Month' : 'माह'}</option>
+                      {months.map(m => (
+                        <option key={m.value} value={m.value}>
+                          {language === 'en' ? m.en : m.hi}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      id="dobDay"
+                      value={dobDay}
+                      onChange={e => handleDobChange('day', e.target.value)}
+                      required
+                    >
+                      <option value="">{language === 'en' ? 'Day' : 'दिन'}</option>
+                      {Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0'))
+                        .map(d => (
+                          <option key={d} value={d}>{d}</option>
+                        ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div className="form-group">

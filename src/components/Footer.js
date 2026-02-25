@@ -1,12 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import { getTranslation } from '../translations';
 import './Footer.css';
 
 const Footer = () => {
   const { language } = useLanguage();
+  const { user } = useAuth();
   const t = (path) => getTranslation(language, path);
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   return (
     <footer className="footer">
@@ -47,22 +51,28 @@ const Footer = () => {
             <div className="footer-section">
               <h4>{language === 'en' ? 'Quick Links' : 'त्वरित लिंक'}</h4>
               <ul>
-                <li><Link to="/">{t('header.home')}</Link></li>
-                <li><Link to="/about">{t('header.about')}</Link></li>
-                <li><Link to="/community">{t('header.community')}</Link></li>
-                <li><Link to="/events">{t('header.events')}</Link></li>
-                <li><Link to="/gallery">{t('header.gallery')}</Link></li>
+                <li><Link to="/" onClick={scrollToTop}>{t('header.home')}</Link></li>
+                <li><Link to="/about" onClick={scrollToTop}>{t('header.about')}</Link></li>
+                {user && (
+                  <>
+                    <li><Link to="/community" onClick={scrollToTop}>{t('header.community')}</Link></li>
+                    <li><Link to="/events" onClick={scrollToTop}>{t('header.events')}</Link></li>
+                    <li><Link to="/gallery" onClick={scrollToTop}>{t('header.gallery')}</Link></li>
+                  </>
+                )}
               </ul>
             </div>
 
             <div className="footer-section">
               <h4>{language === 'en' ? 'Get Involved' : 'शामिल हों'}</h4>
               <ul>
-                <li><Link to="/membership">{language === 'en' ? 'Member Registration' : 'सदस्य पंजीकरण'}</Link></li>
-                <li><Link to="/events">{language === 'en' ? 'Upcoming Events' : 'आने वाली घटनाएं'}</Link></li>
-                <li><Link to="/">{language === 'en' ? 'Donate' : 'सहयोग करें'}</Link></li>
-                <li><Link to="/">{language === 'en' ? 'Volunteer' : 'स्वयंसेवक'}</Link></li>
-                <li><Link to="/contact">{t('header.contact')}</Link></li>
+                <li><Link to="/membership" onClick={scrollToTop}>{language === 'en' ? 'Member Registration' : 'सदस्य पंजीकरण'}</Link></li>
+                {user && (
+                  <li><Link to="/events" onClick={scrollToTop}>{language === 'en' ? 'Upcoming Events' : 'आने वाली घटनाएं'}</Link></li>
+                )}
+                <li><Link to="/" onClick={scrollToTop}>{language === 'en' ? 'Donate' : 'सहयोग करें'}</Link></li>
+                <li><Link to="/" onClick={scrollToTop}>{language === 'en' ? 'Volunteer' : 'स्वयंसेवक'}</Link></li>
+                <li><Link to="/contact" onClick={scrollToTop}>{t('header.contact')}</Link></li>
               </ul>
             </div>
 
@@ -92,8 +102,8 @@ const Footer = () => {
           <div className="footer-bottom-content">
             <p>&copy; 2024 {language === 'en' ? 'Kshatriya Maunas Parivar. All rights reserved.' : 'क्षत्रिय मौनस परिवार। सर्वाधिकार सुरक्षित।'}</p>
             <div className="footer-links">
-              <Link to="/">{language === 'en' ? 'Privacy Policy' : 'गोपनीयता नीति'}</Link>
-              <Link to="/">{language === 'en' ? 'Terms & Conditions' : 'शर्तें और शर्तें'}</Link>
+              <Link to="/" onClick={scrollToTop}>{language === 'en' ? 'Privacy Policy' : 'गोपनीयता नीति'}</Link>
+              <Link to="/" onClick={scrollToTop}>{language === 'en' ? 'Terms & Conditions' : 'शर्तें और शर्तें'}</Link>
             </div>
           </div>
         </div>
