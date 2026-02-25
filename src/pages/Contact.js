@@ -179,9 +179,12 @@ const Contact = () => {
                      rel="noopener noreferrer" 
                      className="social-icon"
                      title={language === 'en' ? 'Email' : 'ईमेल'}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-                      <rect x="2" y="4" width="20" height="16" rx="2"/>
-                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" fill="none" stroke="white" strokeWidth="2"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="32" height="32">
+                      <path fill="#34A853" d="M45,16.2l-5,2.75l-5,4.75L35,40h7c1.657,0,3-1.343,3-3V16.2z"/>
+                      <path fill="#4285F4" d="M3,16.2l3.819,1.807l6.181,5.718L13,40H6c-1.657,0-3-1.343-3-3V16.2z"/>
+                      <polygon fill="#EA4335" points="35,11.2 24,19.45 13,11.2 12,17 13,40 35,40 36,17"/>
+                      <path fill="#C5221F" d="M3,12.298V16.2l10,7.738V11.2L9.876,8.859C9.132,8.301,8.228,8,7.298,8L7.298,8C4.924,8,3,9.924,3,12.298z"/>
+                      <path fill="#FBBC04" d="M45,12.298V16.2l-10,7.738V11.2l3.124-2.341C38.868,8.301,39.772,8,40.702,8L40.702,8C43.076,8,45,9.924,45,12.298z"/>
                     </svg>
                   </a>
                   <a href="https://facebook.com" 
