@@ -34,11 +34,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/community" element={
-                  <ProtectedRoute>
-                    <Community />
-                  </ProtectedRoute>
-                } />
+                <Route path="/community" element={<Community />} />
                 <Route path="/events" element={
                   <ProtectedRoute>
                     <Events />

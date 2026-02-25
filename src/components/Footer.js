@@ -53,13 +53,25 @@ const Footer = () => {
               <ul>
                 <li><Link to="/" onClick={scrollToTop}>{t('header.home')}</Link></li>
                 <li><Link to="/about" onClick={scrollToTop}>{t('header.about')}</Link></li>
+                <li><Link to="/community" onClick={scrollToTop}>{t('header.community')}</Link></li>
                 {user && (
                   <>
-                    <li><Link to="/community" onClick={scrollToTop}>{t('header.community')}</Link></li>
                     <li><Link to="/events" onClick={scrollToTop}>{t('header.events')}</Link></li>
                     <li><Link to="/gallery" onClick={scrollToTop}>{t('header.gallery')}</Link></li>
                   </>
                 )}
+              </ul>
+            </div>
+
+            <div className="footer-section">
+              <h4>{language === 'en' ? 'Our Community' : 'हमारा समुदाय'}</h4>
+              <ul>
+                <li><Link to="/community?section=prakosth" onClick={scrollToTop}>{language === 'en' ? 'Our Cells (Prakosth)' : 'हमारा प्रकोष्ठ'}</Link></li>
+                <li><Link to="/community?section=upadhi" onClick={scrollToTop}>{language === 'en' ? 'Upadhidhaarak' : 'उपाधिधारक'}</Link></li>
+                <li><Link to="/community?section=members" onClick={scrollToTop}>{language === 'en' ? 'Our Members' : 'हमारे सदस्य'}</Link></li>
+                <li><Link to="/about?committee=sanrakshak" onClick={scrollToTop}>{language === 'en' ? 'Protective Committee' : 'संरक्षक कमेटी'}</Link></li>
+                <li><Link to="/about?committee=prabandhan" onClick={scrollToTop}>{language === 'en' ? 'Management Committee' : 'प्रबन्धन कमेटी'}</Link></li>
+                <li><Link to="/about?committee=sanchalan" onClick={scrollToTop}>{language === 'en' ? 'Execution Committee' : 'संचालक कमेटी'}</Link></li>
               </ul>
             </div>
 
