@@ -153,7 +153,7 @@ const Contact = () => {
                 <div className="info-card">
                   <div className="info-icon">📍</div>
                   <h3>{t('contact.address')}</h3>
-                  <p>{language === 'en' ? 'Devtayan Surabhi Nagar Colony, Awaleshpur, Varanasi U.P.' : 'देवतायन सुरभि नगर कॉलोनी, अवलेशपुर वाराणसी उ०प्र०'}</p>
+                  <p>{language === 'en' ? 'Devtayan ,Surabhi Nagar Colony, Awaleshpur, Varanasi U.P.' : 'देवतायन ,सुरभि नगर कॉलोनी, अवलेशपुर वाराणसी उ०प्र०'}</p>
                 </div>
 
                 <div className="info-card">
@@ -174,7 +174,7 @@ const Contact = () => {
               <div className="social-connect">
                 <h3>{t('contact.connectUs')}</h3>
                 <div className="social-icons">
-                  <a href="mailto:info@maunasparivar.com" 
+                  <a href="mailto:kshatriyamaunasparivar@gmail.com" 
                      target="_blank" 
                      rel="noopener noreferrer" 
                      className="social-icon"

@@ -218,8 +218,9 @@
 }
 
 .social-icon:nth-child(1):hover {
-  background: #FF6B35;
+  background: #EA4335;
   color: white;
+  border-color: #EA4335;
 }
 
 .social-icon:nth-child(2):hover {
@@ -229,9 +230,9 @@
 }
 
 .social-icon:nth-child(3):hover {
-  background: #1DA1F2;
+  background: #000000;
   color: white;
-  border-color: #1DA1F2;
+  border-color: #000000;
 }
 
 .social-icon:nth-child(4):hover {

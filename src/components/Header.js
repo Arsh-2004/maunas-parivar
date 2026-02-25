@@ -50,12 +50,12 @@ const Header = () => {
                 </span>
               </div>
               <div className="social-links">
-                <a href="mailto:info@maunasparivar.com" 
+                <a href="mailto:kshatriyamaunasparivar@gmail.com" 
                    aria-label={language === 'en' ? 'Send us an email' : 'हमें ईमेल भेजें'}
                    title={language === 'en' ? 'Gmail' : 'जीमेल'}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" fill="#D44638"/>
-                    <path d="M0 5.457v.727l12 9 12-9v-.727c0-.666-.404-1.235-.982-1.491L12 10.91 1.982 3.966A1.636 1.636 0 0 0 0 5.457z" fill="#EA4335"/>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
+                    <path d="M0 5.457v.727l12 9 12-9v-.727c0-.666-.404-1.235-.982-1.491L12 10.91 1.982 3.966A1.636 1.636 0 0 0 0 5.457z"/>
                   </svg>
                 </a>
                 <a href="https://facebook.com" 
