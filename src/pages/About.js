@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { useLocation } from 'react-router-dom';
 import './About.css';
 
 const About = () => {
   const { language } = useLanguage();
+  const location = useLocation();
   const [selectedCommittee, setSelectedCommittee] = useState(null);
   const [committeeMembers, setCommitteeMembers] = useState({});
   const [loading, setLoading] = useState(false);
+  const [selectedDistrict, setSelectedDistrict] = useState('');
 
   // Function to get static members for Prabandhan Committee based on language
   const getPrabandhanMembers = useCallback(() => [
@@ -256,6 +259,18 @@ const About = () => {
     }
   }, [selectedCommittee, fetchCommitteeMembers]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const committee = params.get('committee');
+    if (committee) {
+      setSelectedCommittee(committee);
+      setTimeout(() => {
+        const el = document.querySelector('.committees-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    }
+  }, [location.search]);
+
   return (
     <div className="about-page">
       {/* Page Header */}
@@ -457,7 +472,7 @@ const About = () => {
 
           {/* Committee Members Modal */}
           {selectedCommittee && (
-            <div className="committee-modal-overlay" onClick={() => setSelectedCommittee(null)}>
+            <div className="committee-modal-overlay" onClick={() => { setSelectedCommittee(null); setSelectedDistrict(''); }}>
               <div className="committee-modal" onClick={(e) => e.stopPropagation()}>
                 <div className="committee-modal-header">
                   <h3>
@@ -467,7 +482,7 @@ const About = () => {
                         : committees.find(c => c.id === selectedCommittee).nameHi)}
                     {' — '}{language === 'en' ? 'Members' : 'सदस्य'}
                   </h3>
-                  <button className="committee-modal-close" onClick={() => setSelectedCommittee(null)}>✕</button>
+                  <button className="committee-modal-close" onClick={() => { setSelectedCommittee(null); setSelectedDistrict(''); }}>✕</button>
                 </div>
                 <div className="committee-modal-body">
                   {loading ? (
@@ -475,25 +490,89 @@ const About = () => {
                       {language === 'en' ? 'Loading members...' : 'सदस्य लोड हो रहे हैं...'}
                     </p>
                   ) : committeeMembers[selectedCommittee] && committeeMembers[selectedCommittee].length > 0 ? (
-                    <div className="committee-modal-grid">
-                      {committeeMembers[selectedCommittee].map((member) => (
-                        <div key={member._id} className="committee-modal-card">
-                          {member.photoPath ? (
-                            <img
-                              src={member.photoPath}
-                              alt={member.fullName}
-                              className="committee-modal-photo"
-                            />
-                          ) : (
-                            <div className="committee-modal-photo-placeholder">👤</div>
-                          )}
-                          <h4>{member.fullName}</h4>
-                          <p className="committee-modal-position">{member.position || (language === 'en' ? 'Member' : 'सदस्य')}</p>
-                          <p className="committee-modal-location">📍 {member.city}, {member.state}</p>
-                          {member.phone && <p className="committee-modal-phone">📱 {member.phone}</p>}
-                        </div>
-                      ))}
-                    </div>
+                    selectedCommittee === 'prabandhan' ? (
+                      (() => {
+                        const members = committeeMembers[selectedCommittee];
+                        const districtOrder = ['Varanasi', 'वाराणसी', 'Bhadohi', 'भदोही'];
+                        const grouped = members.reduce((acc, member) => {
+                          const key = member.city || (language === 'en' ? 'Other' : 'अन्य');
+                          if (!acc[key]) acc[key] = [];
+                          acc[key].push(member);
+                          return acc;
+                        }, {});
+                        const sortedDistricts = Object.keys(grouped).sort((a, b) => {
+                          const ai = districtOrder.findIndex(d => d.toLowerCase() === a.toLowerCase());
+                          const bi = districtOrder.findIndex(d => d.toLowerCase() === b.toLowerCase());
+                          const av = ai === -1 ? 99 : Math.floor(ai / 2);
+                          const bv = bi === -1 ? 99 : Math.floor(bi / 2);
+                          return av - bv;
+                        });
+                        const filteredMembers = selectedDistrict
+                          ? (grouped[selectedDistrict] || [])
+                          : members;
+                        return (
+                          <div className="committee-modal-districts">
+                            <div className="committee-district-dropdown-row">
+                              <label className="committee-district-label" htmlFor="district-select">
+                                📍 {language === 'en' ? 'Select District:' : 'जिला चुनें:'}
+                              </label>
+                              <select
+                                id="district-select"
+                                className="committee-district-select"
+                                value={selectedDistrict}
+                                onChange={e => setSelectedDistrict(e.target.value)}
+                              >
+                                <option value="">{language === 'en' ? 'All Districts' : 'सभी जिले'}</option>
+                                {sortedDistricts.map(d => (
+                                  <option key={d} value={d}>
+                                    {d} ({grouped[d].length})
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="committee-modal-grid">
+                              {filteredMembers.map((member) => (
+                                <div key={member._id} className="committee-modal-card">
+                                  {member.photoPath ? (
+                                    <img
+                                      src={member.photoPath}
+                                      alt={member.fullName}
+                                      className="committee-modal-photo"
+                                    />
+                                  ) : (
+                                    <div className="committee-modal-photo-placeholder">👤</div>
+                                  )}
+                                  <h4>{member.fullName}</h4>
+                                  <p className="committee-modal-position">{member.position || (language === 'en' ? 'Member' : 'सदस्य')}</p>
+                                  <p className="committee-modal-location">📍 {member.city}, {member.state}</p>
+                                  {member.phone && <p className="committee-modal-phone">📱 {member.phone}</p>}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })()
+                    ) : (
+                      <div className="committee-modal-grid">
+                        {committeeMembers[selectedCommittee].map((member) => (
+                          <div key={member._id} className="committee-modal-card">
+                            {member.photoPath ? (
+                              <img
+                                src={member.photoPath}
+                                alt={member.fullName}
+                                className="committee-modal-photo"
+                              />
+                            ) : (
+                              <div className="committee-modal-photo-placeholder">👤</div>
+                            )}
+                            <h4>{member.fullName}</h4>
+                            <p className="committee-modal-position">{member.position || (language === 'en' ? 'Member' : 'सदस्य')}</p>
+                            <p className="committee-modal-location">📍 {member.city}, {member.state}</p>
+                            {member.phone && <p className="committee-modal-phone">📱 {member.phone}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    )
                   ) : (
                     <div className="committee-modal-empty">
                       <p>{language === 'en' ? 'No members added yet for this committee.' : 'इस कमेटी के लिए अभी कोई सदस्य नहीं जोड़े गए हैं।'}</p>

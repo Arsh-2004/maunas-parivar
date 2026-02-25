@@ -45,8 +45,8 @@ const Home = () => {
             <div className="about-text">
               <p>
                 {language === 'en' 
-                  ? 'Kshatriya Maunas Parivar is dedicated to preserving the rich heritage and traditions of the Kshatriya community. We are committed to fostering unity, providing support, and empowering our members through various social, cultural, and educational initiatives.'
-                  : 'क्षत्रिय मौनस परिवार, क्षत्रिय वंश की समृद्ध विरासत और परंपराओं को संरक्षित करने के लिए समर्पित है। हम विभिन्न सामाजिक, सांस्कृतिक और शैक्षिक क्रियाकलापों के माध्यम से एकता को बढ़ावा देने, सहायता प्रदान करने और अपने सदस्यों को सशक्त बनाने के लिए प्रतिबद्ध हैं।'
+                  ? 'Kshatriya Maunas Parivar is dedicated to preserving the rich heritage and traditions of the Kshatriya community. We are committed to fostering unity, providing support, and empowering our members through various social, cultural, and educational activities .'
+                  : 'क्षत्रिय मौनस परिवार, क्षत्रिय वंश की समृद्ध विरासत और परंपराओं को संरक्षित करने के लिए समर्पित है। हम विभिन्न सामाजिक, सांस्कृतिक और शैक्षिक गतिविधिया के माध्यम से एकता को बढ़ावा देने, सहायता प्रदान करने और अपने सदस्यों को सशक्त बनाने के लिए प्रतिबद्ध हैं।'
                 }
               </p>
               <p>
@@ -116,8 +116,8 @@ const Home = () => {
       <section className="team-section">
         <div className="container">
           <div className="section-header">
-            <h6 className="section-label">{language === 'en' ? 'Main' : 'मुख्य'}</h6>
-            <h2>{language === 'en' ? 'Management Committee' : 'प्रबंधन कमेटी'}</h2>
+            <h6 className="section-label">{language === 'en' ? 'Management Committee' : 'प्रबंधन कमेटी'}</h6>
+            {/* <h2>{language === 'en' ? 'Management Committee' : 'प्रबंधन कमेटी'}</h2> */}
             <div className="underline"></div>
           </div>
           <div className="team-grid">

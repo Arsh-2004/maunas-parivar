@@ -116,7 +116,25 @@ const Header = () => {
             
             <div id="nav-menu" className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
               <Link to="/" onClick={() => setIsMenuOpen(false)}>{t('header.home')}</Link>
-              <Link to="/about" onClick={() => setIsMenuOpen(false)}>{t('header.about')}</Link>
+              <div className="nav-dropdown">
+                <span className="nav-dropdown-trigger">
+                  {t('header.about')} <span className="nav-dropdown-arrow">▾</span>
+                </span>
+                <div className="nav-dropdown-menu">
+                  <Link to="/about" onClick={() => setIsMenuOpen(false)}>
+                    {language === 'en' ? 'About Us' : 'हमारे बारे में'}
+                  </Link>
+                  <Link to="/about?committee=sanrakshak" onClick={() => setIsMenuOpen(false)}>
+                    {language === 'en' ? 'Protective Committee' : 'संरक्षक कमेटी'}
+                  </Link>
+                  <Link to="/about?committee=prabandhan" onClick={() => setIsMenuOpen(false)}>
+                    {language === 'en' ? 'Management Committee' : 'प्रबन्धन कमेटी'}
+                  </Link>
+                  <Link to="/about?committee=sanchalan" onClick={() => setIsMenuOpen(false)}>
+                    {language === 'en' ? 'Execution Committee' : 'संचालक कमेटी'}
+                  </Link>
+                </div>
+              </div>
               {isAuthenticated() && !isAdminPage && (
                 <>
                   {userTier === 'diamond' && (

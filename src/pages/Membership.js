@@ -838,7 +838,7 @@ const Membership = () => {
         </div>
       </section>
 
-      <section className="tiers-section">
+      {/* <section className="tiers-section">
         <div className="container">
           <div className="section-header">
             <h2>{language === 'en' ? 'Membership Tiers' : 'सदस्यता स्तर'}</h2>
@@ -899,20 +899,20 @@ const Membership = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="help-section">
         <div className="container">
           <div className="section-header">
-            <h2>{language === 'en' ? 'Support Our Community' : 'हमारे समुदाय का समर्थन करें'}</h2>
+            <h2>{language === 'en' ? 'Support Your Community' : 'अपने समुदाय का समर्थन करें'}</h2>
             <div className="underline"></div>
           </div>
-          <p className="help-subtitle">
+          {/* <p className="help-subtitle">
             {language === 'en' 
-              ? 'Your contributions help enhance the clan\'s renown and better serve the community.'
-              : 'आपके योगदान कुल के यश को बढ़ाने और समुदाय की बेहतर सेवा करने में मदद करते हैं।'}
-          </p>
-          <div className="support-tiers-grid">
+              ? 'The participation of all of us is essential for the progress of society and the creation of a strong future. To achieve this objective, you are humbly requested to participate in this noble work by voluntarily providing financial support as per your capacity for the development of your clan.'
+              : 'समाज की उन्नति और सशक्त भविष्य के निर्माण में हम सभी की सहभागिता आवश्यक है। इसी उद्देश्य की पूर्ति हेतु आपसे विनम्र आग्रह है कि अपने कुल के विकास के लिए स्वेच्छा से यथाशक्ति आर्थिक सहयोग प्रदान कर इस पुनीत कार्य में सहभागी बनें।'}
+          </p> */}
+          {/* <div className="support-tiers-grid">
             <div className="support-card general">
               <div className="support-icon" style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <img src="/assets/general.jpeg" alt="General" style={{width: '70px', height: '70px', objectFit: 'contain', borderRadius: '50%', background: '#f5f5f5'}} />
@@ -964,17 +964,19 @@ const Membership = () => {
                   ? 'Premier support for transformative community initiatives'
                   : 'समुदाय की महत्वपूर्ण परियोजनाओं के लिए शीर्ष सहायता'}
               </p>
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
           <div className="help-note">
             <p>
               {language === 'en'
-                ? '💝 Every contribution is valuable and makes a difference. Thank you for supporting our community!'
-                : '💝 हर योगदान मूल्यवान है और फर्क लाता है। हमारे समुदाय का समर्थन करने के लिए धन्यवाद!'}
+                ? '💝 The participation of all of us is essential for the progress of society and the creation of a strong future. To achieve this objective, you are humbly requested to participate in this noble work by voluntarily providing financial support as per your capacity for the development of your clan.'
+                : '💝समाज की उन्नति और सशक्त भविष्य के निर्माण में हम सभी की सहभागिता आवश्यक है। इसी उद्देश्य की पूर्ति हेतु आपसे विनम्र आग्रह है कि अपने कुल के विकास के लिए स्वेच्छा से यथाशक्ति आर्थिक सहयोग प्रदान कर इस पुनीत कार्य में सहभागी बनें।'}
             </p>
           </div>
         </div>
       </section>
+
+      
 
       <section className="registration-section" id="registration-form">
         <div className="container">
@@ -1028,7 +1030,7 @@ const Membership = () => {
                       required
                     >
                       <option value="">{language === 'en' ? 'Year' : 'वर्ष'}</option>
-                      {Array.from({ length: new Date().getFullYear() - 1939 }, (_, i) => new Date().getFullYear() - i)
+                      {Array.from({ length: new Date().getFullYear() - 1909 }, (_, i) => new Date().getFullYear() - i)
                         .map(y => (
                           <option key={y} value={String(y)}>{y}</option>
                         ))}
