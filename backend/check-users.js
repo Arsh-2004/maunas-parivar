@@ -11,7 +11,7 @@ async function checkUserData() {
     
     // Find approved users
     const users = await User.find({ status: 'approved' })
-      .select('fullName phone photoPath membershipTier')
+      .select('fullName phone photoPath')
       .limit(5);
     
     console.log('\n📋 Approved Users with Photos:');
@@ -23,7 +23,6 @@ async function checkUserData() {
       users.forEach((user, i) => {
         console.log(`\n${i+1}. Name: ${user.fullName}`);
         console.log(`   Phone: ${user.phone}`);
-        console.log(`   Tier: ${user.membershipTier || 'N/A'}`);
         console.log(`   Photo Stored: ${user.photoPath ? 'YES ✓' : 'NO ✗'}`);
         if (user.photoPath) {
           console.log(`   Photo URL: ${user.photoPath.substring(0, 80)}...`);

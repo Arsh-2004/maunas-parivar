@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
+import DigitalIDCard from '../components/DigitalIDCard';
 import './MemberProfile.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
@@ -29,6 +30,7 @@ const MemberProfile = () => {
   }, [userId]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchUserProfile();
   }, [fetchUserProfile]);
 
@@ -55,142 +57,16 @@ const MemberProfile = () => {
   }
 
   return (
-    <div className="member-profile-container">
-      <div className="profile-card">
-        <div className="profile-header">
-          <div className="org-logo">
-            <h1>मौनस परिवार</h1>
-            <p>Maunas Parivar</p>
-          </div>
-          <div className="verified-badge">
-            <span>✓</span> Verified Member
-          </div>
-        </div>
+    <div className="member-profile-qr-page">
+      <div className="member-profile-qr-header">
+        <h1>मौनस परिवार</h1>
+        <p>Maunas Parivar — Verified Member ID Card</p>
+      </div>
 
-        <div className="profile-photo-section">
-          {user.photoPath ? (
-            <img src={user.photoPath} alt={user.fullName} className="profile-photo" />
-          ) : (
-            <div className="profile-photo-placeholder">
-              <span>👤</span>
-            </div>
-          )}
-          <div className="membership-badge">
-            {user.membershipTier === 'diamond' ? '💎 DIAMOND' :
-             user.membershipTier === 'gold' ? '🥇 GOLD' :
-             '🥈 SILVER'}
-          </div>
-        </div>
+      <DigitalIDCard user={user} />
 
-        <div className="profile-name">
-          <h2>{user.fullName}</h2>
-          <p className="member-id">Member ID: {user._id.slice(-8).toUpperCase()}</p>
-        </div>
-
-        <div className="profile-details">
-          <div className="detail-section">
-            <h3>📋 Personal Information</h3>
-            <div className="detail-grid">
-              <div className="detail-item">
-                <span className="label">Father's Name:</span>
-                <span className="value">{user.fatherName}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Date of Birth:</span>
-                <span className="value">{new Date(user.dateOfBirth).toLocaleDateString('en-IN')}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Gender:</span>
-                <span className="value">{user.gender}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Occupation:</span>
-                <span className="value">{user.occupation}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Education:</span>
-                <span className="value">{user.education}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="detail-section">
-            <h3>📞 Contact Information</h3>
-            <div className="detail-grid">
-              <div className="detail-item">
-                <span className="label">Phone:</span>
-                <span className="value">{user.phone}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Email:</span>
-                <span className="value">{user.email}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="detail-section">
-            <h3>📍 Address Information</h3>
-            <div className="detail-grid">
-              <div className="detail-item">
-                <span className="label">Village:</span>
-                <span className="value">{user.village}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Block:</span>
-                <span className="value">{user.block}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Tehsil:</span>
-                <span className="value">{user.tehsil}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">District:</span>
-                <span className="value">{user.district}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">City:</span>
-                <span className="value">{user.city}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">State:</span>
-                <span className="value">{user.state}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Pincode:</span>
-                <span className="value">{user.pincode}</span>
-              </div>
-              <div className="detail-item full-width">
-                <span className="label">Address:</span>
-                <span className="value">{user.address}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="detail-section">
-            <h3>📅 Membership Information</h3>
-            <div className="detail-grid">
-              <div className="detail-item">
-                <span className="label">Status:</span>
-                <span className={`status-badge ${user.status}`}>{user.status.toUpperCase()}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Registered On:</span>
-                <span className="value">{new Date(user.registeredAt).toLocaleDateString('en-IN')}</span>
-              </div>
-              {user.approvedAt && (
-                <div className="detail-item">
-                  <span className="label">Approved On:</span>
-                  <span className="value">{new Date(user.approvedAt).toLocaleDateString('en-IN')}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="profile-footer">
-          <p>This is an official verified member of Maunas Parivar organization.</p>
-          <p className="scanned-info">✓ QR Code Scanned Successfully</p>
-        </div>
+      <div className="member-profile-qr-footer">
+        <p>✓ This is an official verified member card of Maunas Parivar.</p>
       </div>
     </div>
   );

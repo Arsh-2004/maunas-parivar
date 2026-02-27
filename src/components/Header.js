@@ -15,7 +15,6 @@ const Header = () => {
 
   const isAdminPage = location.pathname === '/admin';
   const userPhoto = user?.photoPath || null;
-  const userTier = user?.membershipTier || null;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -151,14 +150,9 @@ const Header = () => {
                   </Link>
                 </div>
               </div>
+              <Link to="/heritage" onClick={() => setIsMenuOpen(false)}>{t('header.heritage')}</Link>
               {isAuthenticated() && !isAdminPage && (
                 <>
-                  {userTier === 'diamond' && (
-                    <Link to="/diamond-dashboard" onClick={() => setIsMenuOpen(false)}>
-                      💎 {language === 'en' ? 'Diamond Panel' : 'डायमंड पैनल'}
-                    </Link>
-                  )}
-                  <Link to="/events" onClick={() => setIsMenuOpen(false)}>{t('header.events')}</Link>
                   <Link to="/gallery" onClick={() => setIsMenuOpen(false)}>{t('header.gallery')}</Link>
                 </>
               )}

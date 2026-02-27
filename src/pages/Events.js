@@ -49,7 +49,7 @@ const Events = () => {
 
       <section className="events-content">
         <div className="container">
-          {/* Upcoming Events */}
+          {/* Upcoming Events
           <div className="events-section">
             <h2 className="section-title">
               {language === 'en' ? 'Upcoming Events' : 'आगामी कार्यक्रम'}
@@ -87,7 +87,7 @@ const Events = () => {
                 ))}
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Past Events */}
           {pastEvents.length > 0 && (

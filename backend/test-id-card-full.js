@@ -29,7 +29,6 @@ const testIDCardGeneration = async () => {
         city: 'Test City',
         state: 'Delhi',
         zipCode: '110001',
-        membershipTier: 'gold',
         status: 'pending',
         password: 'hashedPassword123'
       });
@@ -47,7 +46,6 @@ const testIDCardGeneration = async () => {
     console.log('   Name:', user.fullName);
     console.log('   Phone:', user.phone);
     console.log('   Email:', user.email);
-    console.log('   Tier:', user.membershipTier);
     console.log('   ID:', user._id, '\n');
 
     // Get admin password from env

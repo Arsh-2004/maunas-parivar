@@ -186,18 +186,6 @@ const Profile = () => {
               </div>
               <p className="sidebar-name">{user.fullName}</p>
               <span className={`status-badge ${user.status}`}>{user.status.toUpperCase()}</span>
-              {user.membershipTier && (
-                <div>
-                  <span className={`tier-badge tier-${user.membershipTier.toLowerCase()}`}>
-                    {user.membershipTier === 'diamond' && '💎 '}
-                    {user.membershipTier === 'gold' && '🥇 '}
-                    {user.membershipTier === 'silver' && '🥈 '}
-                    {user.membershipTier === 'bronze' && '🥉 '}
-                    {user.membershipTier === 'general' && '🌟 '}
-                    {user.membershipTier.toUpperCase()} {language === 'en' ? 'TIER' : 'स्तर'}
-                  </span>
-                </div>
-              )}
 
               <ul className="sidebar-info-list">
                 <li>
@@ -239,34 +227,6 @@ const Profile = () => {
             </div>
           )}
 
-          {/* Tier Privileges */}
-          {(user.membershipTier === 'diamond' || user.membershipTier === 'gold') && (
-            <div className="privilege-card">
-              <div className="privilege-card-header">
-                {user.membershipTier === 'diamond' ? '💎' : '🥇'} {language === 'en' ? 'Your Privileges' : 'आपके विशेषाधिकार'}
-              </div>
-              <div className="privilege-card-body">
-                <ul className="privilege-list">
-                  {user.membershipTier === 'diamond' && <>
-                    <li>✅ {language === 'en' ? 'Approve / Reject new members' : 'नए सदस्यों को स्वीकृत/अस्वीकृत करें'}</li>
-                    <li>✅ {language === 'en' ? 'Add events & gallery photos' : 'कार्यक्रम और गैलरी फोटो जोड़ें'}</li>
-                    <li>✅ {language === 'en' ? 'Manage community activities' : 'सामुदायिक गतिविधियां प्रबंधित करें'}</li>
-                  </>}
-                  {user.membershipTier === 'gold' && <>
-                    <li>✅ {language === 'en' ? 'View all upcoming events' : 'सभी आगामी कार्यक्रम देखें'}</li>
-                    <li>✅ {language === 'en' ? 'Volunteer to organize events' : 'कार्यक्रम आयोजित करने के लिए स्वयंसेवक'}</li>
-                    <li>✅ {language === 'en' ? 'Priority event participation' : 'प्राथमिकता कार्यक्रम भागीदारी'}</li>
-                  </>}
-                </ul>
-                <button
-                  className={`dashboard-access-btn ${user.membershipTier}`}
-                  onClick={() => navigate(user.membershipTier === 'diamond' ? '/diamond-dashboard' : '/gold-dashboard')}
-                >
-                  {user.membershipTier === 'diamond' ? '💎' : '🥇'} {language === 'en' ? `Go to ${user.membershipTier.charAt(0).toUpperCase() + user.membershipTier.slice(1)} Panel` : `${user.membershipTier === 'diamond' ? 'डायमंड' : 'गोल्ड'} पैनल पर जाएं`}
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* ---- MAIN CONTENT ---- */}

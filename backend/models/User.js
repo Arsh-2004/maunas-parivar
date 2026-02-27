@@ -106,11 +106,6 @@ const userSchema = new mongoose.Schema({
     enum: ['pending', 'approved', 'rejected'],
     default: 'pending'
   },
-  membershipTier: {
-    type: String,
-    enum: ['silver', 'gold', 'diamond'],
-    default: 'silver'
-  },
   rejectionReason: {
     type: String,
     default: null

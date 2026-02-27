@@ -184,25 +184,6 @@ router.post('/register', upload.fields([
   }
 });
 
-// Debug endpoint - check user tier
-router.get('/check-tier/:phone', async (req, res) => {
-  try {
-    const user = await User.findOne({ phone: req.params.phone });
-    if (!user) {
-      return res.json({ success: false, message: 'User not found' });
-    }
-    res.json({
-      success: true,
-      phone: user.phone,
-      fullName: user.fullName,
-      membershipTier: user.membershipTier,
-      status: user.status
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
-
 // Login with phone number and password
 router.post('/login', async (req, res) => {
   try {
@@ -273,7 +254,6 @@ router.post('/login', async (req, res) => {
         occupation: user.occupation,
         education: user.education,
         photoPath: user.photoPath,
-        membershipTier: user.membershipTier,
         status: user.status,
         password: user.password
       }
@@ -323,7 +303,6 @@ router.get('/profile/:phone', async (req, res) => {
         status: user.status,
         approvedAt: user.approvedAt,
         photoPath: user.photoPath,
-        membershipTier: user.membershipTier,
         idCardPath: user.idCardPath,
         idCardGeneratedAt: user.idCardGeneratedAt
       }
@@ -429,7 +408,6 @@ router.get('/id-card/:userId', async (req, res) => {
         occupation: user.occupation,
         education: user.education,
         photoPath: user.photoPath,
-        membershipTier: user.membershipTier,
         status: user.status,
         registeredAt: user.registeredAt,
         approvedAt: user.approvedAt

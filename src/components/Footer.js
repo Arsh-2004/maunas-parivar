@@ -54,9 +54,9 @@ const Footer = () => {
                 <li><Link to="/" onClick={scrollToTop}>{t('header.home')}</Link></li>
                 <li><Link to="/about" onClick={scrollToTop}>{t('header.about')}</Link></li>
                 <li><Link to="/community" onClick={scrollToTop}>{t('header.community')}</Link></li>
+                <li><Link to="/heritage" onClick={scrollToTop}>{t('header.heritage')}</Link></li>
                 {user && (
                   <>
-                    <li><Link to="/events" onClick={scrollToTop}>{t('header.events')}</Link></li>
                     <li><Link to="/gallery" onClick={scrollToTop}>{t('header.gallery')}</Link></li>
                   </>
                 )}
@@ -79,9 +79,7 @@ const Footer = () => {
               <h4>{language === 'en' ? 'Get Involved' : 'शामिल हों'}</h4>
               <ul>
                 <li><Link to="/membership" onClick={scrollToTop}>{language === 'en' ? 'Member Registration' : 'सदस्य पंजीकरण'}</Link></li>
-                {user && (
-                  <li><Link to="/events" onClick={scrollToTop}>{language === 'en' ? 'Upcoming Events' : 'आने वाली घटनाएं'}</Link></li>
-                )}
+                <li><Link to="/heritage" onClick={scrollToTop}>{language === 'en' ? 'Our Historical Heritage' : 'हमारे ऐतिहासिक धरोहर'}</Link></li>
                 <li><Link to="/" onClick={scrollToTop}>{language === 'en' ? 'Donate' : 'सहयोग करें'}</Link></li>
                 <li><Link to="/" onClick={scrollToTop}>{language === 'en' ? 'Volunteer' : 'स्वयंसेवक'}</Link></li>
                 <li><Link to="/contact" onClick={scrollToTop}>{t('header.contact')}</Link></li>

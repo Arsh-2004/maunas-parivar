@@ -8,7 +8,6 @@ const MembershipCards = () => {
   const { language } = useLanguage();
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // all, silver, gold, diamond
 
   useEffect(() => {
     fetchMembers();
@@ -30,27 +29,7 @@ const MembershipCards = () => {
     }
   };
 
-  const filteredMembers = filter === 'all' 
-    ? members 
-    : members.filter(member => member.membershipTier === filter);
-
-  const getTierColor = (tier) => {
-    switch(tier) {
-      case 'silver': return '#C0C0C0';
-      case 'gold': return '#FFD700';
-      case 'diamond': return '#B9F2FF';
-      default: return '#C0C0C0';
-    }
-  };
-
-  const getTierIcon = (tier) => {
-    switch(tier) {
-      case 'silver': return '🥈';
-      case 'gold': return '🥇';
-      case 'diamond': return '💎';
-      default: return '🥈';
-    }
-  };
+  const filteredMembers = members;
 
   if (loading) {
     return <div className="loading">{language === 'en' ? 'Loading members...' : 'सदस्य लोड हो रहे हैं...'}</div>;
@@ -63,33 +42,6 @@ const MembershipCards = () => {
         <p>{language === 'en' ? 'Meet our valued community members' : 'हमारे मूल्यवान समुदाय के सदस्यों से मिलें'}</p>
       </div>
 
-      <div className="tier-filters">
-        <button 
-          className={filter === 'all' ? 'active' : ''}
-          onClick={() => setFilter('all')}
-        >
-          {language === 'en' ? 'All Members' : 'सभी सदस्य'}
-        </button>
-        <button 
-          className={filter === 'silver' ? 'active silver' : 'silver'}
-          onClick={() => setFilter('silver')}
-        >
-          🥈 Silver
-        </button>
-        <button 
-          className={filter === 'gold' ? 'active gold' : 'gold'}
-          onClick={() => setFilter('gold')}
-        >
-          🥇 Gold
-        </button>
-        <button 
-          className={filter === 'diamond' ? 'active diamond' : 'diamond'}
-          onClick={() => setFilter('diamond')}
-        >
-          💎 Diamond
-        </button>
-      </div>
-
       {filteredMembers.length === 0 ? (
         <p className="no-members">{language === 'en' ? 'No members found' : 'कोई सदस्य नहीं मिला'}</p>
       ) : (
@@ -97,11 +49,10 @@ const MembershipCards = () => {
           {filteredMembers.map((member) => (
             <div 
               key={member._id} 
-              className={`membership-card ${member.membershipTier || 'silver'}`}
-              style={{ borderColor: getTierColor(member.membershipTier || 'silver') }}
+              className="membership-card"
             >
-              <div className="tier-badge" style={{ background: getTierColor(member.membershipTier || 'silver') }}>
-                {getTierIcon(member.membershipTier || 'silver')} {(member.membershipTier || 'silver').toUpperCase()}
+              <div className="tier-badge">
+                ✅ MEMBER
               </div>
               
               {member.photoPath && (

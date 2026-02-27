@@ -187,7 +187,7 @@ const generateIDCard = async (user) => {
     const dob = new Date(user.dateOfBirth).toLocaleDateString('en-IN');
     drawInfoLine('DATE OF BIRTH:', dob);
     
-    // Membership tier on separate line with better formatting
+    // Membership status on separate line with better formatting
     ctx.fillStyle = '#666666';
     ctx.font = 'bold 10px Arial';
     ctx.textAlign = 'left';
@@ -195,7 +195,7 @@ const generateIDCard = async (user) => {
     
     ctx.fillStyle = '#e94560';
     ctx.font = 'bold 11px Arial';
-    ctx.fillText(user.membershipTier.toUpperCase(), infoX + 100, detailY);
+    ctx.fillText('MEMBER', infoX + 100, detailY);
 
     // ===== BOTTOM SECTION - ID & VALIDITY (Front Half) =====
     

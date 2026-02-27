@@ -107,7 +107,7 @@ const Home = () => {
             </div>
           </div>
           <div className="text-center" style={{ marginTop: '30px' }}>
-            <Link to="/events" className="btn btn-primary">{language === 'en' ? 'View All Events' : 'सभी घटनाएं देखें'}</Link>
+            <Link to="/gallery" className="btn btn-primary" onClick={() => window.scrollTo(0, 0)}>{language === 'en' ? 'View Gallery' : 'फोटो गैलरी देखें'}</Link>
           </div>
         </div>
       </section>

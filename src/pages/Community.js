@@ -13,7 +13,6 @@ const Community = () => {
   const activeSection = new URLSearchParams(location.search).get('section') || '';
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // all, bronze, silver, gold, diamond
   const [selectedUpadhi, setSelectedUpadhi] = useState(null); // for filtering by honorary title
   const [selectedPrakosth, setSelectedPrakosth] = useState(null); // for filtering by prakosth
 
@@ -131,7 +130,6 @@ const Community = () => {
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       occupation: language === 'en' ? 'Professor' : 'प्रोफेसर',
       education: 'post-graduate',
-      membershipTier: 'gold',
       honoraryTitle: 'मौनस शिरोमणि',
       photoPath: null,
       registeredAt: new Date('2024-01-15')
@@ -143,7 +141,6 @@ const Community = () => {
       state: language === 'en' ? 'Delhi' : 'दिल्ली',
       occupation: language === 'en' ? 'Military Officer (Retd.)' : 'सैन्य अधिकारी (सेवानिवृत्त)',
       education: 'graduate',
-      membershipTier: 'diamond',
       honoraryTitle: 'मौनस कुबेर',
       photoPath: null,
       registeredAt: new Date('2023-11-20')
@@ -155,7 +152,6 @@ const Community = () => {
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       occupation: language === 'en' ? 'Advocate' : 'अधिवक्ता',
       education: 'post-graduate',
-      membershipTier: 'gold',
       honoraryTitle: 'मौनस रत्न',
       photoPath: null,
       registeredAt: new Date('2024-02-10')
@@ -167,7 +163,6 @@ const Community = () => {
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       occupation: language === 'en' ? 'University Professor' : 'विश्वविद्यालय प्रोफेसर',
       education: 'post-graduate',
-      membershipTier: 'gold',
       honoraryTitle: 'मौनस कुलभूषण',
       photoPath: null,
       registeredAt: new Date('2024-03-05')
@@ -179,7 +174,6 @@ const Community = () => {
       state: language === 'en' ? 'Maharashtra' : 'महाराष्ट्र',
       occupation: language === 'en' ? 'Business Owner' : 'व्यवसायी',
       education: 'graduate',
-      membershipTier: 'diamond',
       honoraryTitle: 'मौनस कुलदीपक',
       photoPath: null,
       registeredAt: new Date('2023-12-18')
@@ -191,7 +185,6 @@ const Community = () => {
       state: language === 'en' ? 'Bihar' : 'बिहार',
       occupation: language === 'en' ? 'Medical Doctor' : 'चिकित्सक',
       education: 'post-graduate',
-      membershipTier: 'gold',
       honoraryTitle: 'मौनस नायक',
       photoPath: null,
       registeredAt: new Date('2024-01-25')
@@ -204,7 +197,6 @@ const Community = () => {
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       occupation: language === 'en' ? 'Intellectual Cell Member' : 'बुद्धिजीवी प्रकोष्ठ सदस्य',
       education: 'post-graduate',
-      membershipTier: 'gold',
       prakosth: 'buddhijivi',
       photoPath: '/assets/ram-sudhar-singh.jpeg',
       registeredAt: new Date('2026-02-20')
@@ -216,7 +208,6 @@ const Community = () => {
       state: language === 'en' ? 'Assam' : 'आसाम',
       occupation: language === 'en' ? 'Intellectual Cell Member' : 'बुद्धिजीवी प्रकोष्ठ सदस्य',
       education: 'post-graduate',
-      membershipTier: 'gold',
       prakosth: 'buddhijivi',
       photoPath: '/assets/डॉ जयदीप सिंह जी.jpeg',
       registeredAt: new Date('2026-02-20')
@@ -228,7 +219,6 @@ const Community = () => {
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       occupation: language === 'en' ? 'Human Service Cell Member' : 'मानव सेवा प्रकोष्ठ सदस्य',
       education: 'graduate',
-      membershipTier: 'gold',
       prakosth: 'manav-seva',
       photoPath: '/assets/श्री के के सिंह जी.jpeg',
       registeredAt: new Date('2026-02-21')
@@ -240,7 +230,6 @@ const Community = () => {
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       occupation: language === 'en' ? 'Surgeon' : 'शल्य चिकित्सक',
       education: 'post-graduate',
-      membershipTier: 'diamond',
       prakosth: 'chikitsa',
       photoPath: null,
       registeredAt: new Date('2024-01-10')
@@ -252,7 +241,6 @@ const Community = () => {
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       occupation: language === 'en' ? 'Advocate' : 'एडवोकेट',
       education: 'post-graduate',
-      membershipTier: 'gold',
       prakosth: 'vidhi',
       photoPath: '/assets/श्री राजकुमार सिंह जी.jpeg',
       registeredAt: new Date('2026-02-21')
@@ -264,7 +252,6 @@ const Community = () => {
       state: language === 'en' ? 'Madhya Pradesh' : 'मध्य प्रदेश',
       occupation: language === 'en' ? 'Businessman' : 'व्यवसायी',
       education: 'graduate',
-      membershipTier: 'diamond',
       prakosth: 'vyapar',
       photoPath: null,
       registeredAt: new Date('2024-03-01')
@@ -275,7 +262,6 @@ const Community = () => {
       city: language === 'en' ? 'Gajadharppur' : 'गजाधरपुर',
       state: language === 'en' ? 'Bhadohi' : 'भदोही',
       occupation: language === 'en' ? 'Sports & Military Cell Member' : 'खेल एवं सैनिक प्रकोष्ठ सदस्य',
-      membershipTier: 'silver',
       prakosth: 'khel',
       photoPath: '/assets/श्री यजुवेंद्र सिंह जी.jpeg',
       registeredAt: new Date('2026-02-19')
@@ -285,43 +271,23 @@ const Community = () => {
   // Combine API members with placeholder members
   const allMembers = [...members, ...placeholderMembers];
 
-  const getTierColor = (tier) => {
-    switch(tier) {
-      case 'bronze': return '#CD7F32';
-      case 'silver': return '#C0C0C0';
-      case 'gold': return '#FFD700';
-      case 'diamond': return '#B9F2FF';
-      default: return '#C0C0C0';
-    }
-  };
-
-  const getTierIcon = (tier) => {
-    switch(tier) {
-      case 'bronze': return '🥉';
-      case 'silver': return '🥈';
-      case 'gold': return '🥇';
-      case 'diamond': return '💎';
-      default: return '🥈';
-    }
-  };
-
-  // Members with selected honorary title for upadhi section
-  const upadhiMembers = selectedUpadhi 
-    ? allMembers.filter(member => member.honoraryTitle === selectedUpadhi)
-    : [];
-
-  // Members with selected prakosth for prakosth section
-  const prakosthMembers = selectedPrakosth 
-    ? allMembers.filter(member => member.prakosth === selectedPrakosth)
-    : [];
-
-  // Regular members (without prakosth or honorary titles) with tier filtering for members section
+  // Regular members (without prakosth or honorary titles)
   const filteredMembers = allMembers.filter(member => {
-    // Exclude members with prakosth or honorary titles
     if (member.prakosth || member.honoraryTitle) return false;
-    // Apply tier filter
-    return filter === 'all' || member.membershipTier === filter;
+    return true;
   });
+
+  // All prakosth members (for sidebar+panel)
+  const allPrakosthMembers = allMembers.filter(member => !!member.prakosth);
+  const visiblePrakosthMembers = selectedPrakosth
+    ? allPrakosthMembers.filter(m => m.prakosth === selectedPrakosth)
+    : allPrakosthMembers;
+
+  // All upadhi members (for sidebar+panel)
+  const allUpadhiMembers = allMembers.filter(member => !!member.honoraryTitle);
+  const visibleUpadhiMembers = selectedUpadhi
+    ? allUpadhiMembers.filter(m => m.honoraryTitle === selectedUpadhi)
+    : allUpadhiMembers;
 
   return (
     <div className="community-page">
@@ -341,60 +307,60 @@ const Community = () => {
             <h2>{language === 'en' ? 'Our Cells' : 'हमारा प्रकोष्ठ'}</h2>
             <div className="underline"></div>
           </div>
-          <div className="team-grid">
-            {prakosths.map((prakosth, index) => (
-              <div 
-                key={index} 
-                className={`team-member-card ${selectedPrakosth === prakosth.id ? 'active' : ''}`}
-                onClick={() => {
-                  setSelectedPrakosth(selectedPrakosth === prakosth.id ? null : prakosth.id);
-                }}
-                style={{ cursor: 'pointer' }}
+          <div className="section-with-sidebar">
+            {/* Left Sidebar */}
+            <div className="section-sidebar">
+              <button
+                className={`sidebar-item ${!selectedPrakosth ? 'active' : ''}`}
+                onClick={() => setSelectedPrakosth(null)}
               >
-                <div className="member-image">
-                  <div className="image-placeholder">{prakosth.icon}</div>
-                </div>
-                <div className="member-info">
-                  <p className="member-position">{prakosth.title}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Prakosth Members Modal */}
-          {selectedPrakosth && (
-            <div className="members-modal-overlay" onClick={() => setSelectedPrakosth(null)}>
-              <div className="members-modal" onClick={(e) => e.stopPropagation()}>
-                <div className="members-modal-header">
-                  <h3>{prakosths.find(p => p.id === selectedPrakosth)?.title || selectedPrakosth}</h3>
-                  <button className="members-modal-close" onClick={() => setSelectedPrakosth(null)}>✕</button>
-                </div>
-                <div className="members-modal-body">
-                  {prakosthMembers.length === 0 ? (
-                    <p className="no-members">{language === 'en' ? 'No members found in this cell' : 'इस प्रकोष्ठ में कोई सदस्य नहीं मिला'}</p>
-                  ) : (
-                    <div className="members-modal-grid">
-                      {prakosthMembers.map((member) => (
-                        <div key={member._id} className="members-modal-card">
-                          {member.photoPath ? (
-                            <img
-                              src={member.photoPath}
-                              alt={member.fullName}
-                              className="members-modal-photo"
-                            />
-                          ) : (
-                            <div className="members-modal-photo-placeholder">👤</div>
-                          )}
-                          <h4>{member.fullName}</h4>
-                          <p>📍 {member.city}, {member.state}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+                <span className="sidebar-item-icon">🏛️</span>
+                <span>{language === 'en' ? 'All Cells' : 'सभी प्रकोष्ठ'}</span>
+              </button>
+              {prakosths.map((p) => (
+                <button
+                  key={p.id}
+                  className={`sidebar-item ${selectedPrakosth === p.id ? 'active' : ''}`}
+                  onClick={() => setSelectedPrakosth(selectedPrakosth === p.id ? null : p.id)}
+                >
+                  <span className="sidebar-item-icon">{p.icon}</span>
+                  <span>{p.title}</span>
+                </button>
+              ))}
             </div>
-          )}
+
+            {/* Right Members Panel */}
+            <div className="section-members-panel">
+              {selectedPrakosth && (
+                <h4 className="panel-section-label">
+                  {prakosths.find(p => p.id === selectedPrakosth)?.icon} {prakosths.find(p => p.id === selectedPrakosth)?.title}
+                </h4>
+              )}
+              {visiblePrakosthMembers.length === 0 ? (
+                <p className="no-members">{language === 'en' ? 'No members found' : 'कोई सदस्य नहीं मिला'}</p>
+              ) : (
+                <div className="panel-members-grid">
+                  {visiblePrakosthMembers.map((member) => (
+                    <div key={member._id} className="panel-member-card">
+                      <div className="panel-member-photo-wrap">
+                        {member.photoPath ? (
+                          <img src={member.photoPath} alt={member.fullName} className="panel-member-photo" />
+                        ) : (
+                          <div className="panel-member-photo-placeholder">👤</div>
+                        )}
+                      </div>
+                      <div className="panel-member-info">
+                        <h4>{member.fullName}</h4>
+                        <p className="panel-member-designation">🏛️ {prakosths.find(p => p.id === member.prakosth)?.title || member.prakosth}</p>
+                        <p className="panel-member-location">📍 {member.city}, {member.state}</p>
+                        {member.occupation && <p className="panel-member-occupation">💼 {member.occupation}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </section>
       )}
@@ -407,60 +373,59 @@ const Community = () => {
             <h2>{language === 'en' ? 'Upadhidhaarak' : 'उपाधिधारक'}</h2>
             <div className="underline"></div>
           </div>
-          <div className="upadhi-grid">
-            {upadhiRankings.map((member, index) => (
-              <div 
-                key={index} 
-                className={`upadhi-card ${selectedUpadhi === member.honoraryTitle ? 'active' : ''}`}
-                onClick={() => setSelectedUpadhi(selectedUpadhi === member.honoraryTitle ? null : member.honoraryTitle)}
-                style={{ cursor: 'pointer' }}
+          <div className="section-with-sidebar">
+            {/* Left Sidebar */}
+            <div className="section-sidebar">
+              <button
+                className={`sidebar-item ${!selectedUpadhi ? 'active' : ''}`}
+                onClick={() => setSelectedUpadhi(null)}
               >
-                <div className="upadhi-icon">{getUpadhiIcon(member.honoraryTitle)}</div>
-                <div className="upadhi-info">
-                  <p className="honorary-title">{member.honoraryTitle}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Upadhi Members Modal */}
-          {selectedUpadhi && (
-            <div className="members-modal-overlay" onClick={() => setSelectedUpadhi(null)}>
-              <div className="members-modal" onClick={(e) => e.stopPropagation()}>
-                <div className="members-modal-header">
-                  <h3>{selectedUpadhi}</h3>
-                  <button className="members-modal-close" onClick={() => setSelectedUpadhi(null)}>✕</button>
-                </div>
-                <div className="members-modal-body">
-                  {upadhiMembers.length === 0 ? (
-                    <p className="no-members">{language === 'en' ? 'No members found with this title' : 'इस उपाधि के साथ कोई सदस्य नहीं मिला'}</p>
-                  ) : (
-                    <div className="members-modal-grid">
-                      {upadhiMembers.map((member) => (
-                        <div key={member._id} className="members-modal-card">
-                          {member.photoPath ? (
-                            <img
-                              src={member.photoPath}
-                              alt={member.fullName}
-                              className="members-modal-photo"
-                            />
-                          ) : (
-                            <div className="members-modal-photo-placeholder">👤</div>
-                          )}
-                          <div className="members-modal-tier" style={{ background: getTierColor(member.membershipTier || 'silver') }}>
-                            {getTierIcon(member.membershipTier || 'silver')} {(member.membershipTier || 'silver').toUpperCase()}
-                          </div>
-                          <h4>{member.fullName}</h4>
-                          <p>📍 {member.city}, {member.state}</p>
-                          <p>💼 {member.occupation}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+                <span className="sidebar-item-icon">🏅</span>
+                <span>{language === 'en' ? 'All Titles' : 'सभी उपाधियाँ'}</span>
+              </button>
+              {upadhiRankings.map((u, index) => (
+                <button
+                  key={index}
+                  className={`sidebar-item ${selectedUpadhi === u.honoraryTitle ? 'active' : ''}`}
+                  onClick={() => setSelectedUpadhi(selectedUpadhi === u.honoraryTitle ? null : u.honoraryTitle)}
+                >
+                  <span className="sidebar-item-icon upadhi-sidebar-icon">{getUpadhiIcon(u.honoraryTitle)}</span>
+                  <span>{u.honoraryTitle}</span>
+                </button>
+              ))}
             </div>
-          )}
+
+            {/* Right Members Panel */}
+            <div className="section-members-panel">
+              {selectedUpadhi && (
+                <h4 className="panel-section-label">{selectedUpadhi}</h4>
+              )}
+              {visibleUpadhiMembers.length === 0 ? (
+                <p className="no-members">{language === 'en' ? 'No members found' : 'कोई सदस्य नहीं मिला'}</p>
+              ) : (
+                <div className="panel-members-grid">
+                  {visibleUpadhiMembers.map((member) => (
+                    <div key={member._id} className="panel-member-card">
+                      <div className="panel-member-upadhi-icon">{getUpadhiIcon(member.honoraryTitle)}</div>
+                      <div className="panel-member-photo-wrap">
+                        {member.photoPath ? (
+                          <img src={member.photoPath} alt={member.fullName} className="panel-member-photo" />
+                        ) : (
+                          <div className="panel-member-photo-placeholder">👤</div>
+                        )}
+                      </div>
+                      <div className="panel-member-info">
+                        <h4>{member.fullName}</h4>
+                        <p className="panel-member-designation upadhi-title-badge">{member.honoraryTitle}</p>
+                        <p className="panel-member-location">📍 {member.city}, {member.state}</p>
+                        {member.occupation && <p className="panel-member-occupation">💼 {member.occupation}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </section>
       )}
@@ -475,40 +440,6 @@ const Community = () => {
           </div>
 
           <>
-          <div className="tier-filters">
-            <button 
-              className={filter === 'all' ? 'active' : ''}
-              onClick={() => setFilter('all')}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
-            >
-              <img src="/assets/general.jpeg" alt="General" style={{ width: '24px', height: '28px', objectFit: 'contain', borderRadius: '4px', flexShrink: 0 }} />
-              {language === 'en' ? 'General' : 'General'}
-            </button>
-            <button 
-              className={filter === 'bronze' ? 'active bronze' : 'bronze'}
-              onClick={() => setFilter('bronze')}
-            >
-              🥉 Bronze
-            </button>
-            <button 
-              className={filter === 'silver' ? 'active silver' : 'silver'}
-              onClick={() => setFilter('silver')}
-            >
-              🥈 Silver
-            </button>
-            <button 
-              className={filter === 'gold' ? 'active gold' : 'gold'}
-              onClick={() => setFilter('gold')}
-            >
-              🥇 Gold
-            </button>
-            <button 
-              className={filter === 'diamond' ? 'active diamond' : 'diamond'}
-              onClick={() => setFilter('diamond')}
-            >
-              💎 Diamond
-            </button>
-          </div>
 
           {loading ? (
             <p className="loading">{language === 'en' ? 'Loading members...' : 'सदस्य लोड हो रहे हैं...'}</p>
@@ -519,13 +450,8 @@ const Community = () => {
               {filteredMembers.map((member) => (
                 <div 
                   key={member._id} 
-                  className={`membership-card ${member.membershipTier || 'silver'}`}
-                  style={{ borderColor: getTierColor(member.membershipTier || 'silver') }}
+                  className="membership-card"
                 >
-                  <div className="tier-badge" style={{ background: getTierColor(member.membershipTier || 'silver') }}>
-                    {getTierIcon(member.membershipTier || 'silver')} {(member.membershipTier || 'silver').toUpperCase()}
-                  </div>
-                  
                   {member.photoPath ? (
                     <img 
                       src={member.photoPath} 

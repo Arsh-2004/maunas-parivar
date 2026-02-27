@@ -20,11 +20,9 @@ const AdminDashboard = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
   const [activeTab, setActiveTab] = useState('users');
-  const [events, setEvents] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [oathAgreements, setOathAgreements] = useState([]);
   const [contacts, setContacts] = useState([]);
-  const [eventForm, setEventForm] = useState({ title: '', description: '', date: '', location: '', image: null });
   const [galleryForm, setGalleryForm] = useState({ title: '', description: '', category: 'general', image: null });
   const [showUserModal, setShowUserModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -55,7 +53,6 @@ const AdminDashboard = () => {
         localStorage.setItem('adminPassword', password);
         fetchUsers();
         fetchStats();
-        fetchEvents();
         fetchGallery();
         fetchOathAgreements();
         fetchContacts();
@@ -106,7 +103,6 @@ const AdminDashboard = () => {
       setIsLoggedIn(true);
       fetchUsers();
       fetchStats();
-      fetchEvents();
       fetchGallery();
       fetchOathAgreements();
       fetchContacts();
@@ -230,91 +226,6 @@ const AdminDashboard = () => {
       }
     } catch (err) {
       console.error('Error deleting user:', err);
-    }
-  };
-
-  // Update membership tier
-  const handleUpdateTier = async (userId, tier) => {
-    try {
-      const response = await fetch(`${API_URL}/admin/update-tier/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-password': adminPassword
-        },
-        body: JSON.stringify({ tier }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        fetchUsers();
-      }
-    } catch (err) {
-      console.error('Error updating tier:', err);
-    }
-  };
-
-  // Event management
-  const fetchEvents = async () => {
-    try {
-      const response = await fetch(`${API_URL}/admin/events`);
-      const data = await response.json();
-      if (data.success) {
-        setEvents(data.events);
-      }
-    } catch (err) {
-      console.error('Error fetching events:', err);
-    }
-  };
-
-  const handleEventSubmit = async (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData();
-    formData.append('title', eventForm.title);
-    formData.append('description', eventForm.description);
-    formData.append('date', eventForm.date);
-    formData.append('location', eventForm.location);
-    if (eventForm.image) {
-      formData.append('image', eventForm.image);
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/admin/events`, {
-        method: 'POST',
-        headers: { 'x-admin-password': adminPassword },
-        body: formData,
-      });
-      const data = await response.json();
-      if (data.success) {
-        alert(language === 'en' ? 'Event created successfully!' : 'कार्यक्रम सफलतापूर्वक बनाया गया!');
-        fetchEvents();
-        setEventForm({ title: '', description: '', date: '', location: '', image: null });
-        // Reset file input
-        const fileInput = document.querySelector('input[type="file"]');
-        if (fileInput) fileInput.value = '';
-      } else {
-        alert(language === 'en' ? `Failed to create event: ${data.message}` : `कार्यक्रम बनाने में विफल: ${data.message}`);
-      }
-    } catch (err) {
-      console.error('Error creating event:', err);
-      alert(language === 'en' ? 'Error creating event. Please try again.' : 'कार्यक्रम बनाने में त्रुटि। कृपया पुनः प्रयास करें।');
-    }
-  };
-
-  const handleDeleteEvent = async (eventId) => {
-    if (!window.confirm('Are you sure you want to delete this event?')) return;
-    
-    try {
-      const response = await fetch(`${API_URL}/admin/events/${eventId}`, {
-        method: 'DELETE',
-        headers: { 'x-admin-password': adminPassword },
-      });
-      const data = await response.json();
-      if (data.success) {
-        fetchEvents();
-      }
-    } catch (err) {
-      console.error('Error deleting event:', err);
     }
   };
 
@@ -493,12 +404,6 @@ const AdminDashboard = () => {
           onClick={() => setActiveTab('oath')}
         >
           {language === 'en' ? 'Oath Agreements' : 'शपथ समझौते'}
-        </button>
-        <button 
-          className={activeTab === 'events' ? 'active' : ''}
-          onClick={() => setActiveTab('events')}
-        >
-          {language === 'en' ? 'Events' : 'कार्यक्रम'}
         </button>
         <button 
           className={activeTab === 'gallery' ? 'active' : ''}
@@ -695,7 +600,6 @@ const AdminDashboard = () => {
                       <th>{language === 'en' ? 'District' : 'जिला'}</th>
                       <th>{language === 'en' ? 'Block' : 'खंड'}</th>
                       <th>{language === 'en' ? 'Date' : 'तारीख'}</th>
-                      <th>{language === 'en' ? 'Tier' : 'स्तर'}</th>
                       <th>{language === 'en' ? 'Action' : 'कार्यवाई'}</th>
                     </tr>
                   </thead>
@@ -707,17 +611,6 @@ const AdminDashboard = () => {
                         <td>{user.district || 'N/A'}</td>
                         <td>{user.block || 'N/A'}</td>
                         <td>{new Date(user.registeredAt).toLocaleDateString('en-GB')}</td>
-                        <td>
-                          <select
-                            value={user.membershipTier || 'silver'}
-                            onChange={(e) => handleUpdateTier(user._id, e.target.value)}
-                            className="tier-dropdown-inline"
-                          >
-                            <option value="silver">Silver</option>
-                            <option value="gold">Gold</option>
-                            <option value="diamond">Diamond</option>
-                          </select>
-                        </td>
                         <td>
                           <button 
                             className="view-btn-inline"
@@ -805,15 +698,6 @@ const AdminDashboard = () => {
                 
                 {selectedUser.status === 'pending' && (
                   <div className="modal-actions">
-                    <select
-                      value={selectedUser.membershipTier || 'silver'}
-                      onChange={(e) => handleUpdateTier(selectedUser._id, e.target.value)}
-                      className="tier-dropdown"
-                    >
-                      <option value="silver">Silver</option>
-                      <option value="gold">Gold</option>
-                      <option value="diamond">Diamond</option>
-                    </select>
                     <button className="approve-btn" onClick={() => { handleApprove(selectedUser._id); setShowUserModal(false); }}>
                       {language === 'en' ? 'Approve' : 'स्वीकृत करें'}
                     </button>
@@ -870,82 +754,6 @@ const AdminDashboard = () => {
               </table>
             </div>
           )}
-        </div>
-      )}
-
-      {activeTab === 'events' && (
-        <div className="events-management">
-          <div className="event-form">
-            <h2>{language === 'en' ? 'Add New Event' : 'नया कार्यक्रम जोड़ें'}</h2>
-            <form onSubmit={handleEventSubmit}>
-              <input
-                type="text"
-                placeholder={language === 'en' ? 'Event Title' : 'कार्यक्रम शीर्षक'}
-                value={eventForm.title}
-                onChange={(e) => setEventForm({...eventForm, title: e.target.value})}
-                required
-              />
-              <textarea
-                placeholder={language === 'en' ? 'Event Description' : 'कार्यक्रम विवरण'}
-                value={eventForm.description}
-                onChange={(e) => setEventForm({...eventForm, description: e.target.value})}
-                required
-              />
-              <div className="date-input-wrapper">
-                <label>{language === 'en' ? 'Event Date:' : 'कार्यक्रम तिथि:'}</label>
-                <input
-                  type="date"
-                  value={eventForm.date}
-                  onChange={(e) => setEventForm({...eventForm, date: e.target.value})}
-                  required
-                  className="date-input"
-                />
-              </div>
-              <input
-                type="text"
-                placeholder={language === 'en' ? 'Location' : 'स्थान'}
-                value={eventForm.location}
-                onChange={(e) => setEventForm({...eventForm, location: e.target.value})}
-                required
-              />
-              <div>
-                <label style={{display: 'block', marginBottom: '5px', fontWeight: '600'}}>
-                  {language === 'en' ? 'Event Image (optional):' : 'कार्यक्रम छवि (वैकल्पिक):'}
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setEventForm({...eventForm, image: e.target.files[0]})}
-                />
-                {eventForm.image && (
-                  <p style={{marginTop: '5px', color: '#28a745', fontSize: '14px'}}>
-                    ✓ {eventForm.image.name}
-                  </p>
-                )}
-              </div>
-              <button type="submit">{language === 'en' ? 'Add Event' : 'कार्यक्रम जोड़ें'}</button>
-            </form>
-          </div>
-
-          <div className="events-list">
-            <h2>{language === 'en' ? 'All Events' : 'सभी कार्यक्रम'}</h2>
-            <div className="events-grid">
-              {events.map((event) => (
-                <div key={event._id} className="event-card">
-                  {event.imagePath && (
-                    <img src={event.imagePath} alt={event.title} />
-                  )}
-                  <h3>{event.title}</h3>
-                  <p>{event.description}</p>
-                  <p><strong>{language === 'en' ? 'Date:' : 'तिथि:'}</strong> {new Date(event.date).toLocaleDateString()}</p>
-                  <p><strong>{language === 'en' ? 'Location:' : 'स्थान:'}</strong> {event.location}</p>
-                  <button onClick={() => handleDeleteEvent(event._id)} className="delete-btn">
-                    {language === 'en' ? 'Delete' : 'हटाएं'}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       )}
 
@@ -1171,21 +979,6 @@ const AdminDashboard = () => {
                 <span className={`status-badge ${selectedUser.status}`}>{selectedUser.status}</span>
               </div>
 
-              {selectedUser.status === 'approved' && (
-                <div className="detail-group">
-                  <label>{language === 'en' ? 'Membership Tier:' : 'सदस्यता स्तर:'}</label>
-                  <select
-                    value={selectedUser.membershipTier || 'silver'}
-                    onChange={(e) => handleUpdateTier(selectedUser._id, e.target.value)}
-                    className="tier-select"
-                  >
-                    <option value="silver">Silver</option>
-                    <option value="gold">Gold</option>
-                    <option value="diamond">Diamond</option>
-                  </select>
-                </div>
-              )}
-              
               {selectedUser.rejectionReason && (
                 <div className="detail-group">
                   <label>{language === 'en' ? 'Rejection Reason:' : 'अस्वीकृति कारण:'}</label>

@@ -218,10 +218,10 @@
 }
 
 .social-icon.email:hover {
-  background: #EA4335;
+  background: linear-gradient(135deg, #EA4335 0%, #B31412 100%);
   color: white;
   border-color: #EA4335;
-  box-shadow: 0 4px 12px rgba(234, 67, 53, 0.4);
+  box-shadow: 0 4px 16px rgba(234, 67, 53, 0.5);
 }
 
 .social-icon.facebook:hover {
@@ -232,17 +232,17 @@
 }
 
 .social-icon.x-twitter:hover {
-  background: #1DA1F2;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   color: white;
-  border-color: #1DA1F2;
-  box-shadow: 0 4px 12px rgba(29, 161, 242, 0.4);
+  border-color: #1a1a2e;
+  box-shadow: 0 4px 16px rgba(15, 52, 96, 0.5);
 }
 
 .social-icon.instagram:hover {
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 20%, #dc2743 40%, #cc2366 70%, #bc1888 100%);
   color: white;
-  border-color: #bc1888;
-  box-shadow: 0 4px 12px rgba(225, 48, 108, 0.4);
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(188, 24, 136, 0.5);
 }
 
 .social-icon.youtube:hover {

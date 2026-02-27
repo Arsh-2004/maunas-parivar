@@ -10,9 +10,14 @@ const DigitalIDCard = ({ user }) => {
     return <div className="id-card-container">User data not available</div>;
   }
 
-  // Generate unique URL for QR code - points to web page showing user profile
-  const frontendURL = window.location.origin;
-  const qrValue = `${frontendURL}/member-profile/${user._id}`;
+  // QR code encodes plain text with card details — readable by any scanner without opening a browser
+  const addressParts = [user.village, user.block, user.tehsil, user.district, user.city, user.state, user.pincode].filter(Boolean);
+  const qrValue = [
+    `CARD ID  : ${user._id ? user._id.slice(-8).toUpperCase() : 'N/A'}`,
+    `NAME     : ${user.fullName || 'N/A'}`,
+    `FATHER'S NAME : ${user.fatherName || 'N/A'}`,
+    `ADDRESS  : ${addressParts.length ? addressParts.join(', ') : (user.address || 'N/A')}`,
+  ].join('\n');
 
   // Detect if user is on mobile device
   const isMobileDevice = () => {
@@ -229,7 +234,7 @@ const DigitalIDCard = ({ user }) => {
         </h2>
         <p className="id-card-subtitle">आपका आधिकारिक सदस्य प्रमाण पत्र | Your Official Member Certificate</p>
       </div>
-
+    
       <div className="id-card-display-container">
         {/* Side-by-Side Card */}
         <div className="id-card-side-by-side" id="id-card-capture-target">
@@ -239,8 +244,8 @@ const DigitalIDCard = ({ user }) => {
             <div className="id-card-content-front">
               <div className="id-card-org-header">
                 <h3 className="id-org-name">मौनस परिवार</h3>
-                <p className="id-org-subtitle">Maunas Parivar</p>
-                <p className="id-card-type-label">MEMBER IDENTITY CARD</p>
+                <span className="id-member-id-label">{user._id ? user._id.slice(-8).toUpperCase() : 'N/A'}</span>
+                <span className="id-card-type-label">MEMBER IDENTITY CARD</span>
               </div>
 
               <div className="id-card-photo-section">
@@ -265,18 +270,6 @@ const DigitalIDCard = ({ user }) => {
                 <div className="id-detail-row">
                   <span className="id-detail-label">फोन/Phone</span>
                   <span className="id-detail-value">{user.phone}</span>
-                </div>
-                <div className="id-detail-row">
-                  <span className="id-detail-label">स्थिति/Status</span>
-                  <span className="id-detail-value">
-                    <span className="id-tier-badge">
-                      {user.membershipTier === 'diamond' ? '💎 DIAMOND' :
-                       user.membershipTier === 'gold' ? '🥇 GOLD' :
-                       user.membershipTier === 'silver' ? '🥈 SILVER' :
-                       user.membershipTier === 'bronze' ? '🥉 BRONZE' :
-                       user.membershipTier === 'general' ? '🌟 GENERAL' : '🥈 SILVER'}
-                    </span>
-                  </span>
                 </div>
               </div>
 
@@ -325,10 +318,7 @@ const DigitalIDCard = ({ user }) => {
                       .join(', ') || 'N/A'}
                   </span>
                 </div>
-                <div className="id-back-detail-row">
-                  <span className="id-detail-label">सदस्य ID</span>
-                  <span className="id-detail-value">{user._id ? user._id.slice(-8).toUpperCase() : 'N/A'}</span>
-                </div>
+
               </div>
 
             </div>

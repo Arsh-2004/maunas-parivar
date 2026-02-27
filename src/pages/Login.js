@@ -36,7 +36,6 @@ const Login = () => {
 
       if (data.success) {
         console.log('Login - User data received:', data.user);
-        console.log('Login - Membership Tier:', data.user.membershipTier);
         login(data.user);
         navigate('/');
       } else {

@@ -12,6 +12,7 @@ const Gallery = () => {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchGallery();
   }, []);
 
