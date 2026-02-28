@@ -8,7 +8,7 @@
 /* Hero */
 .heritage-hero {
   position: relative;
-  background: linear-gradient(135deg, #8B1A1A 0%, #C0392B 40%, #FF6B35 100%);
+  background: linear-gradient(135deg, #FF6B35, #F7931E);
   padding: 80px 0 60px;
   text-align: center;
   overflow: hidden;
@@ -100,7 +100,7 @@
 .heritage-site-divider {
   width: 80px;
   height: 3px;
-  background: linear-gradient(90deg, #8B1A1A, #FF6B35);
+  background: linear-gradient(90deg, #FF6B35, #F7931E);
   border-radius: 2px;
   margin: 56px auto;
 }

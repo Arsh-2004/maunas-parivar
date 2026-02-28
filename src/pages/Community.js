@@ -206,7 +206,7 @@ const Community = () => {
       fullName: language === 'en' ? 'Dr. Jaydeep Singh Ji' : 'डॉ जयदीप सिंह जी',
       city: language === 'en' ? 'Guwahati' : 'गुवाहाटी',
       state: language === 'en' ? 'Assam' : 'आसाम',
-      occupation: language === 'en' ? 'Intellectual Cell Member' : 'बुद्धिजीवी प्रकोष्ठ सदस्य',
+      occupation: language === 'en' ? 'Senior ScientistKrishi Vigyan Kendra ICAR, ATARI Zone IV' : 'वरिष्ठ वैज्ञानिक कृषि विज्ञान केंद्रआई०सी०ए०आर०, ए० टी० ए० आर० आई० जोन IV',
       education: 'post-graduate',
       prakosth: 'buddhijivi',
       photoPath: '/assets/डॉ जयदीप सिंह जी.jpeg',
@@ -225,7 +225,7 @@ const Community = () => {
     },
     {
       _id: 'prakosth-3',
-      fullName: language === 'en' ? 'Dr. Anita Verma' : 'डॉ. अनीता वर्मा',
+      fullName: language === 'en' ? 'Dr. Gaurav Singh' : 'डॉ. गौरव सिंह',
       city: language === 'en' ? 'Gorakhpur' : 'गोरखपुर',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       occupation: language === 'en' ? 'Surgeon' : 'शल्य चिकित्सक',
