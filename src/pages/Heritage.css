@@ -49,85 +49,212 @@
   position: relative;
 }
 
-/* Intro */
-.heritage-intro {
-  padding: 60px 0 40px;
+/* ===== Historic Sites Section ===== */
+.heritage-sites-section {
+  padding: 60px 0 70px;
+  background: #f9f9f9;
 }
 
-.heritage-intro-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(139, 26, 26, 0.1);
-  padding: 40px;
+.heritage-sites-section .section-header {
   text-align: center;
-  max-width: 700px;
-  margin: 0 auto;
-  border-top: 4px solid #FF6B35;
+  margin-bottom: 50px;
 }
 
-.heritage-intro-icon {
-  font-size: 3rem;
-  margin-bottom: 14px;
-}
-
-.heritage-intro-card h2 {
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: #8B1A1A;
+.heritage-sites-section .section-header h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1a1a2e;
   margin: 0 0 14px;
 }
 
-.heritage-intro-card p {
-  font-size: 1rem;
-  color: #555;
-  line-height: 1.8;
-  margin: 0;
+.heritage-sites-section .underline {
+  width: 60px;
+  height: 4px;
+  background: #FF6B35;
+  border-radius: 2px;
+  margin: 0 auto;
 }
 
-/* Placeholder Grid */
-.heritage-sections {
-  padding: 20px 0 70px;
-}
-
-.heritage-grid {
+/* Two-column layout identical to Home About section */
+.heritage-about-content {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
 }
 
-.heritage-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 32px 24px;
-  text-align: center;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
-  border: 1px solid #f0e8e0;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+.heritage-about-content > * {
+  min-width: 0;
 }
 
-.heritage-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 28px rgba(139, 26, 26, 0.15);
+/* Reverse column order for alternating layout */
+.heritage-about-content--reverse {
+  direction: rtl;
 }
 
-.heritage-card-icon {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
+.heritage-about-content--reverse > * {
+  direction: ltr;
 }
 
-.heritage-card h3 {
+/* Divider between sites */
+.heritage-site-divider {
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #8B1A1A, #FF6B35);
+  border-radius: 2px;
+  margin: 56px auto;
+}
+
+/* Text-only site entry (no image) */
+.heritage-text-only {
+  max-width: 700px;
+}
+
+.heritage-about-text p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #666;
+  margin-bottom: 20px;
+  text-align: justify;
+}
+
+.heritage-site-name-hi {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #8B1A1A;
+  margin: 0 0 6px;
+  line-height: 1.4;
+}
+
+.heritage-site-name-en {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #FF6B35;
+  margin: 0 0 20px;
+  line-height: 1.4;
+}
+
+/* Portrait-format idol image */
+.heritage-idol-row {
+  margin-top: 36px;
+}
+
+.heritage-idol-image {
+  min-width: 0;
+}
+
+.heritage-idol-image .image-placeholder {
+  background: #111;
+  height: 520px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+}
+
+.heritage-idol-image .image-placeholder img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.heritage-idol-image .image-placeholder p {
+  position: relative;
+  z-index: 1;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #2c2c2c;
-  margin: 0 0 10px;
+  margin: 0;
+  padding: 14px 20px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  letter-spacing: 0.5px;
 }
 
-.heritage-coming-soon {
-  font-size: 0.9rem;
-  color: #FF6B35;
-  font-weight: 600;
+/* Dual stacked images — two photos on the right column */
+.heritage-dual-images {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.heritage-dual-images .image-placeholder {
+  background: #111;
+  height: 260px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+}
+
+.heritage-dual-images .image-placeholder img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.heritage-dual-images .image-placeholder p {
+  position: relative;
+  z-index: 1;
+  font-size: 1rem;
+  font-weight: 700;
   margin: 0;
-  font-style: italic;
+  padding: 12px 18px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  letter-spacing: 0.4px;
+}
+
+/* Image box — identical to Home .about-image .image-placeholder */
+.heritage-about-image .image-placeholder {
+  background: #111;
+  height: 400px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+}
+
+.heritage-about-image .image-placeholder img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.heritage-about-image .image-placeholder p {
+  position: relative;
+  z-index: 1;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  padding: 14px 20px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  letter-spacing: 0.5px;
 }
 
 /* Responsive */
@@ -141,18 +268,28 @@
     padding: 0 16px;
   }
 
-  .heritage-intro-card {
-    padding: 28px 20px;
-  }
-
-  .heritage-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .heritage-grid {
+  .heritage-about-content {
     grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .heritage-about-content--reverse {
+    direction: ltr;
+  }
+
+  .heritage-about-image .image-placeholder {
+    height: 280px;
+  }
+
+  .heritage-dual-images .image-placeholder {
+    height: 200px;
+  }
+
+  .heritage-idol-image .image-placeholder {
+    height: 380px;
+  }
+
+  .heritage-sites-section .section-header h2 {
+    font-size: 1.7rem;
   }
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import './Heritage.css';
 
@@ -23,68 +23,311 @@ const Heritage = () => {
         </div>
       </section>
 
-      {/* Intro Section */}
-      <section className="heritage-intro">
+      {/* Historic Sites Section */}
+      <section className="heritage-sites-section">
         <div className="container">
-          <div className="heritage-intro-card">
-            <div className="heritage-intro-icon">🏰</div>
-            <h2>
-              {language === 'en' ? 'Our Roots Run Deep' : 'हमारी जड़ें गहरी हैं'}
-            </h2>
-            <p>
-              {language === 'en'
-                ? 'Content about our historical heritage is being prepared. Check back soon to explore the rich history, traditions, and legacy of the Maunas Kshatriya community.'
-                : 'हमारी ऐतिहासिक धरोहर के बारे में सामग्री तैयार की जा रही है। जल्द ही वापस आएं और मौनस क्षत्रिय समुदाय के समृद्ध इतिहास, परंपराओं और विरासत का अन्वेषण करें।'}
-            </p>
+          <div className="section-header">
+            <h2>{language === 'en' ? 'Historic Sites' : 'ऐतिहासिक स्थल'}</h2>
+            <div className="underline"></div>
           </div>
-        </div>
-      </section>
 
-      {/* Placeholder Cards */}
-      <section className="heritage-sections">
-        <div className="container">
-          <div className="heritage-grid">
-            <div className="heritage-card">
-              <div className="heritage-card-icon">⚔️</div>
-              <h3>{language === 'en' ? 'Warrior Legacy' : 'वीरता की विरासत'}</h3>
-              <p className="heritage-coming-soon">
-                {language === 'en' ? 'Coming Soon...' : 'जल्द आ रहा है...'}
+          {/* Site 1 — text left, image right */}
+          <div className="heritage-about-content">
+            <div className="heritage-about-text">
+              <h3 className="heritage-site-name-hi">सीता समाहित स्थल (सीतामढ़ी)</h3>
+              <h4 className="heritage-site-name-en">Sita Samaahit Sthal (Sitamarhi), Bhadohi</h4>
+              <p>
+                मौनस वंश के आदिपुरुष एवं भगवान श्रीराम जी के ज्येष्ठ पुत्र श्री कुश जी का जन्मस्थल।
               </p>
+              {language === 'en' && (
+                <p>
+                  The birthplace of Shri Kush Ji, the eldest son of Lord Shri Ram and the progenitor of the Maunas dynasty.
+                </p>
+              )}
             </div>
-            <div className="heritage-card">
-              <div className="heritage-card-icon">🛕</div>
-              <h3>{language === 'en' ? 'Sacred Traditions' : 'पवित्र परंपराएं'}</h3>
-              <p className="heritage-coming-soon">
-                {language === 'en' ? 'Coming Soon...' : 'जल्द आ रहा है...'}
-              </p>
+            <div className="heritage-about-image">
+              <div className="image-placeholder">
+                <img
+                  src="/assets/सीता समाहित स्थल.jpeg"
+                  alt="सीता समाहित स्थल (सीतामढ़ी) Bhadohi"
+                />
+                <p>
+                  {language === 'en'
+                    ? 'Sita Samaahit Sthal (Sitamarhi), Bhadohi'
+                    : 'सीता समाहित स्थल (सीतामढ़ी), भदोही'}
+                </p>
+              </div>
             </div>
-            <div className="heritage-card">
-              <div className="heritage-card-icon">📜</div>
-              <h3>{language === 'en' ? 'Ancient Scripts' : 'प्राचीन ग्रंथ'}</h3>
-              <p className="heritage-coming-soon">
-                {language === 'en' ? 'Coming Soon...' : 'जल्द आ रहा है...'}
-              </p>
+          </div>
+
+          <div className="heritage-site-divider" />
+
+          {/* Site 2 — image left, text right */}
+          <div className="heritage-about-content heritage-about-content--reverse">
+            <div className="heritage-about-image">
+              <div className="image-placeholder">
+                <img
+                  src="/assets/सदियों की विरासत.jpeg"
+                  alt="नवमठा मंदिर गिर्द बड़गांव भदोही"
+                />
+                <p>
+                  {language === 'en'
+                    ? 'Navmatha Mandir, Gird Badgaon, Bhadohi'
+                    : 'नवमठा मंदिर, गिर्द बड़गांव, भदोही'}
+                </p>
+              </div>
             </div>
-            <div className="heritage-card">
-              <div className="heritage-card-icon">🏛️</div>
-              <h3>{language === 'en' ? 'Historic Sites' : 'ऐतिहासिक स्थल'}</h3>
-              <p className="heritage-coming-soon">
-                {language === 'en' ? 'Coming Soon...' : 'जल्द आ रहा है...'}
+            <div className="heritage-about-text">
+              <h3 className="heritage-site-name-hi">नवमठा मंदिर</h3>
+              <h4 className="heritage-site-name-en">Navmatha Mandir, Gird Badgaon, Bhadohi</h4>
+              <p>
+                गिर्द बड़गांव, भदोही में स्थित नवमठा मंदिर मौनस क्षत्रिय वंश की प्राचीन धार्मिक आस्था एवं गौरवशाली सांस्कृतिक विरासत का प्रतीक है।
               </p>
+              {language === 'en' && (
+                <p>
+                  Located in Gird Badgaon, Bhadohi, Navmatha Mandir is a symbol of the ancient religious faith and glorious cultural heritage of the Maunas Kshatriya lineage.
+                </p>
+              )}
             </div>
-            <div className="heritage-card">
-              <div className="heritage-card-icon">👑</div>
-              <h3>{language === 'en' ? 'Royal Lineage' : 'राजवंशीय परिवार'}</h3>
-              <p className="heritage-coming-soon">
-                {language === 'en' ? 'Coming Soon...' : 'जल्द आ रहा है...'}
+          </div>
+
+          <div className="heritage-site-divider" />
+
+          {/* Site 3 — text only (no image yet) */}
+          <div className="heritage-about-text heritage-text-only">
+            <h3 className="heritage-site-name-hi">सुरियावां गढ़ (रंग महल)</h3>
+            <h4 className="heritage-site-name-en">Suriyawan Garh (Rang Mahal), Suriyawan, Bhadohi</h4>
+            <p>
+              सुरियावां गढ़ अब रंग महल के नाम से राजस्व विभाग में दर्ज है। यह सुरियावां, भदोही में स्थित है।
+            </p>
+            {language === 'en' && (
+              <p>
+                Suriyawan Garh is now recorded in the revenue department under the name Rang Mahal. It is located in Suriyawan, Bhadohi.
               </p>
+            )}
+          </div>
+
+          <div className="heritage-site-divider" />
+
+          {/* Site 4a — text left, smarak building right */}
+          <div className="heritage-about-content">
+            <div className="heritage-about-text">
+              <h3 className="heritage-site-name-hi">अमर शहीद ठा० झूरी सिंह स्मारक</h3>
+              <h4 className="heritage-site-name-en">Amar Shaheed Tha. Jhoori Singh Smarak, Parauppur, Bhadohi</h4>
+              <p>
+                परऊपुर, भदोही में स्थित यह स्मारक 1857 की क्रांति के महान वीर अमर शहीद ठाकुर झूरी सिंह की अदम्य देशभक्ति एवं बलिदान को समर्पित है।
+              </p>
+              {language === 'en' && (
+                <p>
+                  Located in Parauppur, Bhadohi, this memorial is dedicated to the undying patriotism and sacrifice of Amar Shaheed Thakur Jhoori Singh, a great hero of the 1857 revolution.
+                </p>
+              )}
             </div>
-            <div className="heritage-card">
-              <div className="heritage-card-icon">🎭</div>
-              <h3>{language === 'en' ? 'Cultural Arts' : 'सांस्कृतिक कलाएं'}</h3>
-              <p className="heritage-coming-soon">
-                {language === 'en' ? 'Coming Soon...' : 'जल्द आ रहा है...'}
+            <div className="heritage-about-image">
+              <div className="image-placeholder">
+                <img
+                  src="/assets/अमर शहीद ठा० झूरी सिंह स्मारक.jpeg"
+                  alt="अमर शहीद ठा० झूरी सिंह स्मारक परऊपुर भदोही"
+                  style={{ objectPosition: 'center center' }}
+                />
+                <p>
+                  {language === 'en'
+                    ? 'Amar Shaheed Tha. Jhoori Singh Smarak, Parauppur, Bhadohi'
+                    : 'अमर शहीद ठा० झूरी सिंह स्मारक, परऊपुर, भदोही'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Site 4b — idol image left, caption right */}
+          <div className="heritage-about-content heritage-about-content--reverse heritage-idol-row">
+            <div className="heritage-idol-image">
+              <div className="image-placeholder">
+                <img
+                  src="/assets/अमर शहीद ठा० झूरी सिंह.jpeg"
+                  alt="अमर शहीद ठा० झूरी सिंह"
+                  style={{ objectPosition: 'center top' }}
+                />
+                <p>
+                  {language === 'en'
+                    ? 'Amar Shaheed Tha. Jhoori Singh'
+                    : 'अमर शहीद ठा० झूरी सिंह'}
+                </p>
+              </div>
+            </div>
+            <div className="heritage-about-text">
+              <h3 className="heritage-site-name-hi">अमर शहीद ठा० झूरी सिंह</h3>
+              <p>
+                1857 की महान क्रांति में भदोही जनपद के परऊपुर ग्राम के इस वीर सपूत ने अंग्रेजी हुकूमत के विरुद्ध शस्त्र उठाया और देश की आज़ादी के लिए अपने प्राण न्योछावर कर दिए।
               </p>
+              {language === 'en' && (
+                <p>
+                  This brave son of Parauppur village, Bhadohi district, took up arms against British rule in the great revolution of 1857 and sacrificed his life for the freedom of the nation.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="heritage-site-divider" />
+
+          {/* Site 5 — राजा अचल सिंह तालाब */}
+          <div className="heritage-about-text heritage-text-only">
+            <h3 className="heritage-site-name-hi">राजा अचल सिंह का तालाब (52 बीघा)</h3>
+            <h4 className="heritage-site-name-en">Raja Achal Singh's Pond (52 Bigha), Suriyawan, Bhadohi</h4>
+            <p>
+              राजा अचल सिंह का 52 बीघा तालाब सुरियावां, भदोही में स्थित है।
+            </p>
+            {language === 'en' && (
+              <p>
+                The 52 Bigha pond of Raja Achal Singh is located in Suriyawan, Bhadohi.
+              </p>
+            )}
+          </div>
+
+          <div className="heritage-site-divider" />
+
+          {/* Site 6 — भूल्ली सिंह दीवान तालाब */}
+          <div className="heritage-about-text heritage-text-only">
+            <h3 className="heritage-site-name-hi">भूल्ली सिंह दीवान तालाब (45 बीघा)</h3>
+            <h4 className="heritage-site-name-en">Bhulli Singh Diwan Pond (45 Bigha), Mahuapur (Janakpur), Bhadohi</h4>
+            <p>
+              भूल्ली सिंह दीवान तालाब 45 बीघा, ग्राम महुआपुर (जनकपुर), भदोही में स्थित है।
+            </p>
+            {language === 'en' && (
+              <p>
+                Bhulli Singh Diwan Pond, spanning 45 Bigha, is located in village Mahuapur (Janakpur), Bhadohi.
+              </p>
+            )}
+          </div>
+
+          <div className="heritage-site-divider" />
+
+          {/* Site 7 — राजा जोधराज सिंह तालाब */}
+          <div className="heritage-about-content">
+            <div className="heritage-about-text">
+              <h3 className="heritage-site-name-hi">राजा जोधराज सिंह तालाब (48 बीघा)</h3>
+              <h4 className="heritage-site-name-en">Raja Jodhraj Singh Pond (48 Bigha)</h4>
+              <p>
+                राजा जोधराज सिंह तालाब 48 बीघा, मौनस क्षत्रिय वंश के गौरवशाली इतिहास की एक अमूल्य धरोहर है।
+              </p>
+              {language === 'en' && (
+                <p>
+                  Raja Jodhraj Singh Pond, spanning 48 Bigha, is a priceless heritage of the glorious history of the Maunas Kshatriya lineage.
+                </p>
+              )}
+            </div>
+            <div className="heritage-dual-images">
+              <div className="image-placeholder">
+                <img
+                  src="/assets/महाराज जोधराज तालाब.jpeg"
+                  alt="राजा जोधराज सिंह तालाब"
+                />
+                <p>
+                  {language === 'en' ? 'Raja Jodhraj Singh Pond' : 'राजा जोधराज सिंह तालाब'}
+                </p>
+              </div>
+              <div className="image-placeholder">
+                <img
+                  src="/assets/महाराज जोधराज तालाब 2.jpeg"
+                  alt="राजा जोधराज सिंह तालाब"
+                />
+                <p>
+                  {language === 'en' ? 'Raja Jodhraj Singh Pond (48 Bigha)' : 'राजा जोधराज सिंह तालाब (48 बीघा)'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="heritage-site-divider" />
+
+          {/* Site 8 — कुलदेवी माता */}
+          <div className="heritage-about-content">
+            <div className="heritage-about-text">
+              <h3 className="heritage-site-name-hi">कुलदेवी माता</h3>
+              <h4 className="heritage-site-name-en">Kuldevi Mata Durga Temple, Chakwara (Bhavpur), Bhadohi</h4>
+              <p>
+                मौनस वंश की कुलदेवी माता दुर्गा जी हैं। इसीलिए चकवाड़ा (भावपुर) भदोही गांव के क्षेत्रीय मौनस भाइयों ने मिलकर चकवड़ा में कुलदेवी माता दुर्गा जी का मंदिर निर्माण करवाया था जो अभी भी विद्यमान है।
+              </p>
+              {language === 'en' && (
+                <p>
+                  Goddess Durga is the Kuldevi (ancestral deity) of the Maunas lineage. The regional Maunas brothers of Chakwara (Bhavpur), Bhadohi collectively built a temple of Kuldevi Mata Durga Ji in Chakwara, which still stands today.
+                </p>
+              )}
+            </div>
+            <div className="heritage-about-image">
+              <div className="image-placeholder">
+                <img
+                  src="/assets/कुलदेवी माता दुर्गा.jpeg"
+                  alt="कुलदेवी माता दुर्गा मंदिर चकवाड़ा भदोही"
+                />
+                <p>
+                  {language === 'en'
+                    ? 'Kuldevi Mata Durga Temple, Chakwara (Bhavpur), Bhadohi'
+                    : 'कुलदेवी माता दुर्गा मंदिर, चकवाड़ा (भावपुर), भदोही'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="heritage-site-divider" />
+
+          {/* Site 9 — दिघवट कोट */}
+          <div className="heritage-about-content heritage-about-content--reverse">
+            <div className="heritage-about-image">
+              <div className="image-placeholder">
+                <img
+                  src="/assets/दिघवट कोट.jpeg"
+                  alt="दिघवट कोट महाराजगंज भदोही"
+                />
+                <p>
+                  {language === 'en'
+                    ? 'Dighwat Kot, Maharajganj, Bhadohi'
+                    : 'दिघवट कोट, महाराजगंज, भदोही'}
+                </p>
+              </div>
+            </div>
+            <div className="heritage-about-text">
+              <h3 className="heritage-site-name-hi">दिघवट कोट</h3>
+              <h4 className="heritage-site-name-en">Dighwat Kot, Maharajganj, Bhadohi</h4>
+              <p>
+                भरो का दीघवट किला, जिसे मौनसों ने विध्वंस किया था, महाराजगंज, भदोही में स्थित है। वर्तमान में यह एम. फार सेवा स्वामी दयानंद सरस्वती आश्रम के अंतर्गत आता है।
+              </p>
+              {language === 'en' && (
+                <p>
+                  The Bharo fort of Dighwat, which was destroyed by the Monsoons, is located in Maharajganj, Bhadohi. It currently belongs to the Swami Dayanand Saraswati Ashram, M. Pharma Seva.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="heritage-site-divider" />
+
+          {/* Site 10 — अगियावीर कोट */}
+          <div className="heritage-about-content">
+            <div className="heritage-about-text">
+              <h3 className="heritage-site-name-hi">अगियावीर कोट</h3>
+              <h4 className="heritage-site-name-en">Agiyaveer Kot, Dwarikpur, Bhadohi</h4>
+              <p>
+                अगियावीर कोट के ध्वंसावशेष भदोही जनपद उत्तर प्रदेश के द्वारिकापुर में स्थित हैं। यह स्थल उस ऐतिहासिक घटना का साक्षी है, जहाँ मौनसों ने भरों को पराजित किया था।
+                </p>
+              {language === 'en' && (
+                <p>
+                  The ruins of Agiavir Kot are located in Dwarikapur, Bhadohi district, Uttar Pradesh. This site bears witness to the historic event where the Monsas defeated the Bhars.
+                </p>
+              )}
+            </div>
+            <div className="heritage-about-image">
+              <div className="image-placeholder">
+                <img
+                  src="/assets/अगियावीर कोट.jpeg"
+                  alt="अगियावीर कोट द्वारिकापुर भदोही"
+                />
+                <p>
+                  {language === 'en'
+                    ? 'Agiyaveer Kot, Dwarikpur, Bhadohi'
+                    : 'अगियावीर कोट, द्वारिकापुर, भदोही'}
+                </p>
+              </div>
             </div>
           </div>
         </div>

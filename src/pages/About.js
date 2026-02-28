@@ -76,6 +76,20 @@ const About = () => {
       city: language === 'en' ? 'Bhadohi' : 'भदोही',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/rajan-singh.jpeg'
+    },
+    {_id: '9',
+      fullName: language === 'en' ? 'Shri Ambika Singh Ji' : 'श्री अंबिका सिंह जी',
+      position: language === 'en' ? 'Mathaha Bhadohi' : 'मठहाॅ भदोही',
+      city: language === 'en' ? 'Bhadohi' : 'भदोही',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/श्री अंबिका सिंह जी.jpeg'
+    },
+    {_id: '10',
+      fullName: language === 'en' ? 'Shri Vinod Singh Ji' : 'श्री विनोद सिंह जी',
+      position: language === 'en' ? 'Suryawan Bhadohi' : 'सुरियावां भदोही',
+      city: language === 'en' ? 'Bhadohi' : 'भदोही',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/श्री विनोद सिंह जी.jpeg'
     }
   ], [language]);
 
@@ -147,6 +161,14 @@ const About = () => {
       city: language === 'en' ? 'Mirzapur' : 'मिर्जापुर',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/श्री पारसनाथ सिंह जी.jpeg'
+    },
+    {
+      _id: 'snr4',
+      fullName: language === 'en' ? 'Shri Parasnath Singh Ji' : 'श्री उपेंद्र सिंह जी',
+      position: language === 'en' ? 'Darunhaa' : 'दारूनहा‌‌ॅ',
+      city: language === 'en' ? 'Bhadohi' : 'भदोही',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/श्री उपेंद्र सिंह जी.jpeg'
     }
   ], [language]);
 
