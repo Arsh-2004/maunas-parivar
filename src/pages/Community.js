@@ -224,15 +224,28 @@ const Community = () => {
       registeredAt: new Date('2026-02-21')
     },
     {
-      _id: 'prakosth-3',
-      fullName: language === 'en' ? 'Dr. Gaurav Singh' : 'डॉ. गौरव सिंह',
-      city: language === 'en' ? 'Gorakhpur' : 'गोरखपुर',
-      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
-      occupation: language === 'en' ? 'Surgeon' : 'शल्य चिकित्सक',
+      _id: 'prakosth-chikitsa-akshi',
+      fullName: language === 'en' ? 'Dr. Akshi Singh' : 'डॉ. अक्षी सिंह',
+      city: language === 'en' ? 'Wardha' : 'वर्धा',
+      state: language === 'en' ? 'Maharashtra' : 'महाराष्ट्र',
+      occupation: language === 'en' ? 'MBBS, MD (Pediatrics) — Datta Meghe Medical College, Wardha | PG in Pediatric Nutrition, Boston University, USA' : 'MBBS, MD (पीडियाट्रिक्स) — Datta Meghe Medical College, वर्धा (नागपुर) | पोस्ट ग्रेजुएट इन पीडियाट्रिक न्यूट्रिशन, Boston University, यूएसए',
+      bio: language === 'en' ? 'Special Interest: Pre-term & high-risk newborn care | Fellowships: IAP, Indian College of Haematology & Oncology Society' : 'विशेष रुचि: प्री-टर्म एवं हाई-रिस्क नवजात शिशुओं की देखभाल | फेलोशिप्स: इंडियन एकेडमी ऑफ पीडियाट्रिक्स (IAP), इंडियन कॉलेज ऑफ हीमैटोलॉजी एंड ऑन्कोलॉजी सोसाइटी',
       education: 'post-graduate',
       prakosth: 'chikitsa',
-      photoPath: null,
-      registeredAt: new Date('2024-01-10')
+      photoPath: '/assets/डॉ. अक्षी सिंह.jpeg',
+      registeredAt: new Date('2026-02-28')
+    },
+    {
+      _id: 'prakosth-chikitsa-gaurav',
+      fullName: language === 'en' ? 'Dr. Gaurav Singh' : 'डॉ. गौरव सिंह',
+      city: language === 'en' ? 'Kanpur' : 'कानपुर',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      occupation: language === 'en' ? 'MBBS, MD (General Medicine) — Ganesh Shankar Vidyarthi Memorial Medical College, Kanpur | Fellowship in Diabetes, CMC Vellore' : 'MBBS, MD (जनरल मेडिसिन) — Ganesh Shankar Vidyarthi Memorial Medical College, कानपुर | डायबिटीज में फेलोशिप, Christian Medical College, वेल्लोर',
+      bio: language === 'en' ? 'Fellowships: Indian Society of Hypertension, Indian Society of Chronomedicine, Indian College of Haematology & Oncology Society, Diabetes India' : 'फेलोशिप्स: इंडियन सोसाइटी ऑफ हाइपरटेंशन, इंडियन सोसाइटी ऑफ क्रोनोमेडिसिन, इंडियन कॉलेज ऑफ हीमैटोलॉजी एंड ऑन्कोलॉजी सोसाइटी, डायबिटीज इंडिया',
+      education: 'post-graduate',
+      prakosth: 'chikitsa',
+      photoPath: '/assets/डॉ. गौरव सिंह.jpeg',
+      registeredAt: new Date('2026-02-28')
     },
     {
       _id: 'prakosth-4',
@@ -354,6 +367,7 @@ const Community = () => {
                         <p className="panel-member-designation">🏛️ {prakosths.find(p => p.id === member.prakosth)?.title || member.prakosth}</p>
                         <p className="panel-member-location">📍 {member.city}, {member.state}</p>
                         {member.occupation && <p className="panel-member-occupation">💼 {member.occupation}</p>}
+                        {member.bio && <p className="panel-member-bio">🏅 {member.bio}</p>}
                       </div>
                     </div>
                   ))}

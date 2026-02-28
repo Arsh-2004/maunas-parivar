@@ -987,6 +987,15 @@ section {
   margin: 3px 0 0;
 }
 
+.panel-member-bio {
+  font-size: 0.78rem;
+  color: #555;
+  margin: 4px 0 0;
+  line-height: 1.4;
+  border-top: 1px solid #eee;
+  padding-top: 4px;
+}
+
 .upadhi-title-badge {
   display: inline-block;
   background: linear-gradient(135deg, #FF6B35, #F7931E);

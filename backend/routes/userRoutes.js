@@ -462,4 +462,89 @@ router.get('/committee-members/:committeeId', async (req, res) => {
   }
 });
 
+// ===================== NON-MEMBER RECORDS =====================
+
+const NonMemberRecord = require('../models/NonMemberRecord');
+
+// POST  /api/users/add-non-member  — logged-in member adds a record for a non-registered person
+router.post('/add-non-member', upload.single('photo'), async (req, res) => {
+  try {
+    const {
+      fullName, place, dateOfBirth, addedBy,
+      relationship, fatherName, gender, email, phone,
+      address, village, block, tehsil, district,
+      state, pincode, occupation, education
+    } = req.body;
+
+    if (!fullName || !fullName.trim()) {
+      return res.status(400).json({ success: false, message: 'Full name is required.' });
+    }
+    if (!place || !place.trim()) {
+      return res.status(400).json({ success: false, message: 'Place is required.' });
+    }
+    if (!dateOfBirth) {
+      return res.status(400).json({ success: false, message: 'Date of birth is required.' });
+    }
+    if (!addedBy) {
+      return res.status(400).json({ success: false, message: 'Submitter user ID is required.' });
+    }
+
+    let photoPath = null;
+    if (req.file) {
+      photoPath = await uploadToCloudinary(req.file.path, 'non-member-photos');
+    }
+
+    const record = new NonMemberRecord({
+      fullName: fullName.trim(),
+      place: place.trim(),
+      dateOfBirth,
+      relationship: relationship ? relationship.trim() : '',
+      fatherName: fatherName ? fatherName.trim() : '',
+      gender: gender || '',
+      email: email ? email.trim().toLowerCase() : '',
+      phone: phone ? phone.trim() : '',
+      address: address || '',
+      village: village ? village.trim() : '',
+      block: block ? block.trim() : '',
+      tehsil: tehsil ? tehsil.trim() : '',
+      district: district ? district.trim() : '',
+      state: state ? state.trim() : '',
+      pincode: pincode ? pincode.trim() : '',
+      occupation: occupation ? occupation.trim() : '',
+      education: education || '',
+      photoPath,
+      addedBy
+    });
+
+    await record.save();
+
+    res.status(201).json({ success: true, message: 'Record added successfully!', record });
+  } catch (error) {
+    console.error('Add non-member error:', error);
+    res.status(500).json({ success: false, message: 'Failed to add record. Please try again.' });
+  }
+});
+
+// GET  /api/users/non-members/by-user/:userId  — fetch all records added by a member
+router.get('/non-members/by-user/:userId', async (req, res) => {
+  try {
+    const records = await NonMemberRecord.find({ addedBy: req.params.userId }).sort({ addedAt: -1 });
+    res.json({ success: true, records });
+  } catch (error) {
+    console.error('Fetch non-members error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch records.' });
+  }
+});
+
+// DELETE  /api/users/non-members/:id  — delete a non-member record added by this member
+router.delete('/non-members/:id', async (req, res) => {
+  try {
+    await NonMemberRecord.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Record deleted successfully.' });
+  } catch (error) {
+    console.error('Delete non-member error:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete record.' });
+  }
+});
+
 module.exports = router;

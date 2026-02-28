@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import MembershipCertificate from '../components/MembershipCertificate';
 import './AdminDashboard.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
@@ -26,6 +27,8 @@ const AdminDashboard = () => {
   const [galleryForm, setGalleryForm] = useState({ title: '', description: '', category: 'general', image: null });
   const [showUserModal, setShowUserModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showCertificate, setShowCertificate] = useState(false);
+  const [certificateUser, setCertificateUser] = useState(null);
   
   // New state for district/block filtering and sorting
   const [districtFilter, setDistrictFilter] = useState('all');
@@ -621,6 +624,19 @@ const AdminDashboard = () => {
                           >
                             {language === 'en' ? 'View' : 'देखें'}
                           </button>
+                          {user.status === 'approved' && (
+                            <button
+                              className="view-btn-inline"
+                              style={{ marginLeft: '6px', background: 'linear-gradient(135deg, #d4a017, #e8c44a)', color: '#fff', border: 'none' }}
+                              onClick={() => {
+                                setCertificateUser(user);
+                                setShowCertificate(true);
+                              }}
+                              title={language === 'en' ? 'View Certificate' : 'प्रमाण-पत्र'}
+                            >
+                              🏅
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -709,6 +725,22 @@ const AdminDashboard = () => {
                       }
                     }}>
                       {language === 'en' ? 'Reject' : 'अस्वीकृत करें'}
+                    </button>
+                  </div>
+                )}
+
+                {selectedUser.status === 'approved' && (
+                  <div className="modal-actions">
+                    <button
+                      className="approve-btn"
+                      style={{ background: 'linear-gradient(135deg, #d4a017, #e8c44a)', fontSize: '14px' }}
+                      onClick={() => {
+                        setCertificateUser(selectedUser);
+                        setShowCertificate(true);
+                        setShowUserModal(false);
+                      }}
+                    >
+                      🏅 {language === 'en' ? 'View Certificate' : 'प्रमाण-पत्र देखें'}
                     </button>
                   </div>
                 )}
@@ -1072,6 +1104,14 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Membership Certificate Overlay */}
+      {showCertificate && certificateUser && (
+        <MembershipCertificate
+          user={certificateUser}
+          onClose={() => { setShowCertificate(false); setCertificateUser(null); }}
+        />
       )}
     </div>
   );
