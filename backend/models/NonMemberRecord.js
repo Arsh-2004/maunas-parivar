@@ -12,9 +12,11 @@ const nonMemberRecordSchema = new mongoose.Schema({
     required: true,
     trim: true  // city / village / hometown where the person lives
   },
-  dateOfBirth: {
-    type: Date,
-    required: true
+  age: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 120
   },
 
   // --------------- OPTIONAL FIELDS ---------------

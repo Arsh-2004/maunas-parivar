@@ -30,7 +30,7 @@ const Profile = () => {
 
   // ---- Non-Member Records state ----
   const emptyNm = {
-    fullName: '', place: '', dateOfBirth: '',
+    fullName: '', place: '', age: '',
     relationship: '', fatherName: '', gender: '',
     email: '', phone: '', address: '', village: '',
     block: '', tehsil: '', district: '', state: '',
@@ -212,8 +212,8 @@ const Profile = () => {
       setNmMessage({ type: 'error', text: language === 'en' ? '❌ Place is required.' : '❌ स्थान आवश्यक है।' });
       return;
     }
-    if (!nmFormData.dateOfBirth) {
-      setNmMessage({ type: 'error', text: language === 'en' ? '❌ Date of birth is required.' : '❌ जन्म तिथि आवश्यक है।' });
+    if (!nmFormData.age || isNaN(nmFormData.age) || nmFormData.age <= 0) {
+      setNmMessage({ type: 'error', text: language === 'en' ? '❌ Age is required.' : '❌ आयु आवश्यक है।' });
       return;
     }
     setNmLoading(true);
@@ -502,7 +502,7 @@ const Profile = () => {
                         <p className="nm-card-name">{r.fullName}</p>
                         {r.relationship && <span className="nm-relation-tag">{r.relationship}</span>}
                         <p className="nm-card-detail">📍 {r.place}</p>
-                        <p className="nm-card-detail">🎂 {new Date(r.dateOfBirth).toLocaleDateString('en-IN')}</p>
+                        <p className="nm-card-detail">🎂 {language === 'en' ? `Age: ${r.age}` : `आयु: ${r.age}`}</p>
                         {r.occupation && <p className="nm-card-detail">💼 {r.occupation}</p>}
                       </div>
                       <div className="nm-card-actions">
@@ -561,9 +561,9 @@ const Profile = () => {
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label>{language === 'en' ? 'Date of Birth *' : 'जन्म तिथि *'}</label>
-                    <input type="date" name="dateOfBirth" value={nmFormData.dateOfBirth}
-                      onChange={handleNmChange} required />
+                    <label>{language === 'en' ? 'Age *' : 'आयु *'}</label>
+                    <input type="number" name="age" value={nmFormData.age}
+                      onChange={handleNmChange} min="1" max="120" placeholder={language === 'en' ? 'Enter age' : 'आयु दर्ज करें'} required />
                   </div>
                   <div className="form-group">
                     <label>{language === 'en' ? 'Relationship (optional)' : 'संबंध (वैकल्पिक)'}</label>
@@ -716,7 +716,7 @@ const Profile = () => {
                 {[
                   ['fullName',    language === 'en' ? 'Full Name'    : 'पूरा नाम',      nmViewRecord.fullName],
                   ['place',       language === 'en' ? 'Place'        : 'स्थान',         nmViewRecord.place],
-                  ['dob',         language === 'en' ? 'Date of Birth': 'जन्म तिथि',    new Date(nmViewRecord.dateOfBirth).toLocaleDateString('en-IN')],
+                  ['age',         language === 'en' ? 'Age'          : 'आयु',           nmViewRecord.age],
                   ['rel',         language === 'en' ? 'Relationship' : 'संबंध',         nmViewRecord.relationship],
                   ['father',      language === 'en' ? "Father's Name": 'पिता का नाम',   nmViewRecord.fatherName],
                   ['gender',      language === 'en' ? 'Gender'       : 'लिंग',          nmViewRecord.gender],

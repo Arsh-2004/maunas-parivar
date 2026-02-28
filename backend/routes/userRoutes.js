@@ -470,7 +470,7 @@ const NonMemberRecord = require('../models/NonMemberRecord');
 router.post('/add-non-member', upload.single('photo'), async (req, res) => {
   try {
     const {
-      fullName, place, dateOfBirth, addedBy,
+      fullName, place, age, addedBy,
       relationship, fatherName, gender, email, phone,
       address, village, block, tehsil, district,
       state, pincode, occupation, education
@@ -482,8 +482,8 @@ router.post('/add-non-member', upload.single('photo'), async (req, res) => {
     if (!place || !place.trim()) {
       return res.status(400).json({ success: false, message: 'Place is required.' });
     }
-    if (!dateOfBirth) {
-      return res.status(400).json({ success: false, message: 'Date of birth is required.' });
+    if (!age || isNaN(age) || age <= 0) {
+      return res.status(400).json({ success: false, message: 'Age is required.' });
     }
     if (!addedBy) {
       return res.status(400).json({ success: false, message: 'Submitter user ID is required.' });
@@ -497,7 +497,7 @@ router.post('/add-non-member', upload.single('photo'), async (req, res) => {
     const record = new NonMemberRecord({
       fullName: fullName.trim(),
       place: place.trim(),
-      dateOfBirth,
+      age: Number(age),
       relationship: relationship ? relationship.trim() : '',
       fatherName: fatherName ? fatherName.trim() : '',
       gender: gender || '',
