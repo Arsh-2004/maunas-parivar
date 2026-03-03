@@ -996,6 +996,23 @@ section {
   padding-top: 4px;
 }
 
+.read-more-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #FF6B35;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: inherit;
+  display: inline;
+}
+.read-more-btn:hover {
+  text-decoration: underline;
+}
+
 .upadhi-title-badge {
   display: inline-block;
   background: linear-gradient(135deg, #FF6B35, #F7931E);

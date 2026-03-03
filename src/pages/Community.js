@@ -15,6 +15,9 @@ const Community = () => {
   const [loading, setLoading] = useState(true);
   const [selectedUpadhi, setSelectedUpadhi] = useState(null); // for filtering by honorary title
   const [selectedPrakosth, setSelectedPrakosth] = useState(null); // for filtering by prakosth
+  const [expandedBios, setExpandedBios] = useState({});
+  const toggleBio = (id) => setExpandedBios(prev => ({ ...prev, [id]: !prev[id] }));
+  const BIO_LIMIT = 25;
 
   useEffect(() => {
     fetchMembers();
@@ -226,8 +229,8 @@ const Community = () => {
     {
       _id: 'prakosth-chikitsa-akshi',
       fullName: language === 'en' ? 'Dr. Akshi Singh' : 'डॉ. अक्षी सिंह',
-      city: language === 'en' ? 'Wardha' : 'वर्धा',
-      state: language === 'en' ? 'Maharashtra' : 'महाराष्ट्र',
+      city: language === 'en' ? 'Varanasi' : 'वाराणसी',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       occupation: language === 'en' ? 'MBBS, MD (Pediatrics) — Datta Meghe Medical College, Wardha | PG in Pediatric Nutrition, Boston University, USA' : 'MBBS, MD (पीडियाट्रिक्स) — Datta Meghe Medical College, वर्धा (नागपुर) | पोस्ट ग्रेजुएट इन पीडियाट्रिक न्यूट्रिशन, Boston University, यूएसए',
       bio: language === 'en' ? 'Special Interest: Pre-term & high-risk newborn care | Fellowships: IAP, Indian College of Haematology & Oncology Society' : 'विशेष रुचि: प्री-टर्म एवं हाई-रिस्क नवजात शिशुओं की देखभाल | फेलोशिप्स: इंडियन एकेडमी ऑफ पीडियाट्रिक्स (IAP), इंडियन कॉलेज ऑफ हीमैटोलॉजी एंड ऑन्कोलॉजी सोसाइटी',
       education: 'post-graduate',
@@ -238,7 +241,7 @@ const Community = () => {
     {
       _id: 'prakosth-chikitsa-gaurav',
       fullName: language === 'en' ? 'Dr. Gaurav Singh' : 'डॉ. गौरव सिंह',
-      city: language === 'en' ? 'Kanpur' : 'कानपुर',
+      city: language === 'en' ? 'Varanasi' : 'वाराणसी',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       occupation: language === 'en' ? 'MBBS, MD (General Medicine) — Ganesh Shankar Vidyarthi Memorial Medical College, Kanpur | Fellowship in Diabetes, CMC Vellore' : 'MBBS, MD (जनरल मेडिसिन) — Ganesh Shankar Vidyarthi Memorial Medical College, कानपुर | डायबिटीज में फेलोशिप, Christian Medical College, वेल्लोर',
       bio: language === 'en' ? 'Fellowships: Indian Society of Hypertension, Indian Society of Chronomedicine, Indian College of Haematology & Oncology Society, Diabetes India' : 'फेलोशिप्स: इंडियन सोसाइटी ऑफ हाइपरटेंशन, इंडियन सोसाइटी ऑफ क्रोनोमेडिसिन, इंडियन कॉलेज ऑफ हीमैटोलॉजी एंड ऑन्कोलॉजी सोसाइटी, डायबिटीज इंडिया',
@@ -366,8 +369,23 @@ const Community = () => {
                         <h4>{member.fullName}</h4>
                         <p className="panel-member-designation">🏛️ {prakosths.find(p => p.id === member.prakosth)?.title || member.prakosth}</p>
                         <p className="panel-member-location">📍 {member.city}, {member.state}</p>
-                        {member.occupation && <p className="panel-member-occupation">💼 {member.occupation}</p>}
-                        {member.bio && <p className="panel-member-bio">🏅 {member.bio}</p>}
+                        {member.occupation && (
+                          <p className="panel-member-occupation">
+                            💼 {expandedBios[member._id + '_occ']
+                              ? member.occupation
+                              : member.occupation.slice(0, BIO_LIMIT)}
+                            {(member.occupation.length > BIO_LIMIT || member.bio) && (
+                              <button className="read-more-btn" onClick={() => toggleBio(member._id + '_occ')}>
+                                {expandedBios[member._id + '_occ']
+                                  ? (language === 'en' ? ' − Read less' : ' − कम पढ़ें')
+                                  : (language === 'en' ? '... Read more' : '... और देखें')}
+                              </button>
+                            )}
+                          </p>
+                        )}
+                        {member.bio && expandedBios[member._id + '_occ'] && (
+                          <p className="panel-member-bio">🏅 {member.bio}</p>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -432,7 +450,20 @@ const Community = () => {
                         <h4>{member.fullName}</h4>
                         <p className="panel-member-designation upadhi-title-badge">{member.honoraryTitle}</p>
                         <p className="panel-member-location">📍 {member.city}, {member.state}</p>
-                        {member.occupation && <p className="panel-member-occupation">💼 {member.occupation}</p>}
+                        {member.occupation && (
+                          <p className="panel-member-occupation">
+                            💼 {expandedBios[member._id + '_occ']
+                              ? member.occupation
+                              : member.occupation.slice(0, BIO_LIMIT)}
+                            {member.occupation.length > BIO_LIMIT && (
+                              <button className="read-more-btn" onClick={() => toggleBio(member._id + '_occ')}>
+                                {expandedBios[member._id + '_occ']
+                                  ? (language === 'en' ? ' − Read less' : ' − कम पढ़ें')
+                                  : (language === 'en' ? '... Read more' : '... और देखें')}
+                              </button>
+                            )}
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}
