@@ -63,33 +63,34 @@ const About = () => {
     },
     {
       _id: '7',
-      fullName: language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी',
-      position: language === 'en' ? 'Bhadohi' : 'भदोही',
-      city: language === 'en' ? 'Bhadohi' : 'भदोही',
-      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
-      photoPath: '/assets/ashishsingh.jpeg'
-    },
-    {
-      _id: '8',
       fullName: language === 'en' ? 'Shri Rajan Singh Ji' : 'श्री राजन सिंह जी',
       position: language === 'en' ? 'Gird Badgaon Bhadohi' : 'गिर्द बड़गांव भदोही',
       city: language === 'en' ? 'Bhadohi' : 'भदोही',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/rajan-singh.jpeg'
     },
-    {_id: '9',
+    
+    {_id: '8',
       fullName: language === 'en' ? 'Shri Ambika Singh Ji' : 'श्री अंबिका सिंह जी',
       position: language === 'en' ? 'Mathaha Bhadohi' : 'मठहाॅ भदोही',
       city: language === 'en' ? 'Bhadohi' : 'भदोही',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/श्री अंबिका सिंह जी.jpeg'
     },
-    {_id: '10',
+    {_id: '9',
       fullName: language === 'en' ? 'Shri Vinod Singh Ji' : 'श्री विनोद सिंह जी',
       position: language === 'en' ? 'Suryawan Bhadohi' : 'सुरियावां भदोही',
       city: language === 'en' ? 'Bhadohi' : 'भदोही',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/श्री विनोद सिंह जी.jpeg'
+    },
+    {
+      _id: '10',
+      fullName: language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी',
+      position: language === 'en' ? 'Bhadohi' : 'भदोही',
+      city: language === 'en' ? 'Bhadohi' : 'भदोही',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/ashishsingh.jpeg'
     }
   ], [language]);
 
@@ -165,6 +166,7 @@ const About = () => {
     {
       _id: 'snr4',
       fullName: language === 'en' ? 'Shri Parasnath Singh Ji' : 'श्री उपेंद्र सिंह जी',
+      detail: language === 'en' ? 'Former Sub-Inspector, UP Police | Active in current politics' : 'पूर्व उपनिरीक्षक उत्तर प्रदेश पुलिस | वर्तमान राजनीति में सक्रिय',
       position: language === 'en' ? 'Darunhaa' : 'दारूनहा‌‌ॅ',
       city: language === 'en' ? 'Bhadohi' : 'भदोही',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
@@ -566,6 +568,7 @@ const About = () => {
                                   )}
                                   <h4>{member.fullName}</h4>
                                   <p className="committee-modal-position">{member.position || (language === 'en' ? 'Member' : 'सदस्य')}</p>
+                                  {member.detail && <p className="committee-modal-detail">{member.detail}</p>}
                                   <p className="committee-modal-location">📍 {member.city}, {member.state}</p>
                                   {member.phone && <p className="committee-modal-phone">📱 {member.phone}</p>}
                                 </div>
@@ -589,6 +592,7 @@ const About = () => {
                             )}
                             <h4>{member.fullName}</h4>
                             <p className="committee-modal-position">{member.position || (language === 'en' ? 'Member' : 'सदस्य')}</p>
+                            {member.detail && <p className="committee-modal-detail">{member.detail}</p>}
                             <p className="committee-modal-location">📍 {member.city}, {member.state}</p>
                             {member.phone && <p className="committee-modal-phone">📱 {member.phone}</p>}
                           </div>

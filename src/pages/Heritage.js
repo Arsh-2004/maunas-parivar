@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import './Heritage.css';
 
@@ -172,14 +172,14 @@ const Heritage = () => {
 
           {/* Site 5 — राजा अचल सिंह तालाब */}
           <div className="heritage-about-text heritage-text-only">
-            <h3 className="heritage-site-name-hi">राजा अचल सिंह का तालाब (52 बीघा)</h3>
-            <h4 className="heritage-site-name-en">Raja Achal Singh's Pond (52 Bigha), Suriyawan, Bhadohi</h4>
+            <h3 className="heritage-site-name-hi">महाराजा अचल सिंह का तालाब (52 बीघा)</h3>
+            <h4 className="heritage-site-name-en">MahaRaja Achal Singh's Pond (52 Bigha), Suriyawan, Bhadohi</h4>
             <p>
-              राजा अचल सिंह का 52 बीघा तालाब सुरियावां, भदोही में स्थित है।
+              महाराजा अचल सिंह का 52 बीघा तालाब सुरियावां, भदोही में स्थित है।
             </p>
             {language === 'en' && (
               <p>
-                The 52 Bigha pond of Raja Achal Singh is located in Suriyawan, Bhadohi.
+                The 52 Bigha pond of MahaRaja Achal Singh is located in Suriyawan, Bhadohi.
               </p>
             )}
           </div>
@@ -205,14 +205,14 @@ const Heritage = () => {
           {/* Site 7 — राजा जोधराज सिंह तालाब */}
           <div className="heritage-about-content">
             <div className="heritage-about-text">
-              <h3 className="heritage-site-name-hi">राजा जोधराज सिंह तालाब (48 बीघा)</h3>
-              <h4 className="heritage-site-name-en">Raja Jodhraj Singh Pond (48 Bigha)</h4>
+              <h3 className="heritage-site-name-hi">महाराजा जोधराज सिंह तालाब (48 बीघा)</h3>
+              <h4 className="heritage-site-name-en">MahaRaja Jodhraj Singh Pond (48 Bigha)</h4>
               <p>
-                राजा जोधराज सिंह तालाब 48 बीघा, मौनस क्षत्रिय वंश के गौरवशाली इतिहास की एक अमूल्य धरोहर है।
+                महाराजा जोधराज सिंह तालाब 48 बीघा, मौनस क्षत्रिय वंश के गौरवशाली इतिहास की एक अमूल्य धरोहर है।
               </p>
               {language === 'en' && (
                 <p>
-                  Raja Jodhraj Singh Pond, spanning 48 Bigha, is a priceless heritage of the glorious history of the Maunas Kshatriya lineage.
+                  MahaRaja Jodhraj Singh Pond, spanning 48 Bigha, is a priceless heritage of the glorious history of the Maunas Kshatriya lineage.
                 </p>
               )}
             </div>
@@ -243,14 +243,14 @@ const Heritage = () => {
           {/* Site 8 — कुलदेवी माता */}
           <div className="heritage-about-content">
             <div className="heritage-about-text">
-              <h3 className="heritage-site-name-hi">कुलदेवी माता</h3>
+              <h3 className="heritage-site-name-hi">कुलदेवी माता दुर्गा मंदिर</h3>
               <h4 className="heritage-site-name-en">Kuldevi Mata Durga Temple, Chakwara (Bhavpur), Bhadohi</h4>
               <p>
-                मौनस वंश की कुलदेवी माता दुर्गा जी हैं। इसीलिए चकवाड़ा (भावपुर) भदोही गांव के क्षेत्रीय मौनस भाइयों ने मिलकर चकवड़ा में कुलदेवी माता दुर्गा जी का मंदिर निर्माण करवाया था जो अभी भी विद्यमान है।
+                मौनस वंश की कुलदेवी माता दुर्गा जी हैं। इसी कारण चकवाड़ा (भावपुर), भदोही गाँव के व क्षेत्र के मौनस भाइयों ने मिलकर चकवाड़ा में कुलदेवी माता दुर्गा जी का मंदिर बनवाया, जो आज भी विद्यमान है।
               </p>
               {language === 'en' && (
                 <p>
-                  Goddess Durga is the Kuldevi (ancestral deity) of the Maunas lineage. The regional Maunas brothers of Chakwara (Bhavpur), Bhadohi collectively built a temple of Kuldevi Mata Durga Ji in Chakwara, which still stands today.
+                  The family deity of the Maunas clan is Mata Durga. For this reason, the Maunas brothers from Chakwara (Bhavpur), Bhadohi village, and the surrounding area, together built a temple dedicated to their family deity, Mata Durga, in Chakwara, which still exists today.
                 </p>
               )}
             </div>
@@ -290,11 +290,11 @@ const Heritage = () => {
               <h3 className="heritage-site-name-hi">दिघवट कोट</h3>
               <h4 className="heritage-site-name-en">Dighwat Kot, Maharajganj, Bhadohi</h4>
               <p>
-                भरो का दीघवट किला, जिसे मौनसों ने विध्वंस किया था, महाराजगंज, भदोही में स्थित है। वर्तमान में यह एम. फार सेवा स्वामी दयानंद सरस्वती आश्रम के अंतर्गत आता है।
+                दिघवट किला मौनसों द्वारा आततायियों से मुक्त कराया गया था। यह भदोही जिले के महाराजगंज क्षेत्र में स्थित है। वर्तमान में यह एम. फार. सेवा स्वामी दयानंद सरस्वती आश्रम के अंतर्गत आता है।
               </p>
               {language === 'en' && (
                 <p>
-                  The Bharo fort of Dighwat, which was destroyed by the Monsoons, is located in Maharajganj, Bhadohi. It currently belongs to the Swami Dayanand Saraswati Ashram, M. Pharma Seva.
+                  Dighwat Fort was liberated from the invaders by the Monsoons. Located in the Maharajganj area of ​​Bhadohi district, it currently belongs to the Swami Dayanand Saraswati Ashram, an M.Pharma service.
                 </p>
               )}
             </div>

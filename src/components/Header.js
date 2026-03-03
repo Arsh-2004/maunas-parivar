@@ -5,6 +5,20 @@ import { useAuth } from '../context/AuthContext';
 import { getTranslation } from '../translations';
 import './Header.css';
 
+const HeaderPhoto = ({ src }) => {
+  const [failed, setFailed] = React.useState(false);
+  if (failed) return <span className="header-user-icon">👤</span>;
+  return (
+    <img
+      key={src}
+      src={src}
+      alt="Profile"
+      className="header-user-photo"
+      onError={() => setFailed(true)}
+    />
+  );
+};
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { language, toggleLanguage } = useLanguage();
@@ -14,7 +28,8 @@ const Header = () => {
   const t = (path) => getTranslation(language, path);
 
   const isAdminPage = location.pathname === '/admin';
-  const userPhoto = user?.photoPath || null;
+  // Only use photoPath if it's a real URL (Cloudinary), not an old raw filename
+  const userPhoto = user?.photoPath?.startsWith('http') ? user.photoPath : null;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -151,6 +166,9 @@ const Header = () => {
                 </div>
               </div>
               <Link to="/heritage" onClick={() => setIsMenuOpen(false)}>{t('header.heritage')}</Link>
+              <Link to="/non-members" onClick={() => setIsMenuOpen(false)}>
+                {language === 'en' ? 'Non-Members' : 'गैर-सदस्य'}
+              </Link>
               {isAuthenticated() && !isAdminPage && (
                 <>
                   <Link to="/gallery" onClick={() => setIsMenuOpen(false)}>{t('header.gallery')}</Link>
@@ -163,18 +181,7 @@ const Header = () => {
                     <>
                       <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="profile-link">
                         {userPhoto ? (
-                          <>
-                            <img 
-                              src={userPhoto} 
-                              alt="Profile" 
-                              className="header-user-photo"
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.nextSibling && (e.target.nextSibling.style.display = 'inline-flex');
-                              }}
-                            />
-                            <span className="header-user-icon" style={{ display: 'none' }}>👤</span>
-                          </>
+                          <HeaderPhoto key={userPhoto} src={userPhoto} />
                         ) : (
                           <span className="header-user-icon">👤</span>
                         )}

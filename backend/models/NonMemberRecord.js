@@ -98,7 +98,7 @@ const nonMemberRecordSchema = new mongoose.Schema({
   addedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    default: null
   },
   addedAt: {
     type: Date,

@@ -522,7 +522,15 @@
   color: #FF6B35;
   font-size: 0.9rem;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+}
+
+.committee-modal-detail {
+  color: #555;
+  font-size: 0.82rem;
+  font-style: italic;
+  margin: 2px 0 6px;
+  line-height: 1.4;
 }
 
 .committee-modal-location,

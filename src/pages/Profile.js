@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import DigitalIDCard from '../components/DigitalIDCard';
@@ -27,22 +27,6 @@ const Profile = () => {
     occupation: '',
     photo: null
   });
-
-  // ---- Non-Member Records state ----
-  const emptyNm = {
-    fullName: '', place: '', age: '',
-    relationship: '', fatherName: '', gender: '',
-    email: '', phone: '', address: '', village: '',
-    block: '', tehsil: '', district: '', state: '',
-    pincode: '', occupation: '', education: '', photo: null
-  };
-  const [showNmModal, setShowNmModal]       = useState(false);
-  const [nmFormData, setNmFormData]         = useState(emptyNm);
-  const [nmLoading, setNmLoading]           = useState(false);
-  const [nmMessage, setNmMessage]           = useState({ type: '', text: '' });
-  const [nonMembers, setNonMembers]         = useState([]);
-  const [showNmOptional, setShowNmOptional] = useState(false);
-  const [nmViewRecord, setNmViewRecord]     = useState(null);
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -94,14 +78,6 @@ const Profile = () => {
 
     // Initial fetch
     fetchUserData();
-    
-    // Fetch non-member records added by this user
-    if (user?._id) {
-      fetch(`${API_URL}/users/non-members/by-user/${user._id}`)
-        .then(r => r.json())
-        .then(d => { if (d.success) setNonMembers(d.records); })
-        .catch(() => {});
-    }
     
     // Poll every 3 seconds only if user is approved but doesn't have ID card yet
     if (user?.status === 'approved' && !user?.idCardPath) {
@@ -187,70 +163,7 @@ const Profile = () => {
     return <div className="profile-loading">{language === 'en' ? 'Loading...' : 'लोड हो रहा है...'}</div>;
   }
 
-  // ---- Non-Member Handlers ----
-  const handleNmChange = (e) => {
-    setNmFormData({ ...nmFormData, [e.target.name]: e.target.value });
-  };
 
-  const handleNmFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file && ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-      setNmFormData({ ...nmFormData, photo: file });
-    } else if (file) {
-      alert(language === 'en' ? 'Please upload JPG/PNG only' : 'कृपया केवल JPG/PNG अपलोड करें');
-      e.target.value = '';
-    }
-  };
-
-  const handleNmSubmit = async (e) => {
-    e.preventDefault();
-    if (!nmFormData.fullName.trim()) {
-      setNmMessage({ type: 'error', text: language === 'en' ? '❌ Full name is required.' : '❌ पूरा नाम आवश्यक है।' });
-      return;
-    }
-    if (!nmFormData.place.trim()) {
-      setNmMessage({ type: 'error', text: language === 'en' ? '❌ Place is required.' : '❌ स्थान आवश्यक है।' });
-      return;
-    }
-    if (!nmFormData.age || isNaN(nmFormData.age) || nmFormData.age <= 0) {
-      setNmMessage({ type: 'error', text: language === 'en' ? '❌ Age is required.' : '❌ आयु आवश्यक है।' });
-      return;
-    }
-    setNmLoading(true);
-    setNmMessage({ type: '', text: '' });
-    try {
-      const fd = new FormData();
-      Object.entries(nmFormData).forEach(([k, v]) => {
-        if (k !== 'photo' && v) fd.append(k, v);
-      });
-      fd.append('addedBy', user._id);
-      if (nmFormData.photo) fd.append('photo', nmFormData.photo);
-
-      const res = await fetch(`${API_URL}/users/add-non-member`, { method: 'POST', body: fd });
-      const data = await res.json();
-      if (data.success) {
-        setNonMembers(prev => [data.record, ...prev]);
-        setNmFormData(emptyNm);
-        setShowNmOptional(false);
-        setShowNmModal(false);
-        if (document.getElementById('nmPhoto')) document.getElementById('nmPhoto').value = '';
-      } else {
-        setNmMessage({ type: 'error', text: data.message || (language === 'en' ? '❌ Failed to add record.' : '❌ रिकॉर्ड जोड़ने में विफल।') });
-      }
-    } catch {
-      setNmMessage({ type: 'error', text: language === 'en' ? '❌ Connection error.' : '❌ कनेक्शन त्रुटि।' });
-    } finally {
-      setNmLoading(false);
-    }
-  };
-
-  const handleNmDelete = async (id) => {
-    if (!window.confirm(language === 'en' ? 'Delete this record?' : 'यह रिकॉर्ड हटाएं?')) return;
-    try {
-      await fetch(`${API_URL}/users/non-members/${id}`, { method: 'DELETE' });
-      setNonMembers(prev => prev.filter(r => r._id !== id));
-    } catch { /* ignore */ }
-  };
 
   return (
     <div className="profile-page">
@@ -266,7 +179,7 @@ const Profile = () => {
               <div className="profile-photo-wrap">
                 <div className="profile-photo">
                   {user.photoPath ? (
-                    <img src={user.photoPath} alt="Profile"
+                    <img key={user.photoPath} src={user.photoPath} alt="Profile"
                       onError={(e) => { e.target.style.display = 'none'; }} />
                   ) : (
                     <div className="no-photo">👤</div>
@@ -474,283 +387,35 @@ const Profile = () => {
           )}
 
           {/* ===== NON-MEMBER RECORDS SECTION ===== */}
+          {/* ===== NON-MEMBERS SECTION LINK ===== */}
           <div className="profile-card nm-section">
             <div className="profile-card-header">
               <h3><span className="card-icon">👥</span>
-                {language === 'en' ? 'Non-Member Records' : 'सदस्येतर रिकॉर्ड'}
+                {language === 'en' ? 'Non-Members' : 'गैर-सदस्य'}
               </h3>
-              <button className="nm-add-btn" onClick={() => { setNmMessage({ type:'', text:'' }); setShowNmModal(true); }}>
-                + {language === 'en' ? 'Add Record' : 'रिकॉर्ड जोड़ें'}
-              </button>
             </div>
             <div className="profile-card-body">
-              {nonMembers.length === 0 ? (
-                <p className="nm-empty">{language === 'en'
-                  ? 'No records added yet. You can add details of family/community members who are not registered.'
-                  : 'अभी तक कोई रिकॉर्ड नहीं जोड़ा गया। आप उन परिवार/समुदाय के सदस्यों का विवरण जोड़ सकते हैं जो पंजीकृत नहीं हैं।'}
-                </p>
-              ) : (
-                <div className="nm-list">
-                  {nonMembers.map(r => (
-                    <div className="nm-card" key={r._id}>
-                      <div className="nm-card-photo">
-                        {r.photoPath
-                          ? <img src={r.photoPath} alt={r.fullName} />
-                          : <div className="nm-card-no-photo">👤</div>}
-                      </div>
-                      <div className="nm-card-info">
-                        <p className="nm-card-name">{r.fullName}</p>
-                        {r.relationship && <span className="nm-relation-tag">{r.relationship}</span>}
-                        <p className="nm-card-detail">📍 {r.place}</p>
-                        <p className="nm-card-detail">🎂 {language === 'en' ? `Age: ${r.age}` : `आयु: ${r.age}`}</p>
-                        {r.occupation && <p className="nm-card-detail">💼 {r.occupation}</p>}
-                      </div>
-                      <div className="nm-card-actions">
-                        <button className="nm-view-btn" onClick={() => setNmViewRecord(r)}>
-                          {language === 'en' ? 'View' : 'देखें'}
-                        </button>
-                        <button className="nm-del-btn" onClick={() => handleNmDelete(r._id)}>🗑</button>
-                      </div>
-                    </div>
-                  ))}
+              <div className="nm-ref-card">
+                <div className="nm-ref-card-icon">👥</div>
+                <div className="nm-ref-card-text">
+                  <p className="nm-ref-card-title">
+                    {language === 'en' ? 'Non-Members Directory' : 'गैर-सदस्य डायरेक्टरी'}
+                  </p>
+                  <p className="nm-ref-card-desc">
+                    {language === 'en'
+                      ? 'View and add records of community members who are not yet formally registered. Open to everyone — no login required!'
+                      : 'उन समाज के सदस्यों के रिकॉर्ड देखें और जोड़ें जो अभी तक पंजीकृत नहीं हैं। सभी के लिए खुला — लॉगिन आवश्यक नहीं!'}
+                  </p>
                 </div>
-              )}
+                <Link to="/non-members" className="nm-ref-go-btn" onClick={() => window.scrollTo(0, 0)}>
+                  {language === 'en' ? 'Go to Non-Members →' : 'गैर-सदस्य पेज जाएं →'}
+                </Link>
+              </div>
             </div>
           </div>
 
         </div>
       </div>
-
-      {/* ===== ADD NON-MEMBER MODAL ===== */}
-      {showNmModal && (
-        <div className="nm-modal-overlay" onClick={() => setShowNmModal(false)}>
-          <div className="nm-modal" onClick={e => e.stopPropagation()}>
-            <div className="nm-modal-header">
-              <h3>👥 {language === 'en' ? 'Add Non-Member Record' : 'गैर-सदस्य रिकॉर्ड जोड़ें'}</h3>
-              <button className="nm-modal-close" onClick={() => setShowNmModal(false)}>✕</button>
-            </div>
-            <div className="nm-modal-body">
-              {nmMessage.text && (
-                <div className={`profile-message ${nmMessage.type}`}>{nmMessage.text}</div>
-              )}
-              <form onSubmit={handleNmSubmit}>
-
-                {/* --- MANDATORY FIELDS --- */}
-                <div className="nm-required-note">
-                  {language === 'en'
-                    ? '★ Fields marked with * are mandatory'
-                    : '★ * से चिह्नित फ़ील्ड अनिवार्य हैं'}
-                </div>
-
-                <div className="form-section-title">
-                  {language === 'en' ? '📋 Basic Details' : '📋 बुनियादी विवरण'}
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>{language === 'en' ? 'Full Name *' : 'पूरा नाम *'}</label>
-                    <input type="text" name="fullName" value={nmFormData.fullName}
-                      onChange={handleNmChange} placeholder={language === 'en' ? 'Enter full name' : 'पूरा नाम दर्ज करें'} required />
-                  </div>
-                  <div className="form-group">
-                    <label>{language === 'en' ? 'Place (City/Village) *' : 'स्थान (शहर/गाँव) *'}</label>
-                    <input type="text" name="place" value={nmFormData.place}
-                      onChange={handleNmChange} placeholder={language === 'en' ? 'City or village' : 'शहर या गाँव'} required />
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>{language === 'en' ? 'Age *' : 'आयु *'}</label>
-                    <input type="number" name="age" value={nmFormData.age}
-                      onChange={handleNmChange} min="1" max="120" placeholder={language === 'en' ? 'Enter age' : 'आयु दर्ज करें'} required />
-                  </div>
-                  <div className="form-group">
-                    <label>{language === 'en' ? 'Relationship (optional)' : 'संबंध (वैकल्पिक)'}</label>
-                    <input type="text" name="relationship" value={nmFormData.relationship}
-                      onChange={handleNmChange} placeholder={language === 'en' ? 'e.g. Brother, Uncle' : 'जैसे भाई, चाचा'} />
-                  </div>
-                </div>
-
-                {/* --- OPTIONAL FIELDS TOGGLE --- */}
-                <button type="button" className="nm-optional-toggle"
-                  onClick={() => setShowNmOptional(v => !v)}>
-                  {showNmOptional
-                    ? (language === 'en' ? '▲ Hide Optional Details' : '▲ वैकल्पिक विवरण छुपाएं')
-                    : (language === 'en' ? '▼ Add More Details (Optional)' : '▼ और विवरण जोड़ें (वैकल्पिक)')}
-                </button>
-
-                {showNmOptional && (
-                  <>
-                    <div className="form-section-title">
-                      {language === 'en' ? '👤 Personal (Optional)' : '👤 व्यक्तिगत (वैकल्पिक)'}
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>{language === 'en' ? "Father's Name" : 'पिता का नाम'}</label>
-                        <input type="text" name="fatherName" value={nmFormData.fatherName}
-                          onChange={handleNmChange} />
-                      </div>
-                      <div className="form-group">
-                        <label>{language === 'en' ? 'Gender' : 'लिंग'}</label>
-                        <select name="gender" value={nmFormData.gender} onChange={handleNmChange}>
-                          <option value="">{language === 'en' ? '-- Select --' : '-- चुनें --'}</option>
-                          <option value="male">{language === 'en' ? 'Male' : 'पुरुष'}</option>
-                          <option value="female">{language === 'en' ? 'Female' : 'महिला'}</option>
-                          <option value="other">{language === 'en' ? 'Other' : 'अन्य'}</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>{language === 'en' ? 'Email' : 'ईमेल'}</label>
-                        <input type="email" name="email" value={nmFormData.email} onChange={handleNmChange} />
-                      </div>
-                      <div className="form-group">
-                        <label>{language === 'en' ? 'Phone' : 'फोन'}</label>
-                        <input type="tel" name="phone" value={nmFormData.phone} onChange={handleNmChange} />
-                      </div>
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>{language === 'en' ? 'Occupation' : 'व्यवसाय'}</label>
-                        <input type="text" name="occupation" value={nmFormData.occupation} onChange={handleNmChange} />
-                      </div>
-                      <div className="form-group">
-                        <label>{language === 'en' ? 'Education' : 'शिक्षा'}</label>
-                        <select name="education" value={nmFormData.education} onChange={handleNmChange}>
-                          <option value="">{language === 'en' ? '-- Select --' : '-- चुनें --'}</option>
-                          <option value="below-10th">{language === 'en' ? 'Below 10th' : '10वीं से कम'}</option>
-                          <option value="10th">{language === 'en' ? '10th Pass' : '10वीं पास'}</option>
-                          <option value="12th">{language === 'en' ? '12th Pass' : '12वीं पास'}</option>
-                          <option value="graduate">{language === 'en' ? 'Graduate' : 'स्नातक'}</option>
-                          <option value="post-graduate">{language === 'en' ? 'Post Graduate' : 'स्नातकोत्तर'}</option>
-                          <option value="diploma">{language === 'en' ? 'Diploma' : 'डिप्लोमा'}</option>
-                          <option value="others">{language === 'en' ? 'Others' : 'अन्य'}</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="form-section-title">
-                      {language === 'en' ? '📍 Address (Optional)' : '📍 पता (वैकल्पिक)'}
-                    </div>
-                    <div className="form-group" style={{marginBottom:'13px'}}>
-                      <label>{language === 'en' ? 'Full Address' : 'पूरा पता'}</label>
-                      <textarea name="address" value={nmFormData.address}
-                        onChange={handleNmChange} rows="2" />
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>{language === 'en' ? 'Village' : 'गाँव'}</label>
-                        <input type="text" name="village" value={nmFormData.village} onChange={handleNmChange} />
-                      </div>
-                      <div className="form-group">
-                        <label>{language === 'en' ? 'Block' : 'ब्लॉक'}</label>
-                        <input type="text" name="block" value={nmFormData.block} onChange={handleNmChange} />
-                      </div>
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>{language === 'en' ? 'Tehsil' : 'तहसील'}</label>
-                        <input type="text" name="tehsil" value={nmFormData.tehsil} onChange={handleNmChange} />
-                      </div>
-                      <div className="form-group">
-                        <label>{language === 'en' ? 'District' : 'जिला'}</label>
-                        <input type="text" name="district" value={nmFormData.district} onChange={handleNmChange} />
-                      </div>
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>{language === 'en' ? 'State' : 'राज्य'}</label>
-                        <input type="text" name="state" value={nmFormData.state} onChange={handleNmChange} />
-                      </div>
-                      <div className="form-group">
-                        <label>{language === 'en' ? 'Pincode' : 'पिन कोड'}</label>
-                        <input type="text" name="pincode" value={nmFormData.pincode} onChange={handleNmChange} />
-                      </div>
-                    </div>
-
-                    <div className="form-section-title">
-                      {language === 'en' ? '📷 Photo (Optional)' : '📷 फोटो (वैकल्पिक)'}
-                    </div>
-                    <div className="form-group">
-                      <label>{language === 'en' ? 'Upload Photo (JPG/PNG)' : 'फोटो अपलोड करें (JPG/PNG)'}</label>
-                      <input id="nmPhoto" type="file" accept="image/jpeg,image/png,image/jpg"
-                        onChange={handleNmFileChange} className="file-input" />
-                    </div>
-                  </>
-                )}
-
-                <div className="form-actions">
-                  <button type="submit" className="save-btn" disabled={nmLoading}>
-                    {nmLoading
-                      ? (language === 'en' ? 'Saving…' : 'सहेज रहे हैं…')
-                      : (language === 'en' ? 'Save Record' : 'रिकॉर्ड सहेजें')}
-                  </button>
-                  <button type="button" className="cancel-btn"
-                    onClick={() => { setShowNmModal(false); setNmFormData(emptyNm); setNmMessage({ type:'', text:'' }); setShowNmOptional(false); }}>
-                    {language === 'en' ? 'Cancel' : 'रद्द करें'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ===== VIEW NON-MEMBER RECORD MODAL ===== */}
-      {nmViewRecord && (
-        <div className="nm-modal-overlay" onClick={() => setNmViewRecord(null)}>
-          <div className="nm-modal nm-view-modal" onClick={e => e.stopPropagation()}>
-            <div className="nm-modal-header">
-              <h3>👤 {nmViewRecord.fullName}</h3>
-              <button className="nm-modal-close" onClick={() => setNmViewRecord(null)}>✕</button>
-            </div>
-            <div className="nm-modal-body">
-              <div className="nm-view-photo-wrap">
-                {nmViewRecord.photoPath
-                  ? <img src={nmViewRecord.photoPath} alt={nmViewRecord.fullName} className="nm-view-photo" />
-                  : <div className="nm-view-no-photo">👤</div>}
-              </div>
-              <div className="info-grid">
-                {[
-                  ['fullName',    language === 'en' ? 'Full Name'    : 'पूरा नाम',      nmViewRecord.fullName],
-                  ['place',       language === 'en' ? 'Place'        : 'स्थान',         nmViewRecord.place],
-                  ['age',         language === 'en' ? 'Age'          : 'आयु',           nmViewRecord.age],
-                  ['rel',         language === 'en' ? 'Relationship' : 'संबंध',         nmViewRecord.relationship],
-                  ['father',      language === 'en' ? "Father's Name": 'पिता का नाम',   nmViewRecord.fatherName],
-                  ['gender',      language === 'en' ? 'Gender'       : 'लिंग',          nmViewRecord.gender],
-                  ['email',       language === 'en' ? 'Email'        : 'ईमेल',          nmViewRecord.email],
-                  ['phone',       language === 'en' ? 'Phone'        : 'फोन',           nmViewRecord.phone],
-                  ['occ',         language === 'en' ? 'Occupation'   : 'व्यवसाय',       nmViewRecord.occupation],
-                  ['edu',         language === 'en' ? 'Education'    : 'शिक्षा',        nmViewRecord.education],
-                  ['state',       language === 'en' ? 'State'        : 'राज्य',         nmViewRecord.state],
-                  ['district',    language === 'en' ? 'District'     : 'जिला',          nmViewRecord.district],
-                  ['tehsil',      language === 'en' ? 'Tehsil'       : 'तहसील',         nmViewRecord.tehsil],
-                  ['village',     language === 'en' ? 'Village'      : 'गाँव',          nmViewRecord.village],
-                  ['block',       language === 'en' ? 'Block'        : 'ब्लॉक',         nmViewRecord.block],
-                  ['pincode',     language === 'en' ? 'Pincode'      : 'पिन कोड',       nmViewRecord.pincode],
-                ].filter(([,, val]) => val).map(([key, label, val]) => (
-                  <div className="info-item" key={key}>
-                    <div className="info-label">{label}</div>
-                    <div className="info-value" style={{textTransform: key === 'gender' ? 'capitalize' : 'none'}}>{val}</div>
-                  </div>
-                ))}
-                {nmViewRecord.address && (
-                  <div className="info-item full-width">
-                    <div className="info-label">{language === 'en' ? 'Address' : 'पता'}</div>
-                    <div className="info-value">{nmViewRecord.address}</div>
-                  </div>
-                )}
-              </div>
-              <div style={{marginTop:'18px', fontSize:'0.78rem', color:'#aaa', textAlign:'right'}}>
-                {language === 'en' ? 'Added on: ' : 'जोड़ा गया: '}
-                {new Date(nmViewRecord.addedAt).toLocaleDateString('en-IN')}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );

@@ -46,7 +46,7 @@ const Home = () => {
               <p>
                 {language === 'en' 
                   ? 'Kshatriya Maunas Parivar is dedicated to preserving the rich heritage and traditions of the Kshatriya community. We are committed to fostering unity, providing support, and empowering our members through various social, cultural, and educational activities .'
-                  : 'क्षत्रिय मौनस परिवार, क्षत्रिय वंश की समृद्ध विरासत और परंपराओं को संरक्षित करने के लिए समर्पित है। हम विभिन्न सामाजिक, सांस्कृतिक और शैक्षिक गतिविधिया के माध्यम से एकता को बढ़ावा देने, सहायता प्रदान करने और अपने सदस्यों को सशक्त बनाने के लिए प्रतिबद्ध हैं।'
+                  : 'क्षत्रिय मौनस परिवार, क्षत्रिय वंश की समृद्ध विरासत और परंपराओं को संरक्षित करने के लिए समर्पित है। हम विभिन्न सामाजिक, सांस्कृतिक और शैक्षिक गतिविधियो के माध्यम से एकता को बढ़ावा देने, सहायता प्रदान करने और अपने सदस्यों को सशक्त बनाने के लिए प्रतिबद्ध हैं।'
                 }
               </p>
               <p>
@@ -305,6 +305,26 @@ const Home = () => {
               <h3>{language === 'en' ? 'Community Empowerment' : 'सामुदायिक सशक्तिकरण'}</h3>
               <p>{language === 'en' ? 'Empower members through networking and collaborative opportunities' : 'आपसी भाईचारा एवं परस्पर सहयोग के माध्यम से सदस्यों को सशक्त बनाना'}</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Non-Members Reference Section */}
+      <section className="nm-ref-section">
+        <div className="container">
+          <div className="nm-ref-inner">
+            <div className="nm-ref-icon">👥</div>
+            <div className="nm-ref-text">
+              <h3>{language === 'en' ? 'Non-Members Directory' : 'गैर-सदस्य डायरेक्टरी'}</h3>
+              <p>
+                {language === 'en'
+                  ? 'Know someone from our community who is not yet registered? Add their record so our family stays connected. Anyone can add or view records — no login required!'
+                  : 'क्या आप हमारे समाज के किसी ऐसे व्यक्ति को जानते हैं जो अभी पंजीकृत नहीं हैं? उनका विवरण जोड़ें ताकि हमारा परिवार जुड़ा रहे। कोई भी रिकॉर्ड जोड़ सकता है और देख सकता है — लॉगिन आवश्यक नहीं!'}
+              </p>
+            </div>
+            <Link to="/non-members" className="nm-ref-btn" onClick={() => window.scrollTo(0, 0)}>
+              {language === 'en' ? 'View & Add Records' : 'रिकॉर्ड देखें और जोड़ें →'}
+            </Link>
           </div>
         </div>
       </section>

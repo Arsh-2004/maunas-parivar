@@ -24,6 +24,9 @@ const AdminDashboard = () => {
   const [gallery, setGallery] = useState([]);
   const [oathAgreements, setOathAgreements] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [nonMembers, setNonMembers] = useState([]);
+  const [viewNmRecord, setViewNmRecord] = useState(null);
+  const [nmSearch, setNmSearch] = useState('');
   const [galleryForm, setGalleryForm] = useState({ title: '', description: '', category: 'general', image: null });
   const [showUserModal, setShowUserModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -59,6 +62,7 @@ const AdminDashboard = () => {
         fetchGallery();
         fetchOathAgreements();
         fetchContacts();
+        fetchNonMembers();
       } else {
         setError(language === 'en' ? 'Invalid admin password' : 'गलत व्यवस्थापक पासवर्ड');
       }
@@ -98,6 +102,16 @@ const AdminDashboard = () => {
     }
   }, [adminPassword]);
 
+  const fetchNonMembers = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_URL}/users/non-members`);
+      const data = await res.json();
+      if (data.success) setNonMembers(data.records);
+    } catch (err) {
+      console.error('Error fetching non-members:', err);
+    }
+  }, []);
+
   // Check stored admin session
   useEffect(() => {
     const storedPassword = localStorage.getItem('adminPassword');
@@ -109,8 +123,9 @@ const AdminDashboard = () => {
       fetchGallery();
       fetchOathAgreements();
       fetchContacts();
+      fetchNonMembers();
     }
-  }, [fetchOathAgreements, fetchContacts]);
+  }, [fetchOathAgreements, fetchContacts, fetchNonMembers]);
 
   // Fetch users
   const fetchUsers = async (searchTerm = '') => {
@@ -422,6 +437,17 @@ const AdminDashboard = () => {
           {contacts.filter(c => !c.isRead).length > 0 && (
             <span style={{ background: '#e07b39', color: '#fff', borderRadius: '50%', padding: '2px 7px', marginLeft: '6px', fontSize: '12px' }}>
               {contacts.filter(c => !c.isRead).length}
+            </span>
+          )}
+        </button>
+        <button
+          className={activeTab === 'nonmembers' ? 'active' : ''}
+          onClick={() => setActiveTab('nonmembers')}
+        >
+          {language === 'en' ? 'Non-Members' : 'गैर-सदस्य'}
+          {nonMembers.length > 0 && (
+            <span style={{ background: '#5678c9', color: '#fff', borderRadius: '50%', padding: '2px 7px', marginLeft: '6px', fontSize: '12px' }}>
+              {nonMembers.length}
             </span>
           )}
         </button>
@@ -939,6 +965,152 @@ const AdminDashboard = () => {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {activeTab === 'nonmembers' && (
+        <div className="oath-agreements-section">
+          <h2>{language === 'en' ? '👥 Non-Members Directory' : '👥 गैर-सदस्य डायरेक्टरी'}</h2>
+          <div className="stats-grid">
+            <div className="stat-card total-card">
+              <div className="stat-number">{nonMembers.length}</div>
+              <div className="stat-label">{language === 'en' ? 'Total Records' : 'कुल रिकॉर्ड'}</div>
+            </div>
+            <div className="stat-card approved-card">
+              <div className="stat-number">{[...new Set(nonMembers.map(r => r.state).filter(Boolean))].length}</div>
+              <div className="stat-label">{language === 'en' ? 'States' : 'राज्य'}</div>
+            </div>
+            <div className="stat-card pending-card">
+              <div className="stat-number">{[...new Set(nonMembers.map(r => r.place).filter(Boolean))].length}</div>
+              <div className="stat-label">{language === 'en' ? 'Places' : 'स्थान'}</div>
+            </div>
+          </div>
+
+          <div style={{ margin: '16px 0' }}>
+            <input
+              type="text"
+              placeholder={language === 'en' ? 'Search by name, place, state, district...' : 'नाम, स्थान, राज्य, जिले से खोजें...'}
+              value={nmSearch}
+              onChange={e => setNmSearch(e.target.value)}
+              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #e0e0e0', fontSize: '0.95rem', boxSizing: 'border-box' }}
+            />
+          </div>
+
+          {nonMembers.length === 0 ? (
+            <p className="no-data">{language === 'en' ? 'No non-member records yet' : 'अभी तक कोई गैर-सदस्य रिकॉर्ड नहीं'}</p>
+          ) : (
+            <div className="members-table-container">
+              <table className="members-table">
+                <thead>
+                  <tr>
+                    <th>{language === 'en' ? 'Photo' : 'फोटो'}</th>
+                    <th>{language === 'en' ? 'Name' : 'नाम'}</th>
+                    <th>{language === 'en' ? 'Age' : 'आयु'}</th>
+                    <th>{language === 'en' ? 'Place' : 'स्थान'}</th>
+                    <th>{language === 'en' ? 'Relationship' : 'संबंध'}</th>
+                    <th>{language === 'en' ? 'District' : 'जिला'}</th>
+                    <th>{language === 'en' ? 'State' : 'राज्य'}</th>
+                    <th>{language === 'en' ? 'Added On' : 'जोड़ा गया'}</th>
+                    <th>{language === 'en' ? 'Actions' : 'कार्यवाही'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {nonMembers
+                    .filter(r => {
+                      const q = nmSearch.toLowerCase();
+                      return !q ||
+                        r.fullName?.toLowerCase().includes(q) ||
+                        r.place?.toLowerCase().includes(q) ||
+                        r.state?.toLowerCase().includes(q) ||
+                        r.district?.toLowerCase().includes(q) ||
+                        r.relationship?.toLowerCase().includes(q);
+                    })
+                    .map(r => (
+                    <tr key={r._id}>
+                      <td>
+                        {r.photoPath
+                          ? <img src={r.photoPath} alt={r.fullName} style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
+                          : <span style={{ fontSize: '1.6rem' }}>👤</span>}
+                      </td>
+                      <td><strong>{r.fullName}</strong></td>
+                      <td>{r.age}</td>
+                      <td>{r.place}</td>
+                      <td>{r.relationship || '-'}</td>
+                      <td>{r.district || '-'}</td>
+                      <td>{r.state || '-'}</td>
+                      <td>{new Date(r.addedAt).toLocaleDateString('en-IN')}</td>
+                      <td style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        <button
+                          className="approve-btn"
+                          style={{ padding: '4px 10px', fontSize: '12px' }}
+                          onClick={() => setViewNmRecord(r)}
+                        >
+                          {language === 'en' ? 'View' : 'देखें'}
+                        </button>
+                        <button
+                          className="delete-btn"
+                          style={{ padding: '4px 10px', fontSize: '12px' }}
+                          onClick={async () => {
+                            if (!window.confirm(language === 'en' ? 'Delete this record?' : 'इस रिकॉर्ड को हटाएं?')) return;
+                            const pwd = localStorage.getItem('adminPassword');
+                            await fetch(`${API_URL}/users/non-members/${r._id}`, {
+                              method: 'DELETE',
+                              headers: { 'x-admin-password': pwd }
+                            });
+                            fetchNonMembers();
+                          }}
+                        >
+                          {language === 'en' ? 'Delete' : 'हटाएं'}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {viewNmRecord && (
+        <div className="modal-overlay" onClick={() => setViewNmRecord(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setViewNmRecord(null)}>×</button>
+            <h2>👤 {viewNmRecord.fullName}</h2>
+            {viewNmRecord.photoPath && (
+              <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                <img src={viewNmRecord.photoPath} alt={viewNmRecord.fullName}
+                  style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', border: '3px solid #ffe0d4' }} />
+              </div>
+            )}
+            <div className="user-details">
+              {[
+                [language === 'en' ? 'Full Name' : 'पूरा नाम', viewNmRecord.fullName],
+                [language === 'en' ? 'Age' : 'आयु', viewNmRecord.age],
+                [language === 'en' ? 'Place' : 'स्थान', viewNmRecord.place],
+                [language === 'en' ? 'Relationship' : 'संबंध', viewNmRecord.relationship],
+                [language === 'en' ? "Father's Name" : 'पिता का नाम', viewNmRecord.fatherName],
+                [language === 'en' ? 'Gender' : 'लिंग', viewNmRecord.gender],
+                [language === 'en' ? 'Phone' : 'फोन', viewNmRecord.phone],
+                [language === 'en' ? 'Email' : 'ईमेल', viewNmRecord.email],
+                [language === 'en' ? 'Occupation' : 'व्यवसाय', viewNmRecord.occupation],
+                [language === 'en' ? 'Education' : 'शिक्षा', viewNmRecord.education],
+                [language === 'en' ? 'Village' : 'गाँव', viewNmRecord.village],
+                [language === 'en' ? 'Block' : 'ब्लॉक', viewNmRecord.block],
+                [language === 'en' ? 'Tehsil' : 'तहसील', viewNmRecord.tehsil],
+                [language === 'en' ? 'District' : 'जिला', viewNmRecord.district],
+                [language === 'en' ? 'State' : 'राज्य', viewNmRecord.state],
+                [language === 'en' ? 'Pincode' : 'पिन कोड', viewNmRecord.pincode],
+                [language === 'en' ? 'Address' : 'पता', viewNmRecord.address],
+                [language === 'en' ? 'Added On' : 'जोड़ा गया', new Date(viewNmRecord.addedAt).toLocaleDateString('en-IN')],
+              ].filter(([, val]) => val).map(([label, val]) => (
+                <div className="detail-group" key={label}>
+                  <label>{label}:</label>
+                  <p style={{ textTransform: label === (language === 'en' ? 'Gender' : 'लिंग') ? 'capitalize' : 'none' }}>{val}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 

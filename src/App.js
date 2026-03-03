@@ -18,6 +18,7 @@ import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
 import IDCardView from './pages/IDCardView';
 import MemberProfile from './pages/MemberProfile';
+import NonMembers from './pages/NonMembers';
 import './App.css';
 
 // Routes where the site Header/Footer should be hidden (e.g. QR-scanned member profiles)
@@ -43,6 +44,7 @@ function AppLayout() {
             </ProtectedRoute>
           } />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/non-members" element={<NonMembers />} />
           <Route path="/membership" element={<Membership />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={

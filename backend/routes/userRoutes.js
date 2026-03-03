@@ -339,7 +339,8 @@ router.put('/update-profile/:id', upload.single('photo'), async (req, res) => {
 
     // Update photo if new one uploaded
     if (req.file) {
-      user.photoPath = req.file.filename;
+      const photoUrl = await uploadToCloudinary(req.file.path, 'photos');
+      user.photoPath = photoUrl;
     }
 
     await user.save();
@@ -356,13 +357,20 @@ router.put('/update-profile/:id', upload.single('photo'), async (req, res) => {
         phone: user.phone,
         email: user.email,
         address: user.address,
+        village: user.village,
+        block: user.block,
+        tehsil: user.tehsil,
+        district: user.district,
         city: user.city,
         state: user.state,
         pincode: user.pincode,
         occupation: user.occupation,
         education: user.education,
         photoPath: user.photoPath,
-        status: user.status
+        idCardPath: user.idCardPath,
+        idCardGeneratedAt: user.idCardGeneratedAt,
+        status: user.status,
+        approvedAt: user.approvedAt
       }
     });
   } catch (error) {
@@ -466,7 +474,7 @@ router.get('/committee-members/:committeeId', async (req, res) => {
 
 const NonMemberRecord = require('../models/NonMemberRecord');
 
-// POST  /api/users/add-non-member  — logged-in member adds a record for a non-registered person
+// POST  /api/users/add-non-member  — anyone can add a record for a non-registered person
 router.post('/add-non-member', upload.single('photo'), async (req, res) => {
   try {
     const {
@@ -485,9 +493,7 @@ router.post('/add-non-member', upload.single('photo'), async (req, res) => {
     if (!age || isNaN(age) || age <= 0) {
       return res.status(400).json({ success: false, message: 'Age is required.' });
     }
-    if (!addedBy) {
-      return res.status(400).json({ success: false, message: 'Submitter user ID is required.' });
-    }
+    // addedBy is now optional — public users can submit without a user ID
 
     let photoPath = null;
     if (req.file) {
@@ -522,6 +528,17 @@ router.post('/add-non-member', upload.single('photo'), async (req, res) => {
   } catch (error) {
     console.error('Add non-member error:', error);
     res.status(500).json({ success: false, message: 'Failed to add record. Please try again.' });
+  }
+});
+
+// GET  /api/users/non-members  — public route to fetch all non-member records
+router.get('/non-members', async (req, res) => {
+  try {
+    const records = await NonMemberRecord.find({}).sort({ addedAt: -1 });
+    res.json({ success: true, records });
+  } catch (error) {
+    console.error('Fetch all non-members error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch records.' });
   }
 });
 
