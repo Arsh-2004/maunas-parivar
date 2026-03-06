@@ -927,18 +927,19 @@ section {
   height: 48px;
 }
 
-/* Photo container — fixed aspect ratio, full image visible */
+/* Photo container — padding-top trick for reliable cross-browser aspect ratio */
 .panel-member-photo-wrap {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  padding-top: 133.33%; /* 3:4 portrait ratio */
+  position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #FF6B35, #F7931E);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .panel-member-photo {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -952,6 +953,9 @@ section {
 }
 
 .panel-member-photo-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   display: flex;
@@ -1011,6 +1015,188 @@ section {
 }
 .read-more-btn:hover {
   text-decoration: underline;
+}
+
+/* Prakosth read-more button — styled as a distinct link */
+.prakosth-detail-btn {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #FF6B35;
+  font-weight: 700;
+}
+
+/* ── Member Detail Modal ── */
+.member-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.60);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: overlayFadeIn 0.2s ease;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.member-detail-modal {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalPopIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalPopIn {
+  from { opacity: 0; transform: scale(0.86); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.member-detail-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: rgba(0,0,0,0.08);
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: background 0.2s;
+}
+.member-detail-close:hover {
+  background: #FF6B35;
+  color: #fff;
+}
+
+.member-detail-body {
+  display: flex;
+  gap: 0;
+}
+
+.member-detail-photo-col {
+  flex: 0 0 240px;
+  height: auto;
+  min-height: 320px;
+  background: linear-gradient(160deg, #FF6B35 0%, #F7931E 100%);
+  border-radius: 20px 0 0 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.member-detail-photo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.member-detail-photo-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.member-detail-info-col {
+  flex: 1;
+  padding: 28px 28px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.member-detail-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.member-detail-prakosth {
+  display: inline-block;
+  background: linear-gradient(135deg, #FF6B35, #F7931E);
+  color: #fff;
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  width: fit-content;
+  margin: 0;
+}
+
+.member-detail-location {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0;
+}
+
+.member-detail-row {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 10px;
+}
+
+.member-detail-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #FF6B35;
+  margin-bottom: 4px;
+}
+
+.member-detail-value {
+  font-size: 0.9rem;
+  color: #333;
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* Responsive: stack photo above info on small screens */
+@media (max-width: 600px) {
+  .member-detail-body {
+    flex-direction: column;
+  }
+  .member-detail-photo-col {
+    flex: none;
+    height: 280px;        /* explicit height so img height:100% resolves correctly */
+    min-height: unset;
+    border-radius: 20px 20px 0 0;
+  }
+  .member-detail-info-col {
+    padding: 20px 18px 24px;
+  }
+  .member-detail-name {
+    font-size: 1.1rem;
+  }
 }
 
 .upadhi-title-badge {

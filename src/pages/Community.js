@@ -18,6 +18,17 @@ const Community = () => {
   const [expandedBios, setExpandedBios] = useState({});
   const toggleBio = (id) => setExpandedBios(prev => ({ ...prev, [id]: !prev[id] }));
   const BIO_LIMIT = 25;
+  const [selectedMember, setSelectedMember] = useState(null);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (selectedMember) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [selectedMember]);
 
   useEffect(() => {
     fetchMembers();
@@ -369,22 +380,14 @@ const Community = () => {
                         <p className="panel-member-designation">🏛️ {prakosths.find(p => p.id === member.prakosth)?.title || member.prakosth}</p>
                         <p className="panel-member-location">📍 {member.city}, {member.state}</p>
                         {member.occupation && (
-                          <p className="panel-member-occupation">
-                            💼 {expandedBios[member._id + '_occ']
-                              ? member.occupation
-                              : member.occupation.slice(0, BIO_LIMIT)}
-                            {(member.occupation.length > BIO_LIMIT || member.bio) && (
-                              <button className="read-more-btn" onClick={() => toggleBio(member._id + '_occ')}>
-                                {expandedBios[member._id + '_occ']
-                                  ? (language === 'en' ? ' − Read less' : ' − कम पढ़ें')
-                                  : (language === 'en' ? '... Read more' : '... और देखें')}
-                              </button>
-                            )}
-                          </p>
+                          <p className="panel-member-occupation">💼 {member.occupation.slice(0, BIO_LIMIT)}{member.occupation.length > BIO_LIMIT ? '...' : ''}</p>
                         )}
-                        {member.bio && expandedBios[member._id + '_occ'] && (
-                          <p className="panel-member-bio">🏅 {member.bio}</p>
-                        )}
+                        <button
+                          className="read-more-btn prakosth-detail-btn"
+                          onClick={() => setSelectedMember({ ...member, prakosthTitle: prakosths.find(p => p.id === member.prakosth)?.title || member.prakosth })}
+                        >
+                          {language === 'en' ? '— Read more' : '— और देखें'}
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -533,6 +536,52 @@ const Community = () => {
           </>
         </div>
       </section>
+      )}
+      {/* Member Detail Modal */}
+      {selectedMember && (
+        <div className="member-detail-overlay" onClick={() => setSelectedMember(null)}>
+          <div className="member-detail-modal" onClick={e => e.stopPropagation()}>
+            <button className="member-detail-close" onClick={() => setSelectedMember(null)} aria-label="Close">✕</button>
+            <div className="member-detail-body">
+              <div className="member-detail-photo-col">
+                {selectedMember.photoPath ? (
+                  <img src={selectedMember.photoPath} alt={selectedMember.fullName} className="member-detail-photo" />
+                ) : (
+                  <div className="member-detail-photo-placeholder">👤</div>
+                )}
+              </div>
+              <div className="member-detail-info-col">
+                <h2 className="member-detail-name">{selectedMember.fullName}</h2>
+                {selectedMember.prakosthTitle && (
+                  <p className="member-detail-prakosth">🏛️ {selectedMember.prakosthTitle}</p>
+                )}
+                <p className="member-detail-location">📍 {selectedMember.city}, {selectedMember.state}</p>
+                {selectedMember.occupation && (
+                  <div className="member-detail-row">
+                    <span className="member-detail-label">💼 {language === 'en' ? 'Qualification' : 'योग्यता'}</span>
+                    <p className="member-detail-value">{selectedMember.occupation}</p>
+                  </div>
+                )}
+                {selectedMember.bio && (
+                  <div className="member-detail-row">
+                    <span className="member-detail-label">🏅 {language === 'en' ? 'Additional Info' : 'अतिरिक्त जानकारी'}</span>
+                    <p className="member-detail-value">{selectedMember.bio}</p>
+                  </div>
+                )}
+                {selectedMember.education && (
+                  <div className="member-detail-row">
+                    <span className="member-detail-label">🎓 {language === 'en' ? 'Education' : 'शिक्षा'}</span>
+                    <p className="member-detail-value">
+                      {selectedMember.education === 'post-graduate' ? (language === 'en' ? 'Post Graduate' : 'स्नातकोत्तर') :
+                       selectedMember.education === 'graduate' ? (language === 'en' ? 'Graduate' : 'स्नातक') :
+                       selectedMember.education}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
