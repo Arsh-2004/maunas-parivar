@@ -111,6 +111,25 @@ const Home = () => {
           </div>
         </div>
       </section>
+      {/* Non-Members Reference Section */}
+      <section className="nm-ref-section">
+        <div className="container">
+          <div className="nm-ref-inner">
+            <div className="nm-ref-icon">👥</div>
+            <div className="nm-ref-text">
+              <h3>{language === 'en' ? 'Non-Members Directory' : 'गैर-सदस्य डायरेक्टरी'}</h3>
+              <p>
+                {language === 'en'
+                  ? 'Know someone from our community who is not yet registered? Add their record so our family stays connected. Anyone can add or view records — no login required!'
+                  : 'क्या आप हमारे समाज के किसी ऐसे व्यक्ति को जानते हैं जो अभी पंजीकृत नहीं हैं? उनका विवरण जोड़ें ताकि हमारा परिवार जुड़ा रहे। कोई भी रिकॉर्ड जोड़ सकता है और देख सकता है — लॉगिन आवश्यक नहीं!'}
+              </p>
+            </div>
+            <Link to="/non-members" className="nm-ref-btn" onClick={() => window.scrollTo(0, 0)}>
+              {language === 'en' ? 'View & Add Records' : 'रिकॉर्ड देखें और जोड़ें →'}
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Management Team Preview */}
       <section className="team-section">
@@ -220,8 +239,8 @@ const Home = () => {
             <div className="team-card">
               <div className="team-image">
                 <img 
-                  src="/assets/ashishsingh.jpeg" 
-                  alt="Ashish Singh"
+                  src="/assets/rajan-singh.jpeg" 
+                  alt="Rajan Singh"
                   className="team-photo"
                   onError={(e) => {
                     e.target.style.display = 'none';
@@ -230,15 +249,16 @@ const Home = () => {
                 />
                 <div className="image-placeholder" style={{display: 'none'}}>👤</div>
               </div>
-              <h3 className="member-name">{language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Bhadohi' : 'भदोही'}</p>
+              <h3 className="member-name">{language === 'en' ? 'Rajan Singh Ji' : 'श्री राजन सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Gird Badgaon Bhadohi' : 'गिर्द बड़गांव भदोही'}</p>
             </div>
+            
 
             <div className="team-card">
               <div className="team-image">
                 <img 
                   src="/assets/श्री विनोद सिंह जी.jpeg" 
-                  alt="Ashish Singh"
+                  alt="Vinod Singh"
                   className="team-photo"
                   onError={(e) => {
                     e.target.style.display = 'none';
@@ -256,7 +276,7 @@ const Home = () => {
               <div className="team-image">
                 <img 
                   src="/assets/श्री अंबिका सिंह जी.jpeg" 
-                  alt="Ashish Singh"
+                  alt="Ambika Singh"
                   className="team-photo"
                   onError={(e) => {
                     e.target.style.display = 'none';
@@ -268,6 +288,25 @@ const Home = () => {
               <h3 className="member-name">{language === 'en' ? 'Shri Ambika Singh Ji' : 'श्री अंबिका सिंह जी'}</h3>
               <p className="designation">{language === 'en' ? 'Mathaha Bhadohi' : 'मठहाॅ भदोही'}</p>
             </div>
+
+            <div className="team-card">
+              <div className="team-image">
+                <img 
+                  src="/assets/ashishsingh.jpeg" 
+                  alt="Ashish Singh"
+                  className="team-photo"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
+              </div>
+              <h3 className="member-name">{language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Bhadohi' : 'भदोही'}</p>
+            </div>
+
+            
           
             
           </div>
@@ -309,25 +348,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Non-Members Reference Section */}
-      <section className="nm-ref-section">
-        <div className="container">
-          <div className="nm-ref-inner">
-            <div className="nm-ref-icon">👥</div>
-            <div className="nm-ref-text">
-              <h3>{language === 'en' ? 'Non-Members Directory' : 'गैर-सदस्य डायरेक्टरी'}</h3>
-              <p>
-                {language === 'en'
-                  ? 'Know someone from our community who is not yet registered? Add their record so our family stays connected. Anyone can add or view records — no login required!'
-                  : 'क्या आप हमारे समाज के किसी ऐसे व्यक्ति को जानते हैं जो अभी पंजीकृत नहीं हैं? उनका विवरण जोड़ें ताकि हमारा परिवार जुड़ा रहे। कोई भी रिकॉर्ड जोड़ सकता है और देख सकता है — लॉगिन आवश्यक नहीं!'}
-              </p>
-            </div>
-            <Link to="/non-members" className="nm-ref-btn" onClick={() => window.scrollTo(0, 0)}>
-              {language === 'en' ? 'View & Add Records' : 'रिकॉर्ड देखें और जोड़ें →'}
-            </Link>
-          </div>
-        </div>
-      </section>
+      
 
       {/* CTA Section */}
       <section className="cta-section">

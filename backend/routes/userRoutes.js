@@ -534,7 +534,7 @@ router.post('/add-non-member', upload.single('photo'), async (req, res) => {
 // GET  /api/users/non-members  — public route to fetch all non-member records
 router.get('/non-members', async (req, res) => {
   try {
-    const records = await NonMemberRecord.find({}).sort({ addedAt: -1 });
+    const records = await NonMemberRecord.find({}).sort({ addedAt: -1 }).populate('addedBy', 'fullName email');
     res.json({ success: true, records });
   } catch (error) {
     console.error('Fetch all non-members error:', error);

@@ -215,6 +215,16 @@ const Community = () => {
       photoPath: '/assets/डॉ जयदीप सिंह जी.jpeg',
       registeredAt: new Date('2026-02-20')
     }, 
+    {  _id: 'prakosth-3',
+      fullName: language === 'en' ? 'Shri Amar Dev Singh (Manager)' : 'श्री अमर देव सिंह जी (प्रबंधक)',
+      city: language === 'en' ? 'Sarai Kasturia, Handia Prayagraj' : 'सराय कस्तूरिया, हंडिया प्रयागराज',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      // occupation: language === 'en' ? 'Senior ScientistKrishi Vigyan Kendra ICAR, ATARI Zone IV' : 'वरिष्ठ वैज्ञानिक कृषि विज्ञान केंद्रआई०सी०ए०आर०, ए० टी० ए० आर० आई० जोन IV',
+      // education: 'post-graduate',
+      prakosth: 'buddhijivi',
+      photoPath: '/assets/श्री अमर देव सिंह जी.jpeg',
+      registeredAt: new Date('2026-02-20')
+    },
     {
       _id: 'prakosth-manav-seva-1',
       fullName: language === 'en' ? 'Shri K K Singh Ji' : 'श्री के के सिंह जी',
@@ -228,7 +238,7 @@ const Community = () => {
     },
     {
       _id: 'prakosth-chikitsa-akshi',
-      fullName: language === 'en' ? 'Dr. Akshi Singh' : 'डॉ. अक्षी सिंह',
+      fullName: language === 'en' ? 'Dr. Akshi Singh Ji' : 'डॉ. अक्षी सिंह जी',
       city: language === 'en' ? 'Varanasi' : 'वाराणसी',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       occupation: language === 'en' ? 'MBBS, MD (Pediatrics) — Datta Meghe Medical College, Wardha | PG in Pediatric Nutrition, Boston University, USA' : 'MBBS, MD (पीडियाट्रिक्स) — Datta Meghe Medical College, वर्धा (नागपुर) | पोस्ट ग्रेजुएट इन पीडियाट्रिक न्यूट्रिशन, Boston University, यूएसए',
@@ -240,7 +250,7 @@ const Community = () => {
     },
     {
       _id: 'prakosth-chikitsa-gaurav',
-      fullName: language === 'en' ? 'Dr. Gaurav Singh' : 'डॉ. गौरव सिंह',
+      fullName: language === 'en' ? 'Dr. Gaurav Singh Ji' : 'डॉ. गौरव सिंह जी',
       city: language === 'en' ? 'Varanasi' : 'वाराणसी',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       occupation: language === 'en' ? 'MBBS, MD (General Medicine) — Ganesh Shankar Vidyarthi Memorial Medical College, Kanpur | Fellowship in Diabetes, CMC Vellore' : 'MBBS, MD (जनरल मेडिसिन) — Ganesh Shankar Vidyarthi Memorial Medical College, कानपुर | डायबिटीज में फेलोशिप, Christian Medical College, वेल्लोर',
@@ -260,17 +270,6 @@ const Community = () => {
       prakosth: 'vidhi',
       photoPath: '/assets/श्री राजकुमार सिंह जी.jpeg',
       registeredAt: new Date('2026-02-21')
-    },
-    {
-      _id: 'prakosth-5',
-      fullName: language === 'en' ? 'Shri Dinesh Kumar' : 'श्री दिनेश कुमार',
-      city: language === 'en' ? 'Indore' : 'इंदौर',
-      state: language === 'en' ? 'Madhya Pradesh' : 'मध्य प्रदेश',
-      occupation: language === 'en' ? 'Businessman' : 'व्यवसायी',
-      education: 'graduate',
-      prakosth: 'vyapar',
-      photoPath: null,
-      registeredAt: new Date('2024-03-01')
     },
     {
       _id: 'prakosth-khel-1',

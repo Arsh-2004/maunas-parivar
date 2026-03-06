@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import './NonMembers.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
@@ -14,7 +16,10 @@ const emptyForm = {
 
 const NonMembers = () => {
   const { language } = useLanguage();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,6 +47,15 @@ const NonMembers = () => {
     };
     fetchRecords();
   }, []);
+
+  const handleAddClick = () => {
+    if (!user) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    setMessage({ type: '', text: '' });
+    setShowModal(true);
+  };
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -77,6 +91,7 @@ const NonMembers = () => {
         if (k !== 'photo' && v) fd.append(k, v);
       });
       if (formData.photo) fd.append('photo', formData.photo);
+      if (user?._id) fd.append('addedBy', user._id);
 
       const res = await fetch(`${API_URL}/users/add-non-member`, { method: 'POST', body: fd });
       const data = await res.json();
@@ -112,14 +127,14 @@ const NonMembers = () => {
         <div className="nm-hero-overlay">
           <div className="container">
             <h1 className="nm-hero-title">
-              {language === 'en' ? 'Non-Members' : 'गैर-सदस्य'}
+              {language === 'en' ? 'Non-Members' : 'अन्य सदस्य'}
             </h1>
             <p className="nm-hero-sub">
               {language === 'en'
-                ? 'Community members who are part of our family but not yet formally registered — their records are maintained here.'
-                : 'परिवार के वे सदस्य जो हमारे समाज का हिस्सा हैं लेकिन अभी तक औपचारिक रूप से पंजीकृत नहीं हैं — उनके विवरण यहाँ संरक्षित हैं।'}
+                ? 'All those family members who are associated with our society but have not yet been formally registered, it is a humble request to all of you conscious people to please provide their complete details here, so that they can also be included in the society records.'
+                : 'परिवार के वे सभी सदस्य जो हमारे समाज से जुड़े हुए हैं, किन्तु अभी तक औपचारिक रूप से पंजीकृत नहीं हो पाए हैं, आप सब जागरूक लोगों से विनम्र अनुरोध है कि कृपया उनके पूर्ण विवरण यहाँ प्रदान करें, ताकि उन्हें भी समाज के अभिलेख में सम्मिलित किया जा सके।'}
             </p>
-            <button className="nm-hero-btn" onClick={() => { setMessage({ type: '', text: '' }); setShowModal(true); }}>
+            <button className="nm-hero-btn" onClick={handleAddClick}>
               + {language === 'en' ? 'Add Record' : 'रिकॉर्ड जोड़ें'}
             </button>
           </div>
@@ -154,7 +169,7 @@ const NonMembers = () => {
             value={searchText}
             onChange={e => setSearchText(e.target.value)}
           />
-          <button className="nm-add-btn-top" onClick={() => { setMessage({ type: '', text: '' }); setShowModal(true); }}>
+          <button className="nm-add-btn-top" onClick={handleAddClick}>
             + {language === 'en' ? 'Add Record' : 'रिकॉर्ड जोड़ें'}
           </button>
         </div>
@@ -199,6 +214,40 @@ const NonMembers = () => {
           </div>
         )}
       </div>
+
+      {/* ===== LOGIN PROMPT MODAL ===== */}
+      {showLoginPrompt && (
+        <div className="nm-overlay" onClick={() => setShowLoginPrompt(false)}>
+          <div className="nm-modal" style={{ maxWidth: 420, textAlign: 'center' }} onClick={e => e.stopPropagation()}>
+            <div className="nm-modal-header">
+              <h3>🔒 {language === 'en' ? 'Login Required' : 'लॉगिन आवश्यक है'}</h3>
+              <button className="nm-modal-close" onClick={() => setShowLoginPrompt(false)}>✕</button>
+            </div>
+            <div className="nm-modal-body" style={{ padding: '28px 24px 24px' }}>
+              <p style={{ fontSize: '1rem', color: '#555', marginBottom: 24, lineHeight: 1.6 }}>
+                {language === 'en'
+                  ? 'Only registered members can add non-member records. Please log in or create an account to continue.'
+                  : 'केवल पंजीकृत सदस्य ही गैर-सदस्य रिकॉर्ड जोड़ सकते हैं। कृपया जारी रखने के लिए लॉगिन करें या खाता बनाएं।'}
+              </p>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button
+                  className="nm-hero-btn"
+                  onClick={() => { setShowLoginPrompt(false); navigate('/login'); }}
+                >
+                  {language === 'en' ? '🔑 Login' : '🔑 लॉगिन करें'}
+                </button>
+                <button
+                  className="nm-hero-btn"
+                  style={{ background: 'white', color: '#FF6B35', border: '2px solid #FF6B35' }}
+                  onClick={() => { setShowLoginPrompt(false); navigate('/membership#registration-form'); }}
+                >
+                  {language === 'en' ? '📝 Register' : '📝 पंजीकरण करें'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ===== ADD RECORD MODAL ===== */}
       {showModal && (

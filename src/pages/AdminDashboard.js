@@ -444,7 +444,7 @@ const AdminDashboard = () => {
           className={activeTab === 'nonmembers' ? 'active' : ''}
           onClick={() => setActiveTab('nonmembers')}
         >
-          {language === 'en' ? 'Non-Members' : 'गैर-सदस्य'}
+          {language === 'en' ? 'Non-Members' : 'अन्य सदस्य'}
           {nonMembers.length > 0 && (
             <span style={{ background: '#5678c9', color: '#fff', borderRadius: '50%', padding: '2px 7px', marginLeft: '6px', fontSize: '12px' }}>
               {nonMembers.length}
@@ -970,7 +970,7 @@ const AdminDashboard = () => {
 
       {activeTab === 'nonmembers' && (
         <div className="oath-agreements-section">
-          <h2>{language === 'en' ? '👥 Non-Members Directory' : '👥 गैर-सदस्य डायरेक्टरी'}</h2>
+          <h2>{language === 'en' ? '👥 Non-Members Directory' : '👥 अन्य सदस्य डायरेक्टरी'}</h2>
           <div className="stats-grid">
             <div className="stat-card total-card">
               <div className="stat-number">{nonMembers.length}</div>
@@ -997,7 +997,7 @@ const AdminDashboard = () => {
           </div>
 
           {nonMembers.length === 0 ? (
-            <p className="no-data">{language === 'en' ? 'No non-member records yet' : 'अभी तक कोई गैर-सदस्य रिकॉर्ड नहीं'}</p>
+            <p className="no-data">{language === 'en' ? 'No non-member records yet' : 'अभी तक कोई अन्य सदस्य रिकॉर्ड नहीं'}</p>
           ) : (
             <div className="members-table-container">
               <table className="members-table">
@@ -1010,6 +1010,7 @@ const AdminDashboard = () => {
                     <th>{language === 'en' ? 'Relationship' : 'संबंध'}</th>
                     <th>{language === 'en' ? 'District' : 'जिला'}</th>
                     <th>{language === 'en' ? 'State' : 'राज्य'}</th>
+                    <th>{language === 'en' ? 'Added By' : 'जोड़ा किसने'}</th>
                     <th>{language === 'en' ? 'Added On' : 'जोड़ा गया'}</th>
                     <th>{language === 'en' ? 'Actions' : 'कार्यवाही'}</th>
                   </tr>
@@ -1038,6 +1039,11 @@ const AdminDashboard = () => {
                       <td>{r.relationship || '-'}</td>
                       <td>{r.district || '-'}</td>
                       <td>{r.state || '-'}</td>
+                      <td>
+                        {r.addedBy
+                          ? <span style={{ fontWeight: 600, color: '#FF6B35' }}>{r.addedBy.fullName}</span>
+                          : <span style={{ color: '#aaa' }}>-</span>}
+                      </td>
                       <td>{new Date(r.addedAt).toLocaleDateString('en-IN')}</td>
                       <td style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                         <button
@@ -1103,6 +1109,8 @@ const AdminDashboard = () => {
                 [language === 'en' ? 'Pincode' : 'पिन कोड', viewNmRecord.pincode],
                 [language === 'en' ? 'Address' : 'पता', viewNmRecord.address],
                 [language === 'en' ? 'Added On' : 'जोड़ा गया', new Date(viewNmRecord.addedAt).toLocaleDateString('en-IN')],
+                [language === 'en' ? 'Added By' : 'जोड़ा किसने', viewNmRecord.addedBy?.fullName || null],
+                [language === 'en' ? 'Adder Email' : 'जोड़ने वाले का ईमेल', viewNmRecord.addedBy?.email || null],
               ].filter(([, val]) => val).map(([label, val]) => (
                 <div className="detail-group" key={label}>
                   <label>{label}:</label>

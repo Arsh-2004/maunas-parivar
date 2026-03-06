@@ -167,7 +167,7 @@ const Header = () => {
               </div>
               <Link to="/heritage" onClick={() => setIsMenuOpen(false)}>{t('header.heritage')}</Link>
               <Link to="/non-members" onClick={() => setIsMenuOpen(false)}>
-                {language === 'en' ? 'Non-Members' : 'गैर-सदस्य'}
+                {language === 'en' ? 'Non-Members' : 'अन्य सदस्य'}
               </Link>
               {isAuthenticated() && !isAdminPage && (
                 <>

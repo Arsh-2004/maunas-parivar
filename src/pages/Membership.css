@@ -620,7 +620,21 @@
 /* Help Section - Support Tiers */
 .help-section {
   padding: 100px 0;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #ffb347 100%);
+  position: relative;
+}
+
+.help-section .section-header h2 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 15px;
+  text-shadow: 1px 2px 8px rgba(0,0,0,0.18);
+}
+
+.help-section .underline {
+  background: linear-gradient(90deg, #fff, #ffe0c2);
+  opacity: 0.85;
 }
 
 .help-subtitle {
@@ -748,19 +762,20 @@
 }
 
 .help-note {
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 32px 36px;
+  border-radius: 18px;
   text-align: center;
-  border-left: 5px solid #FF6B35;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  border-left: 6px solid #FF6B35;
+  box-shadow: 0 8px 28px rgba(255, 107, 53, 0.22);
 }
 
 .help-note p {
-  color: #333;
-  font-size: 1.1rem;
+  color: #1a1a1a;
+  font-size: 1.12rem;
+  font-weight: 700;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 /* Notification Toast Styles */
