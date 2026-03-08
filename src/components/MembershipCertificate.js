@@ -125,14 +125,13 @@ const MembershipCertificate = ({ user, onClose }) => {
               {/* Footer / Signatures */}
               <div className="cert-footer">
                 <div className="cert-sig-block">
-                  <div className="cert-sig-line"></div>
-                  <p className="cert-sig-label">संचालक</p>
-                  <p className="cert-sig-name">मौनस परिवार</p>
-                </div>
-                <div className="cert-sig-block">
-                  <div className="cert-sig-line"></div>
                   <p className="cert-sig-label">सदस्यता दिनांक</p>
                   <p className="cert-sig-name">{memberSince}</p>
+                </div>
+                <div className="cert-sig-block">
+                  <img src="/assets/Signature.png" alt="संचालक हस्ताक्षर" className="cert-sig-image" />
+                  <p className="cert-sig-label">संचालक</p>
+                  <p className="cert-sig-name">मौनस परिवार</p>
                 </div>
               </div>
 

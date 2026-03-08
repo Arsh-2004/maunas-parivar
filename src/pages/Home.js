@@ -117,7 +117,7 @@ const Home = () => {
           <div className="nm-ref-inner">
             <div className="nm-ref-icon">👥</div>
             <div className="nm-ref-text">
-              <h3>{language === 'en' ? 'Non-Members Directory' : 'गैर-सदस्य डायरेक्टरी'}</h3>
+              <h3>{language === 'en' ? 'Non-Members Directory' : 'अन्य सदस्य डायरेक्टरी'}</h3>
               <p>
                 {language === 'en'
                   ? 'Know someone from our community who is not yet registered? Add their record so our family stays connected. Anyone can add or view records — no login required!'
@@ -306,8 +306,24 @@ const Home = () => {
               <p className="designation">{language === 'en' ? 'Bhadohi' : 'भदोही'}</p>
             </div>
 
-            
-          
+
+            <div className="team-card">
+              <div className="team-image">
+                <img 
+                  src="/assets/श्री संजय सिंह जी.png" 
+                  alt="श्री संजय सिंह जी"
+                  className="team-photo"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
+              </div>
+              <h3 className="member-name">{language === 'en' ? 'Shri Sanjay Singh Ji' : 'श्री संजय सिंह जी'}</h3>
+              <p className="designation">{language === 'en' ? 'Sehra Rampur Jaunpur' : 'सेहरा रामपुर जौनपुर'}</p>
+            </div>
+
             
           </div>
           {/* <div className="text-center" style={{ marginTop: '30px' }}>

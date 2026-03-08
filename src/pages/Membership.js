@@ -902,11 +902,37 @@ const Membership = () => {
       </section> */}
 
       <section className="help-section">
-        <div className="container">
+        <div className="help-section-bg-overlay"></div>
+        <div className="container" style={{position: 'relative', zIndex: 1}}>
           <div className="section-header">
+            <p className="help-section-eyebrow">{language === 'en' ? '🙏 Be Part of Something Greater' : '🙏 कुछ महान का हिस्सा बनें'}</p>
             <h2>{language === 'en' ? 'Support Your Community' : 'अपने समुदाय का समर्थन करें'}</h2>
             <div className="underline"></div>
           </div>
+
+          <div className="help-impact-grid">
+            <div className="help-impact-card">
+              <div className="help-impact-icon">🎓</div>
+              <h4>{language === 'en' ? 'Education' : 'शिक्षा'}</h4>
+              <p>{language === 'en' ? 'Supporting students with scholarships & resources' : 'छात्रवृत्ति व संसाधनों से विद्यार्थियों की मदद'}</p>
+            </div>
+            <div className="help-impact-card">
+              <div className="help-impact-icon">🏥</div>
+              <h4>{language === 'en' ? 'Health & Welfare' : 'स्वास्थ्य एवं कल्याण'}</h4>
+              <p>{language === 'en' ? 'Medical aid & welfare programs for families' : 'परिवारों के लिए चिकित्सा सहायता व कल्याण कार्यक्रम'}</p>
+            </div>
+            <div className="help-impact-card">
+              <div className="help-impact-icon">🏛️</div>
+              <h4>{language === 'en' ? 'Heritage' : 'विरासत'}</h4>
+              <p>{language === 'en' ? 'Preserving our cultural identity & traditions' : 'सांस्कृतिक पहचान व परंपराओं का संरक्षण'}</p>
+            </div>
+            <div className="help-impact-card">
+              <div className="help-impact-icon">🤝</div>
+              <h4>{language === 'en' ? 'Unity' : 'एकता'}</h4>
+              <p>{language === 'en' ? 'Strengthening bonds across the Maunas family' : 'मौनस परिवार में संगठन व एकजुटता को सुदृढ़ करना'}</p>
+            </div>
+          </div>
+
           {/* <p className="help-subtitle">
             {language === 'en' 
               ? 'The participation of all of us is essential for the progress of society and the creation of a strong future. To achieve this objective, you are humbly requested to participate in this noble work by voluntarily providing financial support as per your capacity for the development of your clan.'
@@ -967,11 +993,15 @@ const Membership = () => {
             </div> */}
           {/* </div> */}
           <div className="help-note">
+            <div className="help-note-icon">💝</div>
             <p>
               {language === 'en'
-                ? '💝 The participation of all of us is essential for the progress of society and the creation of a strong future. To achieve this objective, you are humbly requested to participate in this noble work by voluntarily providing financial support as per your capacity for the development of your clan.'
-                : '💝समाज की उन्नति और सशक्त भविष्य के निर्माण में हम सभी की सहभागिता आवश्यक है। इसी उद्देश्य की पूर्ति हेतु आपसे विनम्र आग्रह है कि अपने कुल के विकास के लिए स्वेच्छा से यथाशक्ति आर्थिक सहयोग प्रदान कर इस पुनीत कार्य में सहभागी बनें।'}
+                ? 'The participation of all of us is essential for the progress of society and the creation of a strong future. To achieve this objective, you are humbly requested to participate in this noble work by voluntarily providing financial support as per your capacity for the development of your clan.'
+                : 'समाज की उन्नति और सशक्त भविष्य के निर्माण में हम सभी की सहभागिता आवश्यक है। इसी उद्देश्य की पूर्ति हेतु आपसे विनम्र आग्रह है कि अपने कुल के विकास के लिए स्वेच्छा से यथाशक्ति आर्थिक सहयोग प्रदान कर इस पुनीत कार्य में सहभागी बनें।'}
             </p>
+            <a href="/community?section=sahyogi" className="help-donate-btn">
+              {language === 'en' ? '🤲 View Sahyogi Sadashya' : '🤲 सहयोगी सदस्य देखें'}
+            </a>
           </div>
         </div>
       </section>

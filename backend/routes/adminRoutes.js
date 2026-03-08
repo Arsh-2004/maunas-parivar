@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const Gallery = require('../models/Gallery');
 const OathAgreement = require('../models/OathAgreement');
+const Donor = require('../models/Donor');
 const path = require('path');
 const fs = require('fs');
 const { upload, uploadToCloudinary, getSignedUrl, cloudinary } = require('../middleware/cloudinaryUpload');
@@ -607,6 +608,56 @@ router.delete('/contacts/:id', adminAuth, async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to delete message' });
+  }
+});
+
+// ===== Sahyogi Sadashya (Donor) Routes =====
+
+// Add a donor
+router.post('/donors', adminAuth, upload.single('photo'), async (req, res) => {
+  try {
+    let photoPath = null;
+    if (req.file) {
+      photoPath = await uploadToCloudinary(req.file.path, 'donors');
+    }
+
+    const donor = new Donor({
+      fullName: req.body.fullName,
+      city: req.body.city || '',
+      state: req.body.state || '',
+      donationAmount: Number(req.body.donationAmount),
+      donationPurpose: req.body.donationPurpose || '',
+      message: req.body.message || '',
+      photoPath
+    });
+
+    await donor.save();
+    res.status(201).json({ success: true, donor });
+  } catch (error) {
+    console.error('Add donor error:', error);
+    res.status(500).json({ success: false, message: 'Failed to add donor', error: error.message });
+  }
+});
+
+// Get all donors (public)
+router.get('/donors', async (req, res) => {
+  try {
+    const donors = await Donor.find().sort({ addedAt: -1 });
+    res.json({ success: true, donors });
+  } catch (error) {
+    console.error('Fetch donors error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch donors' });
+  }
+});
+
+// Delete a donor
+router.delete('/donors/:id', adminAuth, async (req, res) => {
+  try {
+    await Donor.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Donor deleted successfully' });
+  } catch (error) {
+    console.error('Delete donor error:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete donor' });
   }
 });
 

@@ -80,8 +80,7 @@ const Footer = () => {
               <ul>
                 <li><Link to="/membership" onClick={scrollToTop}>{language === 'en' ? 'Member Registration' : 'सदस्य पंजीकरण'}</Link></li>
                 <li><Link to="/heritage" onClick={scrollToTop}>{language === 'en' ? 'Our Historical Heritage' : 'हमारे ऐतिहासिक धरोहर'}</Link></li>
-                <li><Link to="/" onClick={scrollToTop}>{language === 'en' ? 'Donate' : 'सहयोग करें'}</Link></li>
-                <li><Link to="/" onClick={scrollToTop}>{language === 'en' ? 'Volunteer' : 'स्वयंसेवक'}</Link></li>
+                <li><Link to="/community?section=sahyogi" onClick={scrollToTop}>{language === 'en' ? 'Donate' : 'सहयोग करें'}</Link></li>
                 <li><Link to="/contact" onClick={scrollToTop}>{t('header.contact')}</Link></li>
               </ul>
             </div>

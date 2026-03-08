@@ -169,6 +169,9 @@ const Header = () => {
               <Link to="/non-members" onClick={() => setIsMenuOpen(false)}>
                 {language === 'en' ? 'Non-Members' : 'अन्य सदस्य'}
               </Link>
+              <Link to="/community?section=sahyogi" onClick={() => setIsMenuOpen(false)}>
+                {language === 'en' ? 'Sahyogi Sadashya' : 'सहयोगी सदस्य'}
+              </Link>
               {isAuthenticated() && !isAdminPage && (
                 <>
                   <Link to="/gallery" onClick={() => setIsMenuOpen(false)}>{t('header.gallery')}</Link>

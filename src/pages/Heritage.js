@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import './Heritage.css';
 
@@ -11,15 +11,27 @@ const Heritage = () => {
       <section className="heritage-hero">
         <div className="heritage-hero-overlay" />
         <div className="container">
-          <h1 className="heritage-hero-title">
-            {language === 'en' ? 'Our Historical Heritage' : 'हमारे ऐतिहासिक धरोहर'}
-          </h1>
-          <p className="heritage-hero-subtitle">
-            {language === 'en'
-              ? 'Preserving the glorious legacy of the Maunas Kshatriya lineage'
-              : 'मौनस क्षत्रिय वंश की गौरवशाली विरासत को संजोए रखना'}
-          </p>
-          <div className="heritage-hero-divider" />
+          <div className="heritage-hero-inner">
+            <div className="heritage-hero-portrait">
+              <img
+                src="/assets/महाराजा राम सिंह मौनस.png"
+                alt="महाराजा राम सिंह मौनस"
+                className="heritage-maharaja-image"
+                loading="lazy"
+              />
+            </div>
+            <div className="heritage-hero-text">
+              <h1 className="heritage-hero-title">
+                {language === 'en' ? 'Our Historical Heritage' : 'हमारे ऐतिहासिक धरोहर'}
+              </h1>
+              <p className="heritage-hero-subtitle">
+                {language === 'en'
+                  ? 'Preserving the glorious legacy of the Maunas Kshatriya lineage'
+                  : 'मौनस क्षत्रिय वंश की गौरवशाली विरासत को संजोए रखना'}
+              </p>
+              <div className="heritage-hero-divider" />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -37,7 +49,7 @@ const Heritage = () => {
               <h3 className="heritage-site-name-hi">सीता समाहित स्थल (सीतामढ़ी)</h3>
               <h4 className="heritage-site-name-en">Sita Samaahit Sthal (Sitamarhi), Bhadohi</h4>
               <p>
-                मौनस वंश के आदिपुरुष एवं भगवान श्रीराम जी के ज्येष्ठ पुत्र श्री कुश जी का जन्मस्थल।
+                मौनस वंश के आदिपुरुष एवं भगवान श्रीराम जी के ज्येष्ठ पुत्र श्री कुश जी का जन्मस्थल। सीता समाहित स्थल (सीतामढ़ी)  तहसील - ज्ञानपुर, जिला - भदोही उ० प्र० में स्थित है।
               </p>
               {language === 'en' && (
                 <p>
@@ -246,11 +258,11 @@ const Heritage = () => {
               <h3 className="heritage-site-name-hi">कुलदेवी माता दुर्गा मंदिर</h3>
               <h4 className="heritage-site-name-en">Kuldevi Mata Durga Temple, Chakwara (Bhavpur), Bhadohi</h4>
               <p>
-                मौनस वंश की कुलदेवी माता दुर्गा जी हैं। इसी कारण चकवाड़ा (भावपुर), भदोही गाँव के व क्षेत्र के मौनस भाइयों ने मिलकर चकवाड़ा में कुलदेवी माता दुर्गा जी का मंदिर बनवाया, जो आज भी विद्यमान है।
+                मौनस वंश की कुलदेवी माता दुर्गा जी हैं। इसी कारण ग्राम सभा चकौड़ा (भावापुर) तहसील औराई जनपद भदोही, भदोही गाँव के व क्षेत्र के मौनस भाइयों ने मिलकर चकौड़ा में कुलदेवी माता दुर्गा जी का मंदिर बनवाया, जो आज भी विद्यमान है।
               </p>
               {language === 'en' && (
                 <p>
-                  The family deity of the Maunas clan is Mata Durga. For this reason, the Maunas brothers from Chakwara (Bhavpur), Bhadohi village, and the surrounding area, together built a temple dedicated to their family deity, Mata Durga, in Chakwara, which still exists today.
+                  The Maunas clan's family deity is Mata Durga. For this reason, the Mounas of the village council, Chakoura (Bhavapur), Tehsil Aurai, District Bhadohi, and the area, together built a temple dedicated to their family deity, Mata Durga, in Chakoura, which still exists today.
                 </p>
               )}
             </div>
@@ -262,8 +274,8 @@ const Heritage = () => {
                 />
                 <p>
                   {language === 'en'
-                    ? 'Kuldevi Mata Durga Temple, Chakwara (Bhavpur), Bhadohi'
-                    : 'कुलदेवी माता दुर्गा मंदिर, चकवाड़ा (भावपुर), भदोही'}
+                    ? 'Kuldevi Mata Durga Temple, Chakoura (Bhavpur), Bhadohi'
+                    : 'कुलदेवी माता दुर्गा मंदिर,  चकौड़ा (भावापुर), भदोही'}
                 </p>
               </div>
             </div>

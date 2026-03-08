@@ -19,6 +19,7 @@ const Community = () => {
   const toggleBio = (id) => setExpandedBios(prev => ({ ...prev, [id]: !prev[id] }));
   const BIO_LIMIT = 25;
   const [selectedMember, setSelectedMember] = useState(null);
+  const [donors, setDonors] = useState([]);
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -32,7 +33,18 @@ const Community = () => {
 
   useEffect(() => {
     fetchMembers();
+    fetchDonors();
   }, []);
+
+  const fetchDonors = async () => {
+    try {
+      const response = await fetch(`${API_URL}/admin/donors`);
+      const data = await response.json();
+      if (data.success) setDonors(data.donors);
+    } catch (err) {
+      console.error('Error fetching donors:', err);
+    }
+  };
 
   const fetchMembers = async () => {
     try {
@@ -227,13 +239,19 @@ const Community = () => {
       registeredAt: new Date('2026-02-20')
     }, 
     {  _id: 'prakosth-3',
-      fullName: language === 'en' ? 'Shri Amar Dev Singh (Manager)' : 'श्री अमर देव सिंह जी (प्रबंधक)',
+      fullName: language === 'en' ? 'Shri Amar Dev Singh Ji (Manager)' : 'श्री अमर देव सिंह जी (प्रबंधक)',
       city: language === 'en' ? 'Sarai Kasturia, Handia Prayagraj' : 'सराय कस्तूरिया, हंडिया प्रयागराज',
-      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
-      // occupation: language === 'en' ? 'Senior ScientistKrishi Vigyan Kendra ICAR, ATARI Zone IV' : 'वरिष्ठ वैज्ञानिक कृषि विज्ञान केंद्रआई०सी०ए०आर०, ए० टी० ए० आर० आई० जोन IV',
-      // education: 'post-graduate',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश', 
       prakosth: 'buddhijivi',
       photoPath: '/assets/श्री अमर देव सिंह जी.jpeg',
+      registeredAt: new Date('2026-02-20')
+    },
+    {  _id: 'prakosth-4',
+      fullName: language === 'en' ? 'Shri Dinesh Singh Ji (Manager)' : 'श्री दिनेश सिंह जी (प्रबंधक)',
+      city: language === 'en' ? 'Sehra, Rampur Jaunpur' : 'सेहरा, रामपुर जौनपुर',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      prakosth: 'buddhijivi',
+      photoPath: '/assets/श्री दिनेश सिंह जी.png',
       registeredAt: new Date('2026-02-20')
     },
     {
@@ -537,6 +555,61 @@ const Community = () => {
         </div>
       </section>
       )}
+      {/* Sahyogi Sadashya (Donors) Section */}
+      {(!activeSection || activeSection === 'sahyogi') && (
+      <section className="sahyogi-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>{language === 'en' ? 'Sahyogi Sadashya' : 'सहयोगी सदस्य'}</h2>
+            <div className="underline"></div>
+            <p className="section-subheading">
+              {language === 'en'
+                ? 'Honourable donors who have generously supported the Maunas Kshatriya Parivar'
+                : 'वे सम्माननीय सदस्य जिन्होंने मौनस क्षत्रिय परिवार को उदारतापूर्वक सहयोग दिया'}
+            </p>
+          </div>
+
+          {donors.length === 0 ? (
+            <p className="no-members">{language === 'en' ? 'No donors yet' : 'अभी तक कोई सहयोगी नहीं'}</p>
+          ) : (
+            <div className="sahyogi-grid">
+              {donors.map((donor) => (
+                <div key={donor._id} className="sahyogi-card">
+                  <div className="sahyogi-image">
+                    {donor.photoPath ? (
+                      <img
+                        src={donor.photoPath}
+                        alt={donor.fullName}
+                        className="sahyogi-photo"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div className="sahyogi-photo-placeholder" style={donor.photoPath ? {display: 'none'} : {}}>👤</div>
+                  </div>
+                  <div className="sahyogi-amount-badge">
+                    ₹{Number(donor.donationAmount).toLocaleString('en-IN')}
+                  </div>
+                  <h3 className="sahyogi-name">{donor.fullName}</h3>
+                  {(donor.city || donor.state) && (
+                    <p className="sahyogi-location">{[donor.city, donor.state].filter(Boolean).join(', ')}</p>
+                  )}
+                  {donor.donationPurpose && (
+                    <p className="sahyogi-purpose">🌸 {donor.donationPurpose}</p>
+                  )}
+                  {donor.message && (
+                    <p className="sahyogi-message">"{donor.message}"</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+      )}
+
       {/* Member Detail Modal */}
       {selectedMember && (
         <div className="member-detail-overlay" onClick={() => setSelectedMember(null)}>

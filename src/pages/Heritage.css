@@ -14,6 +14,38 @@
   overflow: hidden;
 }
 
+.heritage-hero-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+}
+
+.heritage-hero-portrait {
+  flex-shrink: 0;
+}
+
+.heritage-maharaja-image {
+  height: 220px;
+  width: auto;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.4));
+  display: block;
+}
+
+.heritage-hero-text {
+  text-align: left;
+}
+
+.heritage-hero-text .heritage-hero-subtitle {
+  margin: 0 0 28px;
+}
+
+.heritage-hero-text .heritage-hero-divider {
+  margin: 0;
+}
+
 .heritage-hero::before {
   content: '';
   position: absolute;
@@ -259,6 +291,19 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .heritage-hero-inner {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .heritage-maharaja-image {
+    height: 160px;
+  }
+
+  .heritage-hero-text {
+    text-align: center;
+  }
+
   .heritage-hero-title {
     font-size: 2rem;
   }

@@ -91,6 +91,14 @@ const About = () => {
       city: language === 'en' ? 'Bhadohi' : 'भदोही',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/ashishsingh.jpeg'
+    },
+    {
+      _id: '11',
+      fullName: language === 'en' ? 'Shri Sanjay Singh Ji' : 'श्री संजय सिंह जी',
+      position: language === 'en' ? 'Sehra Rampur Jaunpur' : 'सेहरा रामपुर जौनपुर',
+      city: language === 'en' ? 'Jaunpur' : 'जौनपुर',
+      state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
+      photoPath: '/assets/श्री संजय सिंह जी.png'
     }
   ], [language]);
 

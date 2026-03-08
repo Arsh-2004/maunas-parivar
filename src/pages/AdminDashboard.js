@@ -28,6 +28,8 @@ const AdminDashboard = () => {
   const [viewNmRecord, setViewNmRecord] = useState(null);
   const [nmSearch, setNmSearch] = useState('');
   const [galleryForm, setGalleryForm] = useState({ title: '', description: '', category: 'general', image: null });
+  const [donors, setDonors] = useState([]);
+  const [donorForm, setDonorForm] = useState({ fullName: '', city: '', state: '', donationAmount: '', donationPurpose: '', message: '', photo: null });
   const [showUserModal, setShowUserModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
@@ -63,6 +65,7 @@ const AdminDashboard = () => {
         fetchOathAgreements();
         fetchContacts();
         fetchNonMembers();
+        fetchDonors();
       } else {
         setError(language === 'en' ? 'Invalid admin password' : 'गलत व्यवस्थापक पासवर्ड');
       }
@@ -260,6 +263,62 @@ const AdminDashboard = () => {
     }
   };
 
+  // Donors management
+  const fetchDonors = async () => {
+    try {
+      const response = await fetch(`${API_URL}/admin/donors`);
+      const data = await response.json();
+      if (data.success) setDonors(data.donors);
+    } catch (err) {
+      console.error('Error fetching donors:', err);
+    }
+  };
+
+  const handleDonorSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('fullName', donorForm.fullName);
+    formData.append('city', donorForm.city);
+    formData.append('state', donorForm.state);
+    formData.append('donationAmount', donorForm.donationAmount);
+    formData.append('donationPurpose', donorForm.donationPurpose);
+    formData.append('message', donorForm.message);
+    if (donorForm.photo) formData.append('photo', donorForm.photo);
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      const response = await fetch(`${API_URL}/admin/donors`, {
+        method: 'POST',
+        headers: { 'x-admin-password': pwd },
+        body: formData,
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert(language === 'en' ? 'Donor added successfully!' : 'सहयोगी सफलतापूर्वक जोड़ा गया!');
+        fetchDonors();
+        setDonorForm({ fullName: '', city: '', state: '', donationAmount: '', donationPurpose: '', message: '', photo: null });
+        document.querySelectorAll('#donor-form input[type="file"]').forEach(i => { i.value = ''; });
+      } else {
+        alert(language === 'en' ? `Failed: ${data.message}` : `विफल: ${data.message}`);
+      }
+    } catch (err) {
+      console.error('Error adding donor:', err);
+    }
+  };
+
+  const handleDeleteDonor = async (id) => {
+    if (!window.confirm(language === 'en' ? 'Delete this donor record?' : 'इस सहयोगी रिकॉर्ड को हटाएं?')) return;
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      await fetch(`${API_URL}/admin/donors/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-admin-password': pwd },
+      });
+      fetchDonors();
+    } catch (err) {
+      console.error('Error deleting donor:', err);
+    }
+  };
+
   const handleGallerySubmit = async (e) => {
     e.preventDefault();
     
@@ -450,6 +509,12 @@ const AdminDashboard = () => {
               {nonMembers.length}
             </span>
           )}
+        </button>
+        <button
+          className={activeTab === 'donors' ? 'active' : ''}
+          onClick={() => setActiveTab('donors')}
+        >
+          {language === 'en' ? 'Sahyogi Sadashya' : 'सहयोगी सदस्य'}
         </button>
       </div>
 
@@ -1075,6 +1140,94 @@ const AdminDashboard = () => {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {activeTab === 'donors' && (
+        <div className="gallery-management">
+          <div className="gallery-form">
+            <h2>{language === 'en' ? '🙏 Add Sahyogi Sadashya (Donor)' : '🙏 सहयोगी सदस्य जोड़ें'}</h2>
+            <form id="donor-form" onSubmit={handleDonorSubmit}>
+              <input
+                type="text"
+                placeholder={language === 'en' ? 'Full Name *' : 'पूरा नाम *'}
+                value={donorForm.fullName}
+                onChange={(e) => setDonorForm({...donorForm, fullName: e.target.value})}
+                required
+              />
+              <input
+                type="text"
+                placeholder={language === 'en' ? 'City' : 'शहर'}
+                value={donorForm.city}
+                onChange={(e) => setDonorForm({...donorForm, city: e.target.value})}
+              />
+              <input
+                type="text"
+                placeholder={language === 'en' ? 'State' : 'राज्य'}
+                value={donorForm.state}
+                onChange={(e) => setDonorForm({...donorForm, state: e.target.value})}
+              />
+              <input
+                type="number"
+                placeholder={language === 'en' ? 'Donation Amount (₹) *' : 'दान राशि (₹) *'}
+                value={donorForm.donationAmount}
+                onChange={(e) => setDonorForm({...donorForm, donationAmount: e.target.value})}
+                min="1"
+                required
+              />
+              <input
+                type="text"
+                placeholder={language === 'en' ? 'Donation Purpose (e.g. Parivar Bhavan)' : 'दान का उद्देश्य (जैसे परिवार भवन)'}
+                value={donorForm.donationPurpose}
+                onChange={(e) => setDonorForm({...donorForm, donationPurpose: e.target.value})}
+              />
+              <textarea
+                placeholder={language === 'en' ? 'Message (optional)' : 'संदेश (वैकल्पिक)'}
+                value={donorForm.message}
+                onChange={(e) => setDonorForm({...donorForm, message: e.target.value})}
+              />
+              <div>
+                <label style={{display: 'block', marginBottom: '5px', fontWeight: '600'}}>
+                  {language === 'en' ? 'Donor Photo (optional):' : 'सहयोगी की फोटो (वैकल्पिक):'}
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setDonorForm({...donorForm, photo: e.target.files[0]})}
+                />
+                {donorForm.photo && (
+                  <p style={{marginTop: '5px', color: '#28a745', fontSize: '14px'}}>✓ {donorForm.photo.name}</p>
+                )}
+              </div>
+              <button type="submit">{language === 'en' ? 'Add Donor' : 'सहयोगी जोड़ें'}</button>
+            </form>
+          </div>
+
+          <div className="gallery-list">
+            <h2>{language === 'en' ? `All Donors (${donors.length})` : `सभी सहयोगी (${donors.length})`}</h2>
+            <div className="gallery-grid">
+              {donors.length === 0 ? (
+                <p style={{ color: '#888' }}>{language === 'en' ? 'No donors added yet' : 'अभी तक कोई सहयोगी नहीं जोड़ा गया'}</p>
+              ) : donors.map((donor) => (
+                <div key={donor._id} className="gallery-card">
+                  {donor.photoPath
+                    ? <img src={donor.photoPath} alt={donor.fullName} style={{ objectFit: 'cover' }} />
+                    : <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', background: '#fff5ef' }}>🙏</div>
+                  }
+                  <div className="gallery-info">
+                    <h3>{donor.fullName}</h3>
+                    <p style={{ fontWeight: 700, color: '#FF6B35', fontSize: '1.05rem' }}>₹{Number(donor.donationAmount).toLocaleString('en-IN')}</p>
+                    {donor.donationPurpose && <p>{donor.donationPurpose}</p>}
+                    {(donor.city || donor.state) && <p>📍 {[donor.city, donor.state].filter(Boolean).join(', ')}</p>}
+                    {donor.message && <p style={{ fontStyle: 'italic', color: '#888' }}>"{donor.message}"</p>}
+                    <button onClick={() => handleDeleteDonor(donor._id)} className="delete-btn">
+                      {language === 'en' ? 'Delete' : 'हटाएं'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
