@@ -1,4 +1,4 @@
-﻿import React from 'react';
+mport React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import './Heritage.css';
 
