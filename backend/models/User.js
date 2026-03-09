@@ -144,7 +144,49 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['बुद्धिजीवी प्रकोष्ठ', 'मानव सेवा प्रकोष्ठ', 'चिकित्सा प्रकोष्ठ', 'विधि प्रकोष्ठ', 'व्यापार प्रकोष्ठ', 'किसान प्रकोष्ठ', 'खेल एवं सैनिक प्रकोष्ठ', 'युवा प्रकोष्ठ', 'महिला प्रकोष्ठ', 'वीरांगना प्रकोष्ठ'],
     default: null
-  }
+  },
+  familyMembers: [{
+    name: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    relation: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    dateOfBirth: {
+      type: Date,
+      default: null
+    },
+    gender: {
+      type: String,
+      enum: ['male', 'female', 'other', null],
+      default: null
+    },
+    occupation: {
+      type: String,
+      default: ''
+    },
+    phone: {
+      type: String,
+      default: ''
+    },
+    photoPath: {
+      type: String,
+      default: ''
+    },
+    addedAt: {
+      type: Date,
+      default: Date.now
+    },
+    addedFrom: {
+      type: String,
+      enum: ['registration', 'profile'],
+      default: 'registration'
+    }
+  }]
 });
 
 module.exports = mongoose.model('User', userSchema);

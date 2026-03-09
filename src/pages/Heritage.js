@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import './Heritage.css';
 
@@ -256,9 +256,9 @@ const Heritage = () => {
           <div className="heritage-about-content">
             <div className="heritage-about-text">
               <h3 className="heritage-site-name-hi">कुलदेवी माता दुर्गा मंदिर</h3>
-              <h4 className="heritage-site-name-en">Kuldevi Mata Durga Temple, Chakwara (Bhavpur), Bhadohi</h4>
+              <h4 className="heritage-site-name-en">Kuldevi Mata Durga Temple, Chakwara (Bhavapur), Bhadohi</h4>
               <p>
-                मौनस वंश की कुलदेवी माता दुर्गा जी हैं। इसी कारण ग्राम सभा चकौड़ा (भावापुर) तहसील औराई जनपद भदोही, भदोही गाँव के व क्षेत्र के मौनस भाइयों ने मिलकर चकौड़ा में कुलदेवी माता दुर्गा जी का मंदिर बनवाया, जो आज भी विद्यमान है।
+                मौनस वंश की कुलदेवी माता दुर्गा जी हैं। इसी कारण ग्राम सभा चकौड़ा (भावापुर) तहसील औराई जनपद भदोही, गाँव के व क्षेत्र के मौनस भाइयों ने मिलकर चकौड़ा में कुलदेवी माता दुर्गा जी का मंदिर बनवाया, जो आज भी विद्यमान है।
               </p>
               {language === 'en' && (
                 <p>

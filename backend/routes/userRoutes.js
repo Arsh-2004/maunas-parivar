@@ -101,7 +101,8 @@ router.post('/register', upload.fields([
   { name: 'idProof', maxCount: 1 },
   { name: 'addressProof', maxCount: 1 },
   { name: 'photo', maxCount: 1 },
-  { name: 'donationDocument', maxCount: 1 }
+  { name: 'donationDocument', maxCount: 1 },
+  { name: 'familyMemberPhoto', maxCount: 20 }
 ]), async (req, res) => {
   try {
     // Check if phone number already exists
@@ -142,6 +143,40 @@ router.post('/register', upload.fields([
       : null;
 
     // Create new user
+    // Parse optional family members from JSON string
+    let familyMembers = [];
+    if (req.body.familyMembers) {
+      try {
+        const parsed = JSON.parse(req.body.familyMembers);
+        if (Array.isArray(parsed)) {
+          familyMembers = await Promise.all(
+            parsed
+              .filter(m => m.name && m.name.trim() && m.relation && m.relation.trim())
+              .map(async (m, i) => {
+                let photoPath = '';
+                const photoFiles = req.files && req.files.familyMemberPhoto;
+                if (photoFiles && photoFiles[i]) {
+                  photoPath = await uploadToCloudinary(photoFiles[i].path, 'photos');
+                }
+                return {
+                  name: m.name.trim(),
+                  relation: m.relation.trim(),
+                  dateOfBirth: m.dateOfBirth || null,
+                  gender: m.gender || null,
+                  occupation: m.occupation || '',
+                  phone: m.phone || '',
+                  photoPath,
+                  addedAt: new Date(),
+                  addedFrom: 'registration'
+                };
+              })
+          );
+        }
+      } catch (e) {
+        // ignore malformed JSON
+      }
+    }
+
     const userData = {
       fullName: req.body.fullName,
       fatherName: req.body.fatherName,
@@ -164,6 +199,7 @@ router.post('/register', upload.fields([
       addressProofPath: addressProofUrl,
       photoPath: photoUrl,
       donationDocumentPath: donationDocUrl,
+      familyMembers,
       status: 'pending'
     };
 
@@ -255,7 +291,8 @@ router.post('/login', async (req, res) => {
         education: user.education,
         photoPath: user.photoPath,
         status: user.status,
-        password: user.password
+        password: user.password,
+        familyMembers: user.familyMembers || []
       }
     });
   } catch (error) {
@@ -304,7 +341,8 @@ router.get('/profile/:phone', async (req, res) => {
         approvedAt: user.approvedAt,
         photoPath: user.photoPath,
         idCardPath: user.idCardPath,
-        idCardGeneratedAt: user.idCardGeneratedAt
+        idCardGeneratedAt: user.idCardGeneratedAt,
+        familyMembers: user.familyMembers || []
       }
     });
   } catch (error) {
@@ -336,6 +374,7 @@ router.put('/update-profile/:id', upload.single('photo'), async (req, res) => {
     user.state = req.body.state || user.state;
     user.pincode = req.body.pincode || user.pincode;
     user.occupation = req.body.occupation || user.occupation;
+    if (req.body.education) user.education = req.body.education;
 
     // Update photo if new one uploaded
     if (req.file) {
@@ -370,7 +409,8 @@ router.put('/update-profile/:id', upload.single('photo'), async (req, res) => {
         idCardPath: user.idCardPath,
         idCardGeneratedAt: user.idCardGeneratedAt,
         status: user.status,
-        approvedAt: user.approvedAt
+        approvedAt: user.approvedAt,
+        familyMembers: user.familyMembers || []
       }
     });
   } catch (error) {
@@ -561,6 +601,159 @@ router.delete('/non-members/:id', async (req, res) => {
   } catch (error) {
     console.error('Delete non-member error:', error);
     res.status(500).json({ success: false, message: 'Failed to delete record.' });
+  }
+});
+
+// ===================== FAMILY MEMBERS =====================
+
+// POST /api/users/family/:userId/add — Add a family member (approved members only)
+const familyUpload = upload.fields([{ name: 'familyMemberPhoto', maxCount: 1 }]);
+router.post('/family/:userId/add', familyUpload, async (req, res) => {
+  try {
+    const { phone, password, name, relation, dateOfBirth, gender, occupation, memberPhone } = req.body;
+
+    // Authenticate the requesting user
+    if (!phone || !password) {
+      return res.status(401).json({ success: false, message: 'Authentication required' });
+    }
+    const requestingUser = await User.findOne({ phone, password, status: 'approved' });
+    if (!requestingUser) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials or account not approved' });
+    }
+
+    // Verify they are modifying their own profile
+    if (String(requestingUser._id) !== String(req.params.userId)) {
+      return res.status(403).json({ success: false, message: 'You can only manage your own family members' });
+    }
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ success: false, message: 'Family member name is required' });
+    }
+    if (!relation || !relation.trim()) {
+      return res.status(400).json({ success: false, message: 'Relation is required' });
+    }
+
+    const newMember = {
+      name: name.trim(),
+      relation: relation.trim(),
+      dateOfBirth: dateOfBirth || null,
+      gender: gender || null,
+      occupation: occupation || '',
+      phone: memberPhone || '',
+      photoPath: '',
+      addedAt: new Date(),
+      addedFrom: 'profile'
+    };
+
+    // Upload photo if provided
+    if (req.files && req.files.familyMemberPhoto && req.files.familyMemberPhoto[0]) {
+      newMember.photoPath = await uploadToCloudinary(req.files.familyMemberPhoto[0].path, 'photos');
+    }
+
+    requestingUser.familyMembers.push(newMember);
+    await requestingUser.save();
+
+    res.json({
+      success: true,
+      message: 'Family member added successfully',
+      familyMembers: requestingUser.familyMembers
+    });
+  } catch (error) {
+    console.error('Add family member error:', error);
+    res.status(500).json({ success: false, message: 'Failed to add family member' });
+  }
+});
+
+// PUT /api/users/family/:userId/edit/:memberId — Edit a family member (approved members only)
+const familyEditUpload = upload.fields([{ name: 'familyMemberPhoto', maxCount: 1 }]);
+router.put('/family/:userId/edit/:memberId', familyEditUpload, async (req, res) => {
+  try {
+    const { phone, password, name, relation, dateOfBirth, gender, occupation, memberPhone } = req.body;
+
+    if (!phone || !password) {
+      return res.status(401).json({ success: false, message: 'Authentication required' });
+    }
+    const requestingUser = await User.findOne({ phone, password, status: 'approved' });
+    if (!requestingUser) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials or account not approved' });
+    }
+    if (String(requestingUser._id) !== String(req.params.userId)) {
+      return res.status(403).json({ success: false, message: 'You can only manage your own family members' });
+    }
+    if (!name || !name.trim()) {
+      return res.status(400).json({ success: false, message: 'Family member name is required' });
+    }
+    if (!relation || !relation.trim()) {
+      return res.status(400).json({ success: false, message: 'Relation is required' });
+    }
+
+    const member = requestingUser.familyMembers.id(req.params.memberId);
+    if (!member) {
+      return res.status(404).json({ success: false, message: 'Family member not found' });
+    }
+
+    member.name = name.trim();
+    member.relation = relation.trim();
+    if (dateOfBirth) member.dateOfBirth = dateOfBirth;
+    if (gender) member.gender = gender;
+    member.occupation = occupation || '';
+    member.phone = memberPhone || '';
+
+    // Upload new photo if provided
+    if (req.files && req.files.familyMemberPhoto && req.files.familyMemberPhoto[0]) {
+      member.photoPath = await uploadToCloudinary(req.files.familyMemberPhoto[0].path, 'photos');
+    }
+
+    await requestingUser.save();
+    res.json({
+      success: true,
+      message: 'Family member updated successfully',
+      familyMembers: requestingUser.familyMembers
+    });
+  } catch (error) {
+    console.error('Edit family member error:', error);
+    res.status(500).json({ success: false, message: 'Failed to edit family member' });
+  }
+});
+
+// DELETE /api/users/family/:userId/remove/:memberId — Remove a family member (approved members only)
+router.delete('/family/:userId/remove/:memberId', async (req, res) => {
+  try {
+    const { phone, password } = req.body;
+
+    // Authenticate the requesting user
+    if (!phone || !password) {
+      return res.status(401).json({ success: false, message: 'Authentication required' });
+    }
+    const requestingUser = await User.findOne({ phone, password, status: 'approved' });
+    if (!requestingUser) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials or account not approved' });
+    }
+
+    // Verify they are modifying their own profile
+    if (String(requestingUser._id) !== String(req.params.userId)) {
+      return res.status(403).json({ success: false, message: 'You can only manage your own family members' });
+    }
+
+    const memberIndex = requestingUser.familyMembers.findIndex(
+      m => String(m._id) === String(req.params.memberId)
+    );
+
+    if (memberIndex === -1) {
+      return res.status(404).json({ success: false, message: 'Family member not found' });
+    }
+
+    requestingUser.familyMembers.splice(memberIndex, 1);
+    await requestingUser.save();
+
+    res.json({
+      success: true,
+      message: 'Family member removed successfully',
+      familyMembers: requestingUser.familyMembers
+    });
+  } catch (error) {
+    console.error('Remove family member error:', error);
+    res.status(500).json({ success: false, message: 'Failed to remove family member' });
   }
 });
 

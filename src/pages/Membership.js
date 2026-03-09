@@ -54,6 +54,29 @@ const Membership = () => {
   const [dobDay, setDobDay] = useState('');
   const [dobMonth, setDobMonth] = useState('');
   const [dobYear, setDobYear] = useState('');
+  const [familyMembers, setFamilyMembers] = useState([]);
+  const [showFamilyForm, setShowFamilyForm] = useState(true);
+  const [newFamilyMember, setNewFamilyMember] = useState({ name: '', relation: '', gender: '', dateOfBirth: '', occupation: '', phone: '' });
+  const [fmDobDay, setFmDobDay] = useState('');
+  const [fmDobMonth, setFmDobMonth] = useState('');
+  const [fmDobYear, setFmDobYear] = useState('');
+  const [fmPhotoFile, setFmPhotoFile] = useState(null);
+  const [fmPhotoPreview, setFmPhotoPreview] = useState('');
+  const [familyMemberPhotos, setFamilyMemberPhotos] = useState([]);
+
+  const handleFmDobChange = (field, value) => {
+    const newDay   = field === 'day'   ? value : fmDobDay;
+    const newMonth = field === 'month' ? value : fmDobMonth;
+    const newYear  = field === 'year'  ? value : fmDobYear;
+    if (field === 'day')   setFmDobDay(value);
+    if (field === 'month') setFmDobMonth(value);
+    if (field === 'year')  setFmDobYear(value);
+    if (newDay && newMonth && newYear) {
+      setNewFamilyMember(prev => ({ ...prev, dateOfBirth: `${newYear}-${newMonth}-${newDay}` }));
+    } else {
+      setNewFamilyMember(prev => ({ ...prev, dateOfBirth: '' }));
+    }
+  };
 
   // Scroll to registration form if hash is present
   useEffect(() => {
@@ -518,6 +541,10 @@ const Membership = () => {
       submitData.append('pincode', formData.pincode);
       submitData.append('occupation', formData.occupation);
       submitData.append('education', formData.education);
+      submitData.append('familyMembers', JSON.stringify(familyMembers));
+      familyMemberPhotos.forEach(file => {
+        if (file) submitData.append('familyMemberPhoto', file);
+      });
       
       if (formData.idProof) {
         submitData.append('idProof', formData.idProof);
@@ -555,6 +582,12 @@ const Membership = () => {
         setDobDay('');
         setDobMonth('');
         setDobYear('');
+        setFamilyMembers([]);
+        setFamilyMemberPhotos([]);
+        setNewFamilyMember({ name: '', relation: '', gender: '', dateOfBirth: '', occupation: '', phone: '' });
+        setFmDobDay(''); setFmDobMonth(''); setFmDobYear('');
+        setFmPhotoFile(null); setFmPhotoPreview('');
+        setShowFamilyForm(true);
         setFormData({
           fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '', education: '',
           phone: '', password: '', confirmPassword: '', address: '', village: '', block: '', tehsil: '', district: '', city: '', state: '', pincode: '', occupation: '',
@@ -1020,7 +1053,7 @@ const Membership = () => {
               </div>
             )}
             
-            <form onSubmit={handleSubmit} className="registration-form">
+            <form onSubmit={handleSubmit} className="registration-form" noValidate>
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="fullName">{t('membership.fullName')}</label>
@@ -1400,7 +1433,6 @@ const Membership = () => {
                         style={{ marginTop: '8px' }}
                         value={subDegreeOther === 'diploma' ? 'Other Diploma' : formData.education}
                         onChange={handleEducationDegreeChange}
-                        required
                       >
                         <option value="">
                           {language === 'en' ? 'Select Diploma' : 'डिप्लोमा चुनें'}
@@ -1418,7 +1450,6 @@ const Membership = () => {
                           placeholder={language === 'en' ? 'Enter your diploma name' : 'अपने डिप्लोमा का नाम लिखें'}
                           value={otherEducationText}
                           onChange={handleOtherEducationChange}
-                          required
                         />
                       )}
                     </>
@@ -1430,7 +1461,6 @@ const Membership = () => {
                         style={{ marginTop: '8px' }}
                         value={subDegreeOther === 'graduate' ? 'Other Graduate Degree' : formData.education}
                         onChange={handleEducationDegreeChange}
-                        required
                       >
                         <option value="">
                           {language === 'en' ? 'Select Graduate Degree' : 'स्नातक डिग्री चुनें'}
@@ -1448,7 +1478,6 @@ const Membership = () => {
                           placeholder={language === 'en' ? 'Enter your graduate degree name' : 'अपनी स्नातक डिग्री का नाम लिखें'}
                           value={otherEducationText}
                           onChange={handleOtherEducationChange}
-                          required
                         />
                       )}
                     </>
@@ -1460,7 +1489,6 @@ const Membership = () => {
                         style={{ marginTop: '8px' }}
                         value={subDegreeOther === 'pg' ? 'Other PG Degree' : formData.education}
                         onChange={handleEducationDegreeChange}
-                        required
                       >
                         <option value="">
                           {language === 'en' ? 'Select Post Graduate Degree' : 'स्नातकोत्तर डिग्री चुनें'}
@@ -1478,7 +1506,6 @@ const Membership = () => {
                           placeholder={language === 'en' ? 'Enter your post graduate degree name' : 'अपनी स्नातकोत्तर डिग्री का नाम लिखें'}
                           value={otherEducationText}
                           onChange={handleOtherEducationChange}
-                          required
                         />
                       )}
                     </>
@@ -1491,7 +1518,6 @@ const Membership = () => {
                       placeholder={language === 'en' ? 'Enter your degree / qualification' : 'अपनी डिग्री / योग्यता लिखें'}
                       value={otherEducationText}
                       onChange={handleOtherEducationChange}
-                      required
                     />
                   )}
                 </div>
@@ -1570,6 +1596,185 @@ const Membership = () => {
                     {language === 'en' ? 'Optional: Upload donation receipt photo (JPG/PNG)' : 'वैकल्पिक: सहयोग रसीद की फोटो अपलोड करें (JPG/PNG)'}
                   </small>
                 </div>
+              </div>
+
+              {/* ====== OPTIONAL FAMILY DETAILS SECTION ====== */}
+              <div className="family-section">
+                <div className="family-section-header">
+                  <h3>
+                    <span className="family-icon">👨‍👩‍👧‍👦</span>
+                    {language === 'en' ? 'Family Details' : 'पारिवारिक विवरण'}
+                    <span className="family-optional-tag">{language === 'en' ? '(Optional)' : '(वैकल्पिक)'}</span>
+                  </h3>
+                </div>
+                <p className="family-section-note">
+                  {language === 'en'
+                    ? 'You can add your family members now or manage them later from your profile after approval.'
+                    : 'आप अभी अपने परिवार के सदस्यों को जोड़ सकते हैं या अनुमोदन के बाद अपनी प्रोफ़ाइल से प्रबंधित कर सकते हैं।'}
+                </p>
+
+                {showFamilyForm && (
+                  <div className="family-form-container">
+                    {/* Existing family members list */}
+                    {familyMembers.length > 0 && (
+                      <div className="family-members-list">
+                        {familyMembers.map((member, index) => (
+                          <div key={index} className="family-member-tag">
+                            <span className="fm-icon">👤</span>
+                            <span className="fm-info">
+                              <strong>{member.name}</strong>
+                              <span className="fm-relation"> ({member.relation})</span>
+                              {member.gender && <span className="fm-extra">, {member.gender === 'male' ? (language === 'en' ? 'Male' : 'पुरुष') : member.gender === 'female' ? (language === 'en' ? 'Female' : 'महिला') : (language === 'en' ? 'Other' : 'अन्य')}</span>}
+                              {member.occupation && <span className="fm-extra">, {member.occupation}</span>}
+                            </span>
+                            <button
+                              type="button"
+                              className="fm-remove-btn"
+                              onClick={() => setFamilyMembers(familyMembers.filter((_, i) => i !== index))}
+                              title={language === 'en' ? 'Remove' : 'हटाएं'}
+                            >✕</button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Add new family member form */}
+                    <div className="add-family-member-form">
+                      <h4>{language === 'en' ? 'Add Family Member' : 'परिवार के सदस्य जोड़ें'}</h4>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>{language === 'en' ? 'Name *' : 'नाम *'}</label>
+                          <input
+                            type="text"
+                            value={newFamilyMember.name}
+                            onChange={e => setNewFamilyMember({ ...newFamilyMember, name: e.target.value })}
+                            placeholder={language === 'en' ? 'Full name' : 'पूरा नाम'}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>{language === 'en' ? 'Relation *' : 'संबंध *'}</label>
+                          <select
+                            value={newFamilyMember.relation}
+                            onChange={e => setNewFamilyMember({ ...newFamilyMember, relation: e.target.value })}
+                          >
+                            <option value="">{language === 'en' ? 'Select Relation' : 'संबंध चुनें'}</option>
+                            <option value="Spouse">{language === 'en' ? 'Spouse (Wife/Husband)' : 'पत्नी/पति'}</option>
+                            <option value="Son">{language === 'en' ? 'Son' : 'पुत्र'}</option>
+                            <option value="Daughter">{language === 'en' ? 'Daughter' : 'पुत्री'}</option>
+                            <option value="Father">{language === 'en' ? 'Father' : 'पिता'}</option>
+                            <option value="Mother">{language === 'en' ? 'Mother' : 'माता'}</option>
+                            <option value="Brother">{language === 'en' ? 'Brother' : 'भाई'}</option>
+                            <option value="Sister">{language === 'en' ? 'Sister' : 'बहन'}</option>
+                            <option value="Grandfather">{language === 'en' ? 'Grandfather' : 'दादा/नाना'}</option>
+                            <option value="Grandmother">{language === 'en' ? 'Grandmother' : 'दादी/नानी'}</option>
+                            <option value="Other">{language === 'en' ? 'Other' : 'अन्य'}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>{language === 'en' ? 'Gender' : 'लिंग'}</label>
+                          <select
+                            value={newFamilyMember.gender}
+                            onChange={e => setNewFamilyMember({ ...newFamilyMember, gender: e.target.value })}
+                          >
+                            <option value="">{language === 'en' ? 'Select Gender' : 'लिंग चुनें'}</option>
+                            <option value="male">{language === 'en' ? 'Male' : 'पुरुष'}</option>
+                            <option value="female">{language === 'en' ? 'Female' : 'महिला'}</option>
+                            <option value="other">{language === 'en' ? 'Other' : 'अन्य'}</option>
+                          </select>
+                        </div>
+                        <div className="form-group">
+                          <label>{language === 'en' ? 'Date of Birth' : 'जन्म तिथि'}</label>
+                          <div className="dob-dropdowns">
+                            <select value={fmDobYear} onChange={e => handleFmDobChange('year', e.target.value)}>
+                              <option value="">{language === 'en' ? 'Year' : 'वर्ष'}</option>
+                              {Array.from({ length: new Date().getFullYear() - 1909 }, (_, i) => new Date().getFullYear() - i)
+                                .map(y => <option key={y} value={String(y)}>{y}</option>)}
+                            </select>
+                            <select value={fmDobMonth} onChange={e => handleFmDobChange('month', e.target.value)}>
+                              <option value="">{language === 'en' ? 'Month' : 'माह'}</option>
+                              {months.map(m => <option key={m.value} value={m.value}>{language === 'en' ? m.en : m.hi}</option>)}
+                            </select>
+                            <select value={fmDobDay} onChange={e => handleFmDobChange('day', e.target.value)}>
+                              <option value="">{language === 'en' ? 'Day' : 'दिन'}</option>
+                              {Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0')).map(d => <option key={d} value={d}>{d}</option>)}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>{language === 'en' ? 'Occupation' : 'व्यवसाय'}</label>
+                          <input
+                            type="text"
+                            value={newFamilyMember.occupation}
+                            onChange={e => setNewFamilyMember({ ...newFamilyMember, occupation: e.target.value })}
+                            placeholder={language === 'en' ? 'Occupation (optional)' : 'व्यवसाय (वैकल्पिक)'}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>{language === 'en' ? 'Phone' : 'फोन'}</label>
+                          <input
+                            type="tel"
+                            value={newFamilyMember.phone}
+                            onChange={e => setNewFamilyMember({ ...newFamilyMember, phone: e.target.value })}
+                            placeholder={language === 'en' ? 'Phone (optional)' : 'फोन (वैकल्पिक)'}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div className="form-group fm-photo-group">
+                          <label>{language === 'en' ? 'Photo (optional)' : 'फोटो (वैकल्पिक)'}</label>
+                          {fmPhotoPreview && (
+                            <div className="fm-photo-preview-wrap">
+                              <img src={fmPhotoPreview} alt="preview" className="fm-photo-preview" />
+                            </div>
+                          )}
+                          <label htmlFor="fmPhotoInput" className="file-upload-label fm-photo-upload-btn">
+                            📁 {language === 'en' ? 'Choose Photo' : 'फोटो चुनें'}
+                          </label>
+                          <input
+                            type="file"
+                            id="fmPhotoInput"
+                            accept="image/jpeg,image/png,image/jpg"
+                            className="file-input hidden-input"
+                            onChange={e => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                setFmPhotoFile(file);
+                                setFmPhotoPreview(URL.createObjectURL(file));
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="add-family-btn"
+                        onClick={() => {
+                          if (!newFamilyMember.name.trim()) {
+                            showNotification('error', language === 'en' ? '❌ Please enter family member name' : '❌ कृपया परिवार के सदस्य का नाम दर्ज करें');
+                            return;
+                          }
+                          if (!newFamilyMember.relation) {
+                            showNotification('error', language === 'en' ? '❌ Please select relation' : '❌ कृपया संबंध चुनें');
+                            return;
+                          }
+                          setFamilyMembers([...familyMembers, { ...newFamilyMember }]);
+                          setFamilyMemberPhotos([...familyMemberPhotos, fmPhotoFile]);
+                          setNewFamilyMember({ name: '', relation: '', gender: '', dateOfBirth: '', occupation: '', phone: '' });
+                          setFmDobDay(''); setFmDobMonth(''); setFmDobYear('');
+                          setFmPhotoFile(null); setFmPhotoPreview('');
+                          const fmPhotoInput = document.getElementById('fmPhotoInput');
+                          if (fmPhotoInput) fmPhotoInput.value = '';
+                        }}
+                      >
+                        + {language === 'en' ? 'Add Member' : 'सदस्य जोड़ें'}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="form-actions">

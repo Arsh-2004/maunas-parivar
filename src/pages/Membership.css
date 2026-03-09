@@ -1180,3 +1180,161 @@
     width: 100%;
   }
 }
+
+/* ===== FAMILY DETAILS SECTION (Registration Form) ===== */
+.family-section {
+  margin: 28px 0 20px;
+  border: 2px dashed #e0a870;
+  border-radius: 14px;
+  background: #fffaf5;
+  overflow: hidden;
+}
+
+.family-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #fff3e8, #ffe8cc);
+}
+
+.family-section-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #b05a00;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.family-icon { font-size: 1.3rem; }
+
+.family-optional-tag {
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: #c07830;
+  margin-left: 4px;
+}
+
+.family-toggle-icon {
+  font-size: 0.85rem;
+  color: #b05a00;
+}
+
+.fm-photo-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fm-photo-preview-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fm-photo-preview {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #FF6B35;
+}
+
+.fm-photo-upload-btn {
+  width: fit-content;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.family-section-note {
+  margin: 0;
+  padding: 8px 20px 10px;
+  font-size: 0.85rem;
+  color: #8a6030;
+  background: #fff8f0;
+  border-bottom: 1px solid #f0d0a0;
+}
+
+.family-form-container {
+  padding: 18px 20px 20px;
+}
+
+.family-members-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.family-member-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #e8f4ff;
+  border: 1px solid #b3d4f7;
+  border-radius: 22px;
+  padding: 5px 10px 5px 8px;
+  font-size: 0.88rem;
+  color: #1a4a7a;
+}
+
+.fm-icon { font-size: 1rem; }
+
+.fm-relation {
+  color: #4570a0;
+  font-size: 0.82rem;
+}
+
+.fm-extra {
+  color: #666;
+  font-size: 0.80rem;
+}
+
+.fm-remove-btn {
+  background: none;
+  border: none;
+  color: #c0392b;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0 2px;
+  line-height: 1;
+  margin-left: 4px;
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+
+.fm-remove-btn:hover { background: #fdecea; }
+
+.add-family-member-form {
+  background: #f9f9f9;
+  border: 1px solid #e0d0b8;
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.add-family-member-form h4 {
+  margin: 0 0 14px;
+  font-size: 0.95rem;
+  color: #6a3f10;
+}
+
+.add-family-btn {
+  background: linear-gradient(135deg, #e07b39, #f0a060);
+  color: #fff;
+  border: none;
+  padding: 9px 22px;
+  border-radius: 22px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.add-family-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(224,123,57,0.35);
+}

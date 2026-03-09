@@ -438,6 +438,88 @@
   background: #fff8f6;
 }
 
+.photo-edit-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.photo-preview-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.photo-preview-img {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #FF6B35;
+}
+
+.photo-preview-label {
+  font-size: 0.82rem;
+  color: #888;
+}
+
+.file-upload-label {
+  display: inline-block;
+  padding: 9px 16px;
+  border: 1.5px dashed #e0e0e0;
+  border-radius: 8px;
+  background: #fafafa;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #555;
+  transition: all 0.25s;
+}
+
+.file-upload-label:hover {
+  border-color: #FF6B35;
+  background: #fff8f6;
+  color: #FF6B35;
+}
+
+.camera-label {
+  border-color: #cce5ff;
+  background: #f0f8ff;
+  color: #0066cc;
+}
+
+.camera-label:hover {
+  border-color: #0066cc;
+  background: #e0f0ff;
+  color: #0066cc;
+}
+
+.dob-dropdowns {
+  display: flex;
+  gap: 10px;
+}
+
+.dob-dropdowns select {
+  flex: 1;
+  padding: 10px 8px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  cursor: pointer;
+  background: white;
+  font-family: inherit;
+  transition: border-color 0.25s;
+}
+
+.dob-dropdowns select:focus {
+  outline: none;
+  border-color: #FF6B35;
+}
+
+@media (max-width: 480px) {
+  .dob-dropdowns { flex-direction: column; gap: 8px; }
+}
+
 .form-actions {
   display: flex;
   gap: 12px;
@@ -774,4 +856,180 @@
     width: 100%;
     text-align: center;
   }
+}
+
+/* ===== FAMILY MEMBERS CARD ===== */
+.family-members-card .profile-card-header {
+  background: linear-gradient(135deg, #fff3e8, #ffe0b2);
+}
+
+.family-add-form {
+  background: #fafafa;
+  border: 1px solid #e0d0b8;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+}
+
+.family-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.no-family-text {
+  color: #999;
+  font-style: italic;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 16px 0;
+}
+
+.family-members-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.family-member-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f5f8ff;
+  border: 1px solid #d0dff5;
+  border-radius: 12px;
+  padding: 12px 14px;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+
+.family-member-card:hover { box-shadow: 0 3px 12px rgba(0,0,200,0.07); }
+
+.fm-card-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fm-card-photo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #FF6B35;
+}
+
+.fm-photo-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fm-photo-preview-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fm-photo-preview {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #FF6B35;
+}
+
+.fm-photo-upload-btn {
+  width: fit-content;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.fm-card-info { flex: 1; }
+
+.fm-card-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a3a6a;
+  margin-bottom: 2px;
+}
+
+.fm-card-relation {
+  display: inline-block;
+  background: #e3f2fd;
+  color: #1565c0;
+  border-radius: 6px;
+  padding: 1px 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.fm-card-detail {
+  font-size: 0.82rem;
+  color: #555;
+  margin-top: 2px;
+}
+
+.fm-card-source {
+  font-size: 0.75rem;
+  color: #aaa;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.fm-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.fm-remove-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #c0392b;
+  border-radius: 6px;
+  padding: 4px 6px;
+  transition: background 0.15s;
+}
+
+.fm-remove-btn:hover { background: #fdecea; }
+.fm-remove-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.fm-edit-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #1565c0;
+  border-radius: 6px;
+  padding: 4px 6px;
+  transition: background 0.15s;
+}
+.fm-edit-btn:hover { background: #e3f2fd; }
+.fm-edit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.family-member-edit-form {
+  background: #f0f7ff;
+  border: 1.5px solid #90caf9;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+}
+.fm-edit-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1565c0;
 }

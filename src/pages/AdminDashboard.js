@@ -34,6 +34,8 @@ const AdminDashboard = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
   const [certificateUser, setCertificateUser] = useState(null);
+  const [showFamilyModal, setShowFamilyModal] = useState(false);
+  const [familyModalUser, setFamilyModalUser] = useState(null);
   
   // New state for district/block filtering and sorting
   const [districtFilter, setDistrictFilter] = useState('all');
@@ -693,6 +695,7 @@ const AdminDashboard = () => {
                       <th>{language === 'en' ? 'Phone' : 'फोन'}</th>
                       <th>{language === 'en' ? 'District' : 'जिला'}</th>
                       <th>{language === 'en' ? 'Block' : 'खंड'}</th>
+                      <th>{language === 'en' ? 'Family' : 'परिवार'}</th>
                       <th>{language === 'en' ? 'Date' : 'तारीख'}</th>
                       <th>{language === 'en' ? 'Action' : 'कार्यवाई'}</th>
                     </tr>
@@ -704,6 +707,16 @@ const AdminDashboard = () => {
                         <td>{user.phone}</td>
                         <td>{user.district || 'N/A'}</td>
                         <td>{user.block || 'N/A'}</td>
+                        <td>
+                          {user.familyMembers && user.familyMembers.length > 0
+                            ? <button
+                                onClick={() => { setFamilyModalUser(user); setShowFamilyModal(true); }}
+                                title={language === 'en' ? 'Click to view family members' : 'परिवार की जानकारी देखें'}
+                                style={{ background: '#e3f2fd', color: '#1565c0', borderRadius: '12px', padding: '2px 10px', fontSize: '12px', fontWeight: '600', border: '1px solid #90caf9', cursor: 'pointer' }}
+                              >👨‍👩‍👧‍👦 {user.familyMembers.length}</button>
+                            : <span style={{ color: '#ccc', fontSize: '12px' }}>—</span>
+                          }
+                        </td>
                         <td>{new Date(user.registeredAt).toLocaleDateString('en-GB')}</td>
                         <td>
                           <button 
@@ -734,6 +747,68 @@ const AdminDashboard = () => {
                   </tbody>
                 </table>
               )}
+            </div>
+          )}
+
+          {/* Family Members Detail Modal */}
+          {showFamilyModal && familyModalUser && (
+            <div className="modal-overlay" onClick={() => setShowFamilyModal(false)}>
+              <div className="modal-content family-detail-modal" onClick={(e) => e.stopPropagation()}>
+                <button className="modal-close" onClick={() => setShowFamilyModal(false)}>×</button>
+                <h2 style={{ marginBottom: '4px' }}>
+                  👨‍👩‍👧‍👦 {language === 'en' ? 'Family Members' : 'पारिवारिक सदस्य'}
+                </h2>
+                <p style={{ color: '#666', fontSize: '14px', marginTop: 0, marginBottom: '16px' }}>
+                  {familyModalUser.fullName} — {familyModalUser.familyMembers.length} {language === 'en' ? 'member(s)' : 'सदस्य'}
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {familyModalUser.familyMembers.map((member, idx) => (
+                    <div key={member._id || idx} style={{
+                      background: '#f8f9fa',
+                      border: '1px solid #dee2e6',
+                      borderRadius: '10px',
+                      padding: '12px 16px',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '12px'
+                    }}>
+                      {member.photoPath
+                        ? <img src={member.photoPath} alt={member.name} style={{ width: '52px', height: '52px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #90caf9', flexShrink: 0 }} />
+                        : <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: '#e3f2fd', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>👤</div>
+                      }
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: '700', fontSize: '16px', color: '#212529', marginBottom: '4px' }}>{member.name}</div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '4px' }}>
+                          <span style={{ background: '#e3f2fd', color: '#1565c0', borderRadius: '4px', padding: '2px 8px', fontSize: '12px', fontWeight: '600' }}>{member.relation}</span>
+                          {member.gender && (
+                            <span style={{ background: '#f3e5f5', color: '#6a1b9a', borderRadius: '4px', padding: '2px 8px', fontSize: '12px' }}>
+                              {member.gender === 'male' ? (language === 'en' ? '♂ Male' : '♂ पुरुष') : member.gender === 'female' ? (language === 'en' ? '♀ Female' : '♀ महिला') : (language === 'en' ? 'Other' : 'अन्य')}
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: '13px', color: '#555', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                          {member.dateOfBirth && (
+                            <span>🎂 {language === 'en' ? 'DOB:' : 'जन्म तिथि:'} {new Date(member.dateOfBirth).toLocaleDateString('en-IN')}</span>
+                          )}
+                          {member.occupation && (
+                            <span>💼 {language === 'en' ? 'Occupation:' : 'व्यवसाय:'} {member.occupation}</span>
+                          )}
+                          {member.phone && (
+                            <span>📞 {member.phone}</span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#aaa', marginTop: '6px' }}>
+                          {member.addedFrom === 'registration'
+                            ? (language === 'en' ? '📝 Added during registration' : '📝 पंजीकरण के समय जोड़ा गया')
+                            : member.addedAt
+                              ? (language === 'en' ? `✏️ Added on ${new Date(member.addedAt).toLocaleDateString('en-IN')}` : `✏️ ${new Date(member.addedAt).toLocaleDateString('en-IN')} को जोड़ा गया`)
+                              : ''}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 
@@ -801,6 +876,52 @@ const AdminDashboard = () => {
                       PDF {language === 'en' ? 'View' : 'देखें'} 📄
                     </a>
                   </div>
+
+                  {/* Family Members Section */}
+                  {selectedUser.familyMembers && selectedUser.familyMembers.length > 0 && (
+                    <div className="detail-row family-detail-row" style={{ flexDirection: 'column', alignItems: 'flex-start', marginTop: '12px' }}>
+                      <span className="detail-label" style={{ marginBottom: '8px' }}>
+                        👨‍👩‍👧‍👦 {language === 'en' ? `Family Members (${selectedUser.familyMembers.length}):` : `पारिवारिक सदस्य (${selectedUser.familyMembers.length}):`}
+                      </span>
+                      <div style={{ width: '100%' }}>
+                        {selectedUser.familyMembers.map((member, idx) => (
+                          <div key={member._id || idx} style={{
+                            background: '#f8f9fa',
+                            border: '1px solid #e0e0e0',
+                            borderRadius: '8px',
+                            padding: '8px 12px',
+                            marginBottom: '6px',
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '10px'
+                          }}>
+                            <span style={{ fontSize: '20px' }}>👤</span>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontWeight: '600', color: '#333' }}>{member.name}</div>
+                              <div style={{ fontSize: '13px', color: '#666' }}>
+                                <span style={{ background: '#e3f2fd', color: '#1565c0', borderRadius: '4px', padding: '1px 6px', marginRight: '6px', fontSize: '12px' }}>{member.relation}</span>
+                                {member.gender && <span style={{ marginRight: '6px' }}>{member.gender === 'male' ? (language === 'en' ? 'Male' : 'पुरुष') : member.gender === 'female' ? (language === 'en' ? 'Female' : 'महिला') : (language === 'en' ? 'Other' : 'अन्य')}</span>}
+                                {member.dateOfBirth && <span style={{ marginRight: '6px' }}>DOB: {new Date(member.dateOfBirth).toLocaleDateString('en-IN')}</span>}
+                                {member.occupation && <span style={{ marginRight: '6px' }}>{member.occupation}</span>}
+                                {member.phone && <span>📞 {member.phone}</span>}
+                              </div>
+                              <div style={{ fontSize: '11px', color: '#999', marginTop: '3px' }}>
+                                {member.addedFrom === 'registration'
+                                  ? (language === 'en' ? '📝 Added during registration' : '📝 पंजीकरण के समय जोड़ा गया')
+                                  : (language === 'en' ? `✏️ Added from profile on ${new Date(member.addedAt).toLocaleDateString('en-IN')}` : `✏️ प्रोफ़ाइल से ${new Date(member.addedAt).toLocaleDateString('en-IN')} को जोड़ा गया`)}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {selectedUser.familyMembers && selectedUser.familyMembers.length === 0 && (
+                    <div className="detail-row" style={{ marginTop: '8px' }}>
+                      <span className="detail-label">👨‍👩‍👧‍👦 {language === 'en' ? 'Family Members:' : 'पारिवारिक सदस्य:'}</span>
+                      <span className="detail-value" style={{ color: '#999', fontStyle: 'italic' }}>{language === 'en' ? 'None added' : 'कोई नहीं'}</span>
+                    </div>
+                  )}
                 </div>
                 
                 {selectedUser.status === 'pending' && (

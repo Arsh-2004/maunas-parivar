@@ -16,7 +16,138 @@ const Profile = () => {
   const isEditingRef = React.useRef(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  
+
+  // Family member state
+  const [familyMembers, setFamilyMembers] = useState([]);
+  const [showFamilyForm, setShowFamilyForm] = useState(false);
+  const [familyLoading, setFamilyLoading] = useState(false);
+  const [familyMessage, setFamilyMessage] = useState({ type: '', text: '' });
+  const [newFamilyMember, setNewFamilyMember] = useState({ name: '', relation: '', gender: '', dateOfBirth: '', occupation: '', phone: '' });
+  const [fmDobDay, setFmDobDay] = useState('');
+  const [fmDobMonth, setFmDobMonth] = useState('');
+  const [fmDobYear, setFmDobYear] = useState('');
+  const [fmPhotoFile, setFmPhotoFile] = useState(null);
+  const [fmPhotoPreview, setFmPhotoPreview] = useState('');
+
+  // Edit family member state
+  const [editingMemberId, setEditingMemberId] = useState(null);
+  const [editFamilyMember, setEditFamilyMember] = useState({ name: '', relation: '', gender: '', dateOfBirth: '', occupation: '', phone: '' });
+  const [editFmDobDay, setEditFmDobDay] = useState('');
+  const [editFmDobMonth, setEditFmDobMonth] = useState('');
+  const [editFmDobYear, setEditFmDobYear] = useState('');
+  const [editFmPhotoFile, setEditFmPhotoFile] = useState(null);
+  const [editFmPhotoPreview, setEditFmPhotoPreview] = useState('');
+
+  const months = [
+    { value: '01', en: '01 - January',  hi: '01 - जनवरी' },
+    { value: '02', en: '02 - February', hi: '02 - फ़रवरी' },
+    { value: '03', en: '03 - March',    hi: '03 - मार्च' },
+    { value: '04', en: '04 - April',    hi: '04 - अप्रैल' },
+    { value: '05', en: '05 - May',      hi: '05 - मई' },
+    { value: '06', en: '06 - June',     hi: '06 - जून' },
+    { value: '07', en: '07 - July',     hi: '07 - जुलाई' },
+    { value: '08', en: '08 - August',   hi: '08 - अगस्त' },
+    { value: '09', en: '09 - September',hi: '09 - सितंबर' },
+    { value: '10', en: '10 - October',  hi: '10 - अक्तूबर' },
+    { value: '11', en: '11 - November', hi: '11 - नवंबर' },
+    { value: '12', en: '12 - December', hi: '12 - दिसंबर' },
+  ];
+
+  const handleFmDobChange = (field, value) => {
+    const newDay   = field === 'day'   ? value : fmDobDay;
+    const newMonth = field === 'month' ? value : fmDobMonth;
+    const newYear  = field === 'year'  ? value : fmDobYear;
+    if (field === 'day')   setFmDobDay(value);
+    if (field === 'month') setFmDobMonth(value);
+    if (field === 'year')  setFmDobYear(value);
+    if (newDay && newMonth && newYear) {
+      setNewFamilyMember(prev => ({ ...prev, dateOfBirth: `${newYear}-${newMonth}-${newDay}` }));
+    } else {
+      setNewFamilyMember(prev => ({ ...prev, dateOfBirth: '' }));
+    }
+  };
+
+  const handleEditFmDobChange = (field, value) => {
+    const newDay   = field === 'day'   ? value : editFmDobDay;
+    const newMonth = field === 'month' ? value : editFmDobMonth;
+    const newYear  = field === 'year'  ? value : editFmDobYear;
+    if (field === 'day')   setEditFmDobDay(value);
+    if (field === 'month') setEditFmDobMonth(value);
+    if (field === 'year')  setEditFmDobYear(value);
+    if (newDay && newMonth && newYear) {
+      setEditFamilyMember(prev => ({ ...prev, dateOfBirth: `${newYear}-${newMonth}-${newDay}` }));
+    } else {
+      setEditFamilyMember(prev => ({ ...prev, dateOfBirth: '' }));
+    }
+  };
+
+  const handleStartEditMember = (member) => {
+    setEditingMemberId(member._id);
+    setEditFamilyMember({
+      name: member.name || '',
+      relation: member.relation || '',
+      gender: member.gender || '',
+      dateOfBirth: member.dateOfBirth || '',
+      occupation: member.occupation || '',
+      phone: member.phone || ''
+    });
+    if (member.dateOfBirth) {
+      const d = new Date(member.dateOfBirth);
+      if (!isNaN(d)) {
+        setEditFmDobYear(String(d.getUTCFullYear()));
+        setEditFmDobMonth(String(d.getUTCMonth() + 1).padStart(2, '0'));
+        setEditFmDobDay(String(d.getUTCDate()).padStart(2, '0'));
+      }
+    } else {
+      setEditFmDobDay(''); setEditFmDobMonth(''); setEditFmDobYear('');
+    }
+    setEditFmPhotoFile(null);
+    setEditFmPhotoPreview(member.photoPath || '');
+    setShowFamilyForm(false);
+  };
+
+  const handleSaveEditMember = async () => {
+    if (!editFamilyMember.name.trim()) {
+      setFamilyMessage({ type: 'error', text: language === 'en' ? 'Please enter member name' : 'कृपया सदस्य का नाम दर्ज करें' });
+      return;
+    }
+    if (!editFamilyMember.relation) {
+      setFamilyMessage({ type: 'error', text: language === 'en' ? 'Please select relation' : 'कृपया संबंध चुनें' });
+      return;
+    }
+    setFamilyLoading(true);
+    setFamilyMessage({ type: '', text: '' });
+    try {
+      const submitData = new FormData();
+      submitData.append('phone', user.phone);
+      submitData.append('password', user.password);
+      submitData.append('name', editFamilyMember.name.trim());
+      submitData.append('relation', editFamilyMember.relation);
+      if (editFamilyMember.gender) submitData.append('gender', editFamilyMember.gender);
+      if (editFamilyMember.dateOfBirth) submitData.append('dateOfBirth', editFamilyMember.dateOfBirth);
+      if (editFamilyMember.occupation) submitData.append('occupation', editFamilyMember.occupation);
+      if (editFamilyMember.phone) submitData.append('memberPhone', editFamilyMember.phone);
+      if (editFmPhotoFile) submitData.append('familyMemberPhoto', editFmPhotoFile);
+
+      const response = await fetch(`${API_URL}/users/family/${user._id}/edit/${editingMemberId}`, {
+        method: 'PUT',
+        body: submitData,
+      });
+      const data = await response.json();
+      if (data.success) {
+        setFamilyMembers(data.familyMembers);
+        setEditingMemberId(null);
+        setFamilyMessage({ type: 'success', text: language === 'en' ? 'Family member updated!' : 'पारिवारिक सदस्य अपडेट हो गया!' });
+      } else {
+        setFamilyMessage({ type: 'error', text: data.message || (language === 'en' ? 'Failed to update' : 'अपडेट विफल') });
+      }
+    } catch (err) {
+      setFamilyMessage({ type: 'error', text: language === 'en' ? 'Connection error. Please try again.' : 'कनेक्शन त्रुटि।' });
+    } finally {
+      setFamilyLoading(false);
+    }
+  };
+
   const [formData, setFormData] = useState({
     email: '',
     phone: '',
@@ -25,6 +156,7 @@ const Profile = () => {
     state: '',
     pincode: '',
     occupation: '',
+    education: '',
     photo: null
   });
 
@@ -44,6 +176,8 @@ const Profile = () => {
             console.log('🔄 Profile refresh - ID Card Path:', data.user.idCardPath ? '✅ Present' : '❌ Not yet');
             // Update user in context with fresh data including photo and ID card
             updateUser(data.user);
+            // Load family members from fresh data
+            setFamilyMembers(data.user.familyMembers || []);
             // Only reset form data if NOT currently editing (prevents wiping user's typed input)
             if (!isEditingRef.current) {
               setFormData({
@@ -54,6 +188,7 @@ const Profile = () => {
                 state: data.user.state || '',
                 pincode: data.user.pincode || '',
                 occupation: data.user.occupation || '',
+                education: data.user.education || '',
                 photo: null
               });
             }
@@ -71,6 +206,7 @@ const Profile = () => {
           state: user.state || '',
           pincode: user.pincode || '',
           occupation: user.occupation || '',
+          education: user.education || '',
           photo: null
         });
       }
@@ -107,6 +243,77 @@ const Profile = () => {
     }
   };
 
+  const handleAddFamilyMember = async () => {
+    if (!newFamilyMember.name.trim()) {
+      setFamilyMessage({ type: 'error', text: language === 'en' ? 'Please enter member name' : 'कृपया सदस्य का नाम दर्ज करें' });
+      return;
+    }
+    if (!newFamilyMember.relation) {
+      setFamilyMessage({ type: 'error', text: language === 'en' ? 'Please select relation' : 'कृपया संबंध चुनें' });
+      return;
+    }
+    setFamilyLoading(true);
+    setFamilyMessage({ type: '', text: '' });
+    try {
+      const submitData = new FormData();
+      submitData.append('phone', user.phone);
+      submitData.append('password', user.password);
+      submitData.append('name', newFamilyMember.name.trim());
+      submitData.append('relation', newFamilyMember.relation);
+      if (newFamilyMember.gender) submitData.append('gender', newFamilyMember.gender);
+      if (newFamilyMember.dateOfBirth) submitData.append('dateOfBirth', newFamilyMember.dateOfBirth);
+      if (newFamilyMember.occupation) submitData.append('occupation', newFamilyMember.occupation);
+      if (newFamilyMember.phone) submitData.append('memberPhone', newFamilyMember.phone);
+      if (fmPhotoFile) submitData.append('familyMemberPhoto', fmPhotoFile);
+
+      const response = await fetch(`${API_URL}/users/family/${user._id}/add`, {
+        method: 'POST',
+        body: submitData,
+      });
+      const data = await response.json();
+      if (data.success) {
+        setFamilyMembers(data.familyMembers);
+        setNewFamilyMember({ name: '', relation: '', gender: '', dateOfBirth: '', occupation: '', phone: '' });
+        setFmDobDay(''); setFmDobMonth(''); setFmDobYear('');
+        setFmPhotoFile(null); setFmPhotoPreview('');
+        const fmPhotoInput = document.getElementById('fmPhotoInputProfile');
+        if (fmPhotoInput) fmPhotoInput.value = '';
+        setShowFamilyForm(false);
+        setFamilyMessage({ type: 'success', text: language === 'en' ? 'Family member added successfully!' : 'पारिवारिक सदस्य सफलतापूर्वक जोड़ा गया!' });
+      } else {
+        setFamilyMessage({ type: 'error', text: data.message || (language === 'en' ? 'Failed to add member' : 'सदस्य जोड़ने में विफल') });
+      }
+    } catch (err) {
+      setFamilyMessage({ type: 'error', text: language === 'en' ? 'Connection error. Please try again.' : 'कनेक्शन त्रुटि। पुनः प्रयास करें।' });
+    } finally {
+      setFamilyLoading(false);
+    }
+  };
+
+  const handleRemoveFamilyMember = async (memberId) => {
+    if (!window.confirm(language === 'en' ? 'Remove this family member?' : 'इस पारिवारिक सदस्य को हटाएं?')) return;
+    setFamilyLoading(true);
+    setFamilyMessage({ type: '', text: '' });
+    try {
+      const response = await fetch(`${API_URL}/users/family/${user._id}/remove/${memberId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: user.phone, password: user.password })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setFamilyMembers(data.familyMembers);
+        setFamilyMessage({ type: 'success', text: language === 'en' ? 'Family member removed.' : 'पारिवारिक सदस्य हटा दिया गया।' });
+      } else {
+        setFamilyMessage({ type: 'error', text: data.message || (language === 'en' ? 'Failed to remove' : 'हटाने में विफल') });
+      }
+    } catch (err) {
+      setFamilyMessage({ type: 'error', text: language === 'en' ? 'Connection error.' : 'कनेक्शन त्रुटि।' });
+    } finally {
+      setFamilyLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -121,6 +328,7 @@ const Profile = () => {
       submitData.append('state', formData.state);
       submitData.append('pincode', formData.pincode);
       submitData.append('occupation', formData.occupation);
+      submitData.append('education', formData.education);
       
       if (formData.photo) {
         submitData.append('photo', formData.photo);
@@ -250,9 +458,28 @@ const Profile = () => {
                 <form onSubmit={handleSubmit} className="profile-form">
 
                   <div className="form-section-title">{language === 'en' ? '📷 Photo' : '📷 फोटो'}</div>
-                  <div className="form-group">
-                    <label htmlFor="photoInput">{language === 'en' ? 'Upload New Photo (JPG/PNG)' : 'नई फोटो अपलोड करें (JPG/PNG)'}</label>
+                  <div className="form-group photo-edit-group">
+                    {user.photoPath && !formData.photo && (
+                      <div className="photo-preview-wrap">
+                        <img src={user.photoPath} alt="Current" className="photo-preview-img" />
+                        <span className="photo-preview-label">{language === 'en' ? 'Current photo' : 'वर्तमान फोटो'}</span>
+                      </div>
+                    )}
+                    {formData.photo && (
+                      <div className="photo-preview-wrap">
+                        <img src={URL.createObjectURL(formData.photo)} alt="New" className="photo-preview-img" />
+                        <span className="photo-preview-label">{language === 'en' ? 'New photo (preview)' : 'नई फोटो (प्रीव्यू)'}</span>
+                      </div>
+                    )}
+                    <label htmlFor="photoInput" className="file-upload-label">
+                      📁 {language === 'en' ? 'Choose from Gallery (JPG/PNG)' : 'गैलरी से चुनें (JPG/PNG)'}
+                    </label>
                     <input type="file" id="photoInput" accept="image/jpeg,image/png,image/jpg"
+                      onChange={handleFileChange} className="file-input" />
+                    <label htmlFor="cameraInput" className="file-upload-label camera-label">
+                      📷 {language === 'en' ? 'Take Photo (Camera)' : 'कैमरा से फोटो लें'}
+                    </label>
+                    <input type="file" id="cameraInput" accept="image/*" capture="environment"
                       onChange={handleFileChange} className="file-input" />
                   </div>
 
@@ -289,9 +516,24 @@ const Profile = () => {
                   </div>
 
                   <div className="form-section-title">{language === 'en' ? '💼 Other' : '💼 अन्य'}</div>
-                  <div className="form-group">
-                    <label>{language === 'en' ? 'Occupation' : 'व्यवसाय'}</label>
-                    <input type="text" name="occupation" value={formData.occupation} onChange={handleChange} required />
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>{language === 'en' ? 'Occupation' : 'व्यवसाय'}</label>
+                      <input type="text" name="occupation" value={formData.occupation} onChange={handleChange} required />
+                    </div>
+                    <div className="form-group">
+                      <label>{language === 'en' ? 'Education' : 'शिक्षा'}</label>
+                      <select name="education" value={formData.education} onChange={handleChange}>
+                        <option value="">{language === 'en' ? 'Select Education' : 'शिक्षा चुनें'}</option>
+                        <option value="below-10th">{language === 'en' ? 'Below 10th' : '10वीं से कम'}</option>
+                        <option value="10th">{language === 'en' ? '10th Pass' : '10वीं पास'}</option>
+                        <option value="12th">{language === 'en' ? '12th Pass' : '12वीं पास'}</option>
+                        <option value="graduate">{language === 'en' ? 'Graduate' : 'स्नातक'}</option>
+                        <option value="post-graduate">{language === 'en' ? 'Post Graduate' : 'स्नातकोत्तर'}</option>
+                        <option value="diploma">{language === 'en' ? 'Diploma' : 'डिप्लोमा'}</option>
+                        <option value="others">{language === 'en' ? 'Others' : 'अन्य'}</option>
+                      </select>
+                    </div>
                   </div>
 
                   <div className="form-actions">
@@ -314,7 +556,7 @@ const Profile = () => {
                   <button className="edit-btn" onClick={() => {
                     setFormData({ email: user.email || '', phone: user.phone || '', address: user.address || '',
                       city: user.city || '', state: user.state || '', pincode: user.pincode || '',
-                      occupation: user.occupation || '', photo: null });
+                      occupation: user.occupation || '', education: user.education || '', photo: null });
                     isEditingRef.current = true;
                     setIsEditing(true);
                   }}>✏️ {language === 'en' ? 'Edit' : 'संपादित करें'}</button>
@@ -386,12 +628,320 @@ const Profile = () => {
             </>
           )}
 
+          {/* ===== FAMILY MEMBERS SECTION ===== */}
+          {user.status === 'approved' && (
+            <div className="profile-card family-members-card">
+              <div className="profile-card-header">
+                <h3><span className="card-icon">👨‍👩‍👧‍👦</span> {language === 'en' ? 'Family Members' : 'पारिवारिक सदस्य'}</h3>
+                <button className="edit-btn" onClick={() => { setShowFamilyForm(!showFamilyForm); setFamilyMessage({ type: '', text: '' }); }}>
+                  {showFamilyForm ? (language === 'en' ? '✕ Close' : '✕ बंद करें') : (language === 'en' ? '+ Add Member' : '+ सदस्य जोड़ें')}
+                </button>
+              </div>
+              <div className="profile-card-body">
+                {familyMessage.text && (
+                  <div className={`profile-message ${familyMessage.type}`} style={{ marginBottom: '12px' }}>{familyMessage.text}</div>
+                )}
+
+                {/* Add family member form */}
+                {showFamilyForm && (
+                  <div className="family-add-form">
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>{language === 'en' ? 'Name *' : 'नाम *'}</label>
+                        <input
+                          type="text"
+                          value={newFamilyMember.name}
+                          onChange={e => setNewFamilyMember({ ...newFamilyMember, name: e.target.value })}
+                          placeholder={language === 'en' ? 'Full name' : 'पूरा नाम'}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>{language === 'en' ? 'Relation *' : 'संबंध *'}</label>
+                        <select
+                          value={newFamilyMember.relation}
+                          onChange={e => setNewFamilyMember({ ...newFamilyMember, relation: e.target.value })}
+                        >
+                          <option value="">{language === 'en' ? 'Select Relation' : 'संबंध चुनें'}</option>
+                          <option value="Spouse">{language === 'en' ? 'Spouse (Wife/Husband)' : 'पत्नी/पति'}</option>
+                          <option value="Son">{language === 'en' ? 'Son' : 'पुत्र'}</option>
+                          <option value="Daughter">{language === 'en' ? 'Daughter' : 'पुत्री'}</option>
+                          <option value="Father">{language === 'en' ? 'Father' : 'पिता'}</option>
+                          <option value="Mother">{language === 'en' ? 'Mother' : 'माता'}</option>
+                          <option value="Brother">{language === 'en' ? 'Brother' : 'भाई'}</option>
+                          <option value="Sister">{language === 'en' ? 'Sister' : 'बहन'}</option>
+                          <option value="Grandfather">{language === 'en' ? 'Grandfather' : 'दादा/नाना'}</option>
+                          <option value="Grandmother">{language === 'en' ? 'Grandmother' : 'दादी/नानी'}</option>
+                          <option value="Other">{language === 'en' ? 'Other' : 'अन्य'}</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>{language === 'en' ? 'Gender' : 'लिंग'}</label>
+                        <select
+                          value={newFamilyMember.gender}
+                          onChange={e => setNewFamilyMember({ ...newFamilyMember, gender: e.target.value })}
+                        >
+                          <option value="">{language === 'en' ? 'Select Gender' : 'लिंग चुनें'}</option>
+                          <option value="male">{language === 'en' ? 'Male' : 'पुरुष'}</option>
+                          <option value="female">{language === 'en' ? 'Female' : 'महिला'}</option>
+                          <option value="other">{language === 'en' ? 'Other' : 'अन्य'}</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label>{language === 'en' ? 'Date of Birth' : 'जन्म तिथि'}</label>
+                        <div className="dob-dropdowns">
+                          <select value={fmDobYear} onChange={e => handleFmDobChange('year', e.target.value)}>
+                            <option value="">{language === 'en' ? 'Year' : 'वर्ष'}</option>
+                            {Array.from({ length: new Date().getFullYear() - 1909 }, (_, i) => new Date().getFullYear() - i)
+                              .map(y => <option key={y} value={String(y)}>{y}</option>)}
+                          </select>
+                          <select value={fmDobMonth} onChange={e => handleFmDobChange('month', e.target.value)}>
+                            <option value="">{language === 'en' ? 'Month' : 'माह'}</option>
+                            {months.map(m => <option key={m.value} value={m.value}>{language === 'en' ? m.en : m.hi}</option>)}
+                          </select>
+                          <select value={fmDobDay} onChange={e => handleFmDobChange('day', e.target.value)}>
+                            <option value="">{language === 'en' ? 'Day' : 'दिन'}</option>
+                            {Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0')).map(d => <option key={d} value={d}>{d}</option>)}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>{language === 'en' ? 'Occupation' : 'व्यवसाय'}</label>
+                        <input
+                          type="text"
+                          value={newFamilyMember.occupation}
+                          onChange={e => setNewFamilyMember({ ...newFamilyMember, occupation: e.target.value })}
+                          placeholder={language === 'en' ? 'Occupation (optional)' : 'व्यवसाय (वैकल्पिक)'}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>{language === 'en' ? 'Phone' : 'फोन'}</label>
+                        <input
+                          type="tel"
+                          value={newFamilyMember.phone}
+                          onChange={e => setNewFamilyMember({ ...newFamilyMember, phone: e.target.value })}
+                          placeholder={language === 'en' ? 'Phone (optional)' : 'फोन (वैकल्पिक)'}
+                        />
+                      </div>
+                    </div>
+                    <div className="form-row">
+                      <div className="form-group fm-photo-group">
+                        <label>{language === 'en' ? 'Photo (optional)' : 'फोटो (वैकल्पिक)'}</label>
+                        {fmPhotoPreview && (
+                          <div className="fm-photo-preview-wrap">
+                            <img src={fmPhotoPreview} alt="preview" className="fm-photo-preview" />
+                          </div>
+                        )}
+                        <label htmlFor="fmPhotoInputProfile" className="file-upload-label fm-photo-upload-btn">
+                          📁 {language === 'en' ? 'Choose Photo' : 'फोटो चुनें'}
+                        </label>
+                        <input
+                          type="file"
+                          id="fmPhotoInputProfile"
+                          accept="image/jpeg,image/png,image/jpg"
+                          className="file-input hidden-input"
+                          onChange={e => {
+                            const file = e.target.files[0];
+                            if (file) { setFmPhotoFile(file); setFmPhotoPreview(URL.createObjectURL(file)); }
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="family-form-actions">
+                      <button
+                        type="button"
+                        className="save-btn"
+                        onClick={handleAddFamilyMember}
+                        disabled={familyLoading}
+                      >
+                        {familyLoading ? (language === 'en' ? 'Adding...' : 'जोड़ रहे हैं...') : (language === 'en' ? 'Add Member' : 'सदस्य जोड़ें')}
+                      </button>
+                      <button type="button" className="cancel-btn" onClick={() => { setShowFamilyForm(false); setNewFamilyMember({ name: '', relation: '', gender: '', dateOfBirth: '', occupation: '', phone: '' }); setFmDobDay(''); setFmDobMonth(''); setFmDobYear(''); setFmPhotoFile(null); setFmPhotoPreview(''); const inp = document.getElementById('fmPhotoInputProfile'); if(inp) inp.value=''; }}>
+                        {language === 'en' ? 'Cancel' : 'रद्द करें'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Family members list */}
+                {familyMembers.length === 0 ? (
+                  <p className="no-family-text">
+                    {language === 'en' ? 'No family members added yet. Click "+ Add Member" to add.' : 'अभी तक कोई पारिवारिक सदस्य नहीं जोड़ा गया। "+ सदस्य जोड़ें" पर क्लिक करें।'}
+                  </p>
+                ) : (
+                  <div className="family-members-grid">
+                    {familyMembers.map((member) => (
+                      editingMemberId === member._id ? (
+                        /* ---- Inline Edit Form ---- */
+                        <div key={member._id} className="family-member-edit-form">
+                          <h4 className="fm-edit-title">✏️ {language === 'en' ? 'Edit Member' : 'सदस्य संपादित करें'}</h4>
+                          <div className="form-row">
+                            <div className="form-group">
+                              <label>{language === 'en' ? 'Name *' : 'नाम *'}</label>
+                              <input
+                                type="text"
+                                value={editFamilyMember.name}
+                                onChange={e => setEditFamilyMember({ ...editFamilyMember, name: e.target.value })}
+                                placeholder={language === 'en' ? 'Full name' : 'पूरा नाम'}
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label>{language === 'en' ? 'Relation *' : 'संबंध *'}</label>
+                              <select
+                                value={editFamilyMember.relation}
+                                onChange={e => setEditFamilyMember({ ...editFamilyMember, relation: e.target.value })}
+                              >
+                                <option value="">{language === 'en' ? 'Select Relation' : 'संबंध चुनें'}</option>
+                                <option value="Spouse">{language === 'en' ? 'Spouse (Wife/Husband)' : 'पत्नी/पति'}</option>
+                                <option value="Son">{language === 'en' ? 'Son' : 'पुत्र'}</option>
+                                <option value="Daughter">{language === 'en' ? 'Daughter' : 'पुत्री'}</option>
+                                <option value="Father">{language === 'en' ? 'Father' : 'पिता'}</option>
+                                <option value="Mother">{language === 'en' ? 'Mother' : 'माता'}</option>
+                                <option value="Brother">{language === 'en' ? 'Brother' : 'भाई'}</option>
+                                <option value="Sister">{language === 'en' ? 'Sister' : 'बहन'}</option>
+                                <option value="Grandfather">{language === 'en' ? 'Grandfather' : 'दादा/नाना'}</option>
+                                <option value="Grandmother">{language === 'en' ? 'Grandmother' : 'दादी/नानी'}</option>
+                                <option value="Other">{language === 'en' ? 'Other' : 'अन्य'}</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div className="form-row">
+                            <div className="form-group">
+                              <label>{language === 'en' ? 'Gender' : 'लिंग'}</label>
+                              <select
+                                value={editFamilyMember.gender}
+                                onChange={e => setEditFamilyMember({ ...editFamilyMember, gender: e.target.value })}
+                              >
+                                <option value="">{language === 'en' ? 'Select Gender' : 'लिंग चुनें'}</option>
+                                <option value="male">{language === 'en' ? 'Male' : 'पुरुष'}</option>
+                                <option value="female">{language === 'en' ? 'Female' : 'महिला'}</option>
+                                <option value="other">{language === 'en' ? 'Other' : 'अन्य'}</option>
+                              </select>
+                            </div>
+                            <div className="form-group">
+                              <label>{language === 'en' ? 'Date of Birth' : 'जन्म तिथि'}</label>
+                              <div className="dob-dropdowns">
+                                <select value={editFmDobYear} onChange={e => handleEditFmDobChange('year', e.target.value)}>
+                                  <option value="">{language === 'en' ? 'Year' : 'वर्ष'}</option>
+                                  {Array.from({ length: new Date().getFullYear() - 1909 }, (_, i) => new Date().getFullYear() - i)
+                                    .map(y => <option key={y} value={String(y)}>{y}</option>)}
+                                </select>
+                                <select value={editFmDobMonth} onChange={e => handleEditFmDobChange('month', e.target.value)}>
+                                  <option value="">{language === 'en' ? 'Month' : 'माह'}</option>
+                                  {months.map(m => <option key={m.value} value={m.value}>{language === 'en' ? m.en : m.hi}</option>)}
+                                </select>
+                                <select value={editFmDobDay} onChange={e => handleEditFmDobChange('day', e.target.value)}>
+                                  <option value="">{language === 'en' ? 'Day' : 'दिन'}</option>
+                                  {Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0')).map(d => <option key={d} value={d}>{d}</option>)}
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="form-row">
+                            <div className="form-group">
+                              <label>{language === 'en' ? 'Occupation' : 'व्यवसाय'}</label>
+                              <input
+                                type="text"
+                                value={editFamilyMember.occupation}
+                                onChange={e => setEditFamilyMember({ ...editFamilyMember, occupation: e.target.value })}
+                                placeholder={language === 'en' ? 'Occupation (optional)' : 'व्यवसाय (वैकल्पिक)'}
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label>{language === 'en' ? 'Phone' : 'फोन'}</label>
+                              <input
+                                type="tel"
+                                value={editFamilyMember.phone}
+                                onChange={e => setEditFamilyMember({ ...editFamilyMember, phone: e.target.value })}
+                                placeholder={language === 'en' ? 'Phone (optional)' : 'फोन (वैकल्पिक)'}
+                              />
+                            </div>
+                          </div>
+                          <div className="form-row">
+                            <div className="form-group fm-photo-group">
+                              <label>{language === 'en' ? 'Photo' : 'फोटो'}</label>
+                              {editFmPhotoPreview && (
+                                <div className="fm-photo-preview-wrap">
+                                  <img src={editFmPhotoPreview} alt="preview" className="fm-photo-preview" />
+                                </div>
+                              )}
+                              <label htmlFor="editFmPhotoInput" className="file-upload-label fm-photo-upload-btn">
+                                📁 {language === 'en' ? 'Change Photo' : 'फोटो बदलें'}
+                              </label>
+                              <input
+                                type="file"
+                                id="editFmPhotoInput"
+                                accept="image/jpeg,image/png,image/jpg"
+                                className="file-input hidden-input"
+                                onChange={e => {
+                                  const file = e.target.files[0];
+                                  if (file) { setEditFmPhotoFile(file); setEditFmPhotoPreview(URL.createObjectURL(file)); }
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div className="family-form-actions">
+                            <button type="button" className="save-btn" onClick={handleSaveEditMember} disabled={familyLoading}>
+                              {familyLoading ? (language === 'en' ? 'Saving...' : 'सहेज रहे हैं...') : (language === 'en' ? 'Save Changes' : 'बदलाव सहेजें')}
+                            </button>
+                            <button type="button" className="cancel-btn" onClick={() => { setEditingMemberId(null); setEditFmPhotoFile(null); setEditFmPhotoPreview(''); }}>
+                              {language === 'en' ? 'Cancel' : 'रद्द करें'}
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        /* ---- Member Card ---- */
+                        <div key={member._id} className="family-member-card">
+                          <div className="fm-card-icon">
+                            {member.photoPath
+                              ? <img src={member.photoPath} alt={member.name} className="fm-card-photo" />
+                              : '👤'}
+                          </div>
+                          <div className="fm-card-info">
+                            <div className="fm-card-name">{member.name}</div>
+                            <div className="fm-card-relation">{member.relation}</div>
+                            {member.gender && <div className="fm-card-detail">{member.gender === 'male' ? (language === 'en' ? 'Male' : 'पुरुष') : member.gender === 'female' ? (language === 'en' ? 'Female' : 'महिला') : (language === 'en' ? 'Other' : 'अन्य')}</div>}
+                            {member.dateOfBirth && <div className="fm-card-detail">{new Date(member.dateOfBirth).toLocaleDateString('en-IN')}</div>}
+                            {member.occupation && <div className="fm-card-detail">{member.occupation}</div>}
+                            {member.phone && <div className="fm-card-detail">📞 {member.phone}</div>}
+                            <div className="fm-card-source">
+                              {member.addedFrom === 'registration'
+                                ? (language === 'en' ? 'Added at registration' : 'पंजीकरण के समय जोड़ा गया')
+                                : (language === 'en' ? `Added on ${new Date(member.addedAt).toLocaleDateString('en-IN')}` : `${new Date(member.addedAt).toLocaleDateString('en-IN')} को जोड़ा गया`)}
+                            </div>
+                          </div>
+                          <div className="fm-card-actions">
+                            <button
+                              className="fm-edit-btn"
+                              onClick={() => handleStartEditMember(member)}
+                              disabled={familyLoading}
+                              title={language === 'en' ? 'Edit' : 'संपादित करें'}
+                            >✏️</button>
+                            <button
+                              className="fm-remove-btn"
+                              onClick={() => handleRemoveFamilyMember(member._id)}
+                              disabled={familyLoading}
+                              title={language === 'en' ? 'Remove' : 'हटाएं'}
+                            >🗑️</button>
+                          </div>
+                        </div>
+                      )
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* ===== NON-MEMBER RECORDS SECTION ===== */}
           {/* ===== NON-MEMBERS SECTION LINK ===== */}
           <div className="profile-card nm-section">
             <div className="profile-card-header">
               <h3><span className="card-icon">👥</span>
-                {language === 'en' ? 'Non-Members' : 'गैर-सदस्य'}
+                {language === 'en' ? 'Non-Members' : 'अन्य-सदस्य'}
               </h3>
             </div>
             <div className="profile-card-body">
@@ -399,16 +949,16 @@ const Profile = () => {
                 <div className="nm-ref-card-icon">👥</div>
                 <div className="nm-ref-card-text">
                   <p className="nm-ref-card-title">
-                    {language === 'en' ? 'Non-Members Directory' : 'गैर-सदस्य डायरेक्टरी'}
+                    {language === 'en' ? 'Non-Members Directory' : 'अन्य-सदस्य डायरेक्टरी'}
                   </p>
                   <p className="nm-ref-card-desc">
                     {language === 'en'
                       ? 'View and add records of community members who are not yet formally registered. Open to everyone — no login required!'
-                      : 'उन समाज के सदस्यों के रिकॉर्ड देखें और जोड़ें जो अभी तक पंजीकृत नहीं हैं। सभी के लिए खुला — लॉगिन आवश्यक नहीं!'}
+                      : 'उन समाज के सदस्यों के रिकॉर्ड देखें और जोड़ें जो अभी तक पंजीकृत नहीं हैं। '}
                   </p>
                 </div>
                 <Link to="/non-members" className="nm-ref-go-btn" onClick={() => window.scrollTo(0, 0)}>
-                  {language === 'en' ? 'Go to Non-Members →' : 'गैर-सदस्य पेज जाएं →'}
+                  {language === 'en' ? 'Go to Non-Members →' : 'अन्य-सदस्य पेज जाएं →'}
                 </Link>
               </div>
             </div>
