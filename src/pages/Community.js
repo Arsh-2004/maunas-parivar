@@ -270,8 +270,18 @@ const Community = () => {
       fullName: language === 'en' ? 'Dr. Akshi Singh Ji' : 'डॉ. अक्षी सिंह जी',
       city: language === 'en' ? 'Varanasi' : 'वाराणसी',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
-      occupation: language === 'en' ? 'MBBS, MD (Pediatrics) — Datta Meghe Medical College, Wardha | PG in Pediatric Nutrition, Boston University, USA' : 'MBBS, MD (पीडियाट्रिक्स) — Datta Meghe Medical College, वर्धा (नागपुर) | पोस्ट ग्रेजुएट इन पीडियाट्रिक न्यूट्रिशन, Boston University, यूएसए',
-      bio: language === 'en' ? 'Special Interest: Pre-term & high-risk newborn care | Fellowships: IAP, Indian College of Haematology & Oncology Society' : 'विशेष रुचि: प्री-टर्म एवं हाई-रिस्क नवजात शिशुओं की देखभाल | फेलोशिप्स: इंडियन एकेडमी ऑफ पीडियाट्रिक्स (IAP), इंडियन कॉलेज ऑफ हीमैटोलॉजी एंड ऑन्कोलॉजी सोसाइटी',
+      occupation: language === 'en'
+        ? 'MBBS, MD (Pediatrics) — Datta Meghe Medical College, Wardha (Nagpur) | Post Graduate in Pediatric Nutrition, Boston University, USA'
+        : 'MBBS, MD (पीडियाट्रिक्स) — Datta Meghe Medical College, वर्धा (नागपुर) | पोस्ट ग्रेजुएट इन पीडियाट्रिक न्यूट्रिशन, Boston University, यूएसए',
+      bio: language === 'en'
+        ? 'Special Interest: Pre-term (Premature) & High-Risk Newborn Care | Fellowships: Indian Academy of Pediatrics (IAP) | Indian College of Haematology & Oncology Society'
+        : 'विशेष रुचि: प्री-टर्म (असमय जन्मे) एवं हाई-रिस्क नवजात शिशुओं की देखभाल | फेलोशिप्स: इंडियन एकेडमी ऑफ पीडियाट्रिक्स (IAP) | इंडियन कॉलेज ऑफ हीमैटोलॉजी एंड ऑन्कोलॉजी सोसाइटी',
+      awards: language === 'en'
+        ? 'Best Research Award (PG Thesis) — Research on Pulmonary Hypertension in Newborns, Datta Meghe Medical College, Wardha'
+        : 'सर्वश्रेष्ठ शोध पुरस्कार (PG थीसिस) — नवजात शिशुओं में पल्मोनरी हाइपरटेंशन पर शोध, Datta Meghe Medical College, वर्धा',
+      publications: language === 'en'
+        ? 'Research papers published as author & co-author in various national and international medical journals'
+        : 'भारत एवं विदेशों की विभिन्न शोध पत्रिकाओं में लेखक एवं सह-लेखक के रूप में शोध पत्र प्रकाशित',
       education: 'post-graduate',
       prakosth: 'chikitsa',
       photoPath: '/assets/डॉ. अक्षी सिंह.jpeg',
@@ -282,8 +292,18 @@ const Community = () => {
       fullName: language === 'en' ? 'Dr. Gaurav Singh Ji' : 'डॉ. गौरव सिंह जी',
       city: language === 'en' ? 'Varanasi' : 'वाराणसी',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
-      occupation: language === 'en' ? 'MBBS, MD (General Medicine) — Ganesh Shankar Vidyarthi Memorial Medical College, Kanpur | Fellowship in Diabetes, CMC Vellore' : 'MBBS, MD (जनरल मेडिसिन) — Ganesh Shankar Vidyarthi Memorial Medical College, कानपुर | डायबिटीज में फेलोशिप, Christian Medical College, वेल्लोर',
-      bio: language === 'en' ? 'Fellowships: Indian Society of Hypertension, Indian Society of Chronomedicine, Indian College of Haematology & Oncology Society, Diabetes India' : 'फेलोशिप्स: इंडियन सोसाइटी ऑफ हाइपरटेंशन, इंडियन सोसाइटी ऑफ क्रोनोमेडिसिन, इंडियन कॉलेज ऑफ हीमैटोलॉजी एंड ऑन्कोलॉजी सोसाइटी, डायबिटीज इंडिया',
+      occupation: language === 'en'
+        ? 'MBBS, MD (General Medicine) — Ganesh Shankar Vidyarthi Memorial Medical College, Kanpur | Fellowship in Diabetes, Christian Medical College, Vellore'
+        : 'MBBS, MD (जनरल मेडिसिन) — Ganesh Shankar Vidyarthi Memorial Medical College, कानपुर | डायबिटीज में फेलोशिप, Christian Medical College, वेल्लोर',
+      bio: language === 'en'
+        ? 'Fellowships: Indian Society of Hypertension | Indian Society of Chronomedicine | Indian College of Haematology & Oncology Society | Diabetes India'
+        : 'फेलोशिप्स: इंडियन सोसाइटी ऑफ हाइपरटेंशन | इंडियन सोसाइटी ऑफ क्रोनोमेडिसिन | इंडियन कॉलेज ऑफ हीमैटोलॉजी एंड ऑन्कोलॉजी सोसाइटी | डायबिटीज इंडिया',
+      awards: language === 'en'
+        ? 'Kashi Gaurav Samman 2023 | Chikitsa Seva Samman 2024 — Mau District (conferred by BJP former State President Shri Bhupendra Singh Chaudhary) | Best Project Work & Academic Excellence (Distinction) — CMC Vellore Annual Convocation 2025 | Excellence Award in Diabetes — World Congress of Diabetes and Obesity, Hyderabad 2026'
+        : 'काशी गौरव सम्मान 2023 | चिकित्सा सेवा सम्मान 2024 — मऊ जिला (BJP पूर्व प्रदेश अध्यक्ष श्री भूपेंद्र सिंह चौधरी द्वारा) | बेस्ट प्रोजेक्ट वर्क एवं शैक्षणिक उत्कृष्टता (डिस्टिंक्शन) — सीएमसी वेल्लोर वार्षिक दीक्षांत समारोह 2025 | डायबिटीज क्षेत्र में उत्कृष्टता पुरस्कार — World Congress of Diabetes and Obesity, हैदराबाद 2026',
+      publications: language === 'en'
+        ? 'Research papers published as author & co-author in various national and international journals | Original research paper presented at International Diabetes Federation Conference, Bangkok 2025'
+        : 'भारत एवं विदेशों की विभिन्न शोध पत्रिकाओं में लेखक एवं सह-लेखक के रूप में शोध पत्र प्रकाशित | वर्ष 2025 में बैंकॉक में आयोजित International Diabetes Federation कॉन्फ्रेंस में मूल शोध पत्र का प्रस्तुतीकरण',
       education: 'post-graduate',
       prakosth: 'chikitsa',
       photoPath: '/assets/डॉ. गौरव सिंह.jpeg',
@@ -637,8 +657,20 @@ const Community = () => {
                 )}
                 {selectedMember.bio && (
                   <div className="member-detail-row">
-                    <span className="member-detail-label">🏅 {language === 'en' ? 'Additional Info' : 'अतिरिक्त जानकारी'}</span>
+                    <span className="member-detail-label">🏅 {language === 'en' ? 'Fellowships' : 'फेलोशिप्स'}</span>
                     <p className="member-detail-value">{selectedMember.bio}</p>
+                  </div>
+                )}
+                {selectedMember.awards && (
+                  <div className="member-detail-row">
+                    <span className="member-detail-label">🏆 {language === 'en' ? 'Awards & Honours' : 'पुरस्कार एवं सम्मान'}</span>
+                    <p className="member-detail-value">{selectedMember.awards}</p>
+                  </div>
+                )}
+                {selectedMember.publications && (
+                  <div className="member-detail-row">
+                    <span className="member-detail-label">📄 {language === 'en' ? 'Publications & Presentations' : 'प्रकाशन एवं प्रस्तुतीकरण'}</span>
+                    <p className="member-detail-value">{selectedMember.publications}</p>
                   </div>
                 )}
                 {selectedMember.education && (
