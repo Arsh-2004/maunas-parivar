@@ -7,8 +7,8 @@
 }
 
 .nm-hero {
-  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #e8521a 100%);
-  padding: 70px 0 50px;
+  background: linear-gradient(135deg, #d94700 0%, #FF6B35 35%, #F7931E 65%, #e8521a 100%);
+  padding: 90px 0 70px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -21,8 +21,18 @@
   left: -20%;
   width: 140%;
   height: 200%;
-  background: radial-gradient(ellipse, rgba(255,255,255,0.08) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(255,255,255,0.13) 0%, transparent 65%);
   pointer-events: none;
+}
+
+.nm-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: rgba(0,0,0,0.15);
 }
 
 .nm-hero-overlay {
@@ -31,37 +41,43 @@
 }
 
 .nm-hero-title {
-  font-size: 2.4rem;
-  font-weight: 800;
+  font-size: 3.4rem;
+  font-weight: 900;
   color: #fff;
-  margin: 0 0 14px;
-  letter-spacing: -0.5px;
+  margin: 0 0 20px;
+  letter-spacing: -1px;
+  text-shadow: 0 3px 16px rgba(0,0,0,0.25);
+  line-height: 1.1;
 }
 
 .nm-hero-sub {
-  font-size: 1rem;
-  color: rgba(255,255,255,0.88);
-  max-width: 640px;
-  margin: 0 auto 28px;
-  line-height: 1.65;
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.96);
+  max-width: 700px;
+  margin: 0 auto 36px;
+  line-height: 1.75;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.18);
 }
 
 .nm-hero-btn {
   background: #fff;
-  color: #FF6B35;
+  color: #d94700;
   border: none;
-  padding: 12px 30px;
-  border-radius: 30px;
-  font-size: 0.95rem;
-  font-weight: 700;
+  padding: 15px 42px;
+  border-radius: 40px;
+  font-size: 1.1rem;
+  font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.18);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  letter-spacing: 0.3px;
 }
 
 .nm-hero-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+  background: #fff8f4;
 }
 
 /* ---- Container ---- */
@@ -535,7 +551,8 @@
 
 /* ---- Responsive ---- */
 @media (max-width: 600px) {
-  .nm-hero-title { font-size: 1.7rem; }
+  .nm-hero-title { font-size: 2.2rem; }
+  .nm-hero-sub { font-size: 1rem; }
   .nm-grid { grid-template-columns: 1fr; }
   .nm-form-row { grid-template-columns: 1fr; }
   .nm-view-grid { grid-template-columns: 1fr; }

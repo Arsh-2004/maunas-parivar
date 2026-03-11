@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Gallery = require('../models/Gallery');
 const OathAgreement = require('../models/OathAgreement');
 const Donor = require('../models/Donor');
+const CommunityMember = require('../models/CommunityMember');
 const path = require('path');
 const fs = require('fs');
 const { upload, uploadToCloudinary, getSignedUrl, cloudinary } = require('../middleware/cloudinaryUpload');
@@ -658,6 +659,60 @@ router.delete('/donors/:id', adminAuth, async (req, res) => {
   } catch (error) {
     console.error('Delete donor error:', error);
     res.status(500).json({ success: false, message: 'Failed to delete donor' });
+  }
+});
+
+// ===== Community Members (Upadhidharak & Prakosht) Routes =====
+
+// Get all community members (public)
+router.get('/community-members', async (req, res) => {
+  try {
+    const members = await CommunityMember.find().sort({ addedAt: -1 });
+    res.json({ success: true, members });
+  } catch (error) {
+    console.error('Fetch community members error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch community members' });
+  }
+});
+
+// Add a community member (admin only)
+router.post('/community-members', adminAuth, upload.single('photo'), async (req, res) => {
+  try {
+    let photoPath = null;
+    if (req.file) {
+      photoPath = await uploadToCloudinary(req.file.path, 'community-members');
+    }
+
+    const member = new CommunityMember({
+      fullName: req.body.fullName,
+      designation: req.body.designation || '',
+      occupation: req.body.occupation || '',
+      city: req.body.city || '',
+      state: req.body.state || '',
+      bio: req.body.bio || '',
+      awards: req.body.awards || '',
+      publications: req.body.publications || '',
+      honoraryTitle: req.body.honoraryTitle || null,
+      prakosth: req.body.prakosth || null,
+      photoPath
+    });
+
+    await member.save();
+    res.status(201).json({ success: true, member });
+  } catch (error) {
+    console.error('Add community member error:', error);
+    res.status(500).json({ success: false, message: 'Failed to add community member', error: error.message });
+  }
+});
+
+// Delete a community member (admin only)
+router.delete('/community-members/:id', adminAuth, async (req, res) => {
+  try {
+    await CommunityMember.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Community member deleted successfully' });
+  } catch (error) {
+    console.error('Delete community member error:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete community member' });
   }
 });
 

@@ -78,8 +78,7 @@ const userSchema = new mongoose.Schema({
   },
   education: {
     type: String,
-    required: true,
-    enum: ['below-10th', '10th', '12th', 'graduate', 'post-graduate', 'diploma', 'others']
+    required: true
   },
   idProofPath: {
     type: String,

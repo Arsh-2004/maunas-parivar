@@ -13,6 +13,7 @@ const Community = () => {
   const activeSection = new URLSearchParams(location.search).get('section') || '';
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [communityMembers, setCommunityMembers] = useState([]);
   const [selectedUpadhi, setSelectedUpadhi] = useState(null); // for filtering by honorary title
   const [selectedPrakosth, setSelectedPrakosth] = useState(null); // for filtering by prakosth
   const [expandedBios, setExpandedBios] = useState({});
@@ -34,7 +35,18 @@ const Community = () => {
   useEffect(() => {
     fetchMembers();
     fetchDonors();
+    fetchCommunityMembers();
   }, []);
+
+  const fetchCommunityMembers = async () => {
+    try {
+      const response = await fetch(`${API_URL}/admin/community-members`);
+      const data = await response.json();
+      if (data.success) setCommunityMembers(data.members);
+    } catch (err) {
+      console.error('Error fetching community members:', err);
+    }
+  };
 
   const fetchDonors = async () => {
     try {
@@ -329,11 +341,21 @@ const Community = () => {
       prakosth: 'khel',
       photoPath: '/assets/श्री यजुवेंद्र सिंह जी.jpeg',
       registeredAt: new Date('2026-02-19')
+    },
+    {
+      _id: 'prakosth-khel-2',
+      fullName: language === 'en' ? 'Pushpraj Singh Maunas' : 'पुष्पराज सिंह मौनस',
+      city: language === 'en' ? 'Katauli, Bhitari, Rampur Naikin' : 'कटौली, भिटारी, रामपुर नैकिन',
+      state: language === 'en' ? 'Sidhi, Madhya Pradesh' : 'सीधी, मध्य प्रदेश',
+      occupation: language === 'en' ? 'Sports & Military Cell Member' : 'खेल एवं सैनिक प्रकोष्ठ सदस्य',
+      prakosth: 'khel',
+      photoPath: '/assets/पुष्पराज सिंह मौनस.jpeg',
+      registeredAt: new Date('2026-03-11')
     }
   ];
 
-  // Combine API members with placeholder members
-  const allMembers = [...members, ...placeholderMembers];
+  // Combine API members with placeholder members and admin-added community members
+  const allMembers = [...members, ...placeholderMembers, ...communityMembers];
 
   // Regular members (without prakosth or honorary titles)
   const filteredMembers = allMembers.filter(member => {

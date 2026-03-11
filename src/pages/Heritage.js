@@ -110,11 +110,11 @@ const Heritage = () => {
             <h3 className="heritage-site-name-hi">सुरियावां गढ़ (रंग महल)</h3>
             <h4 className="heritage-site-name-en">Suriyawan Garh (Rang Mahal), Suriyawan, Bhadohi</h4>
             <p>
-              सुरियावां गढ़ अब रंग महल के नाम से राजस्व विभाग में दर्ज है। यह सुरियावां, भदोही में स्थित है।
+              मौनसों की राजधानी सुरियावां गढ़ थी राजधानी में बने किले को 1739 के युद्ध में तोपों से ध्वस्त कर दिया गया। सुरियावां गढ़ अब रंग महल के नाम से राजस्व विभाग में दर्ज है। यह सुरियावां, भदोही में स्थित है।
             </p>
             {language === 'en' && (
               <p>
-                Suriyawan Garh is now recorded in the revenue department under the name Rang Mahal. It is located in Suriyawan, Bhadohi.
+                The capital of the Monsoons was Suriyawan Garh. The fort built in the capital was destroyed by cannons in the war of 1739. Suriyawan Garh is now recorded in the revenue department under the name Rang Mahal. It is located in Suriyawan, Bhadohi.
               </p>
             )}
           </div>

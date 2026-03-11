@@ -38,7 +38,7 @@ const Header = () => {
   const handleLogout = () => {
     logout();
     setIsMenuOpen(false);
-    navigate('/');
+    window.location.href = '/';
   };
 
   return (

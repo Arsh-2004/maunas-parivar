@@ -36,6 +36,20 @@ const AdminDashboard = () => {
   const [certificateUser, setCertificateUser] = useState(null);
   const [showFamilyModal, setShowFamilyModal] = useState(false);
   const [familyModalUser, setFamilyModalUser] = useState(null);
+  const [communityMembers, setCommunityMembers] = useState([]);
+  const [communityForm, setCommunityForm] = useState({
+    fullName: '', designation: '', occupation: '', city: '', state: '',
+    bio: '', awards: '', publications: '', honoraryTitle: '', prakosth: '', photo: null
+  });
+  const [communityMemberType, setCommunityMemberType] = useState('upadhi'); // 'upadhi' | 'prakosht'
+
+  // Submitting / status states for forms
+  const [gallerySubmitting, setGallerySubmitting] = useState(false);
+  const [galleryStatus, setGalleryStatus] = useState(null); // {type:'success'|'error', msg:''}
+  const [donorSubmitting, setDonorSubmitting] = useState(false);
+  const [donorStatus, setDonorStatus] = useState(null);
+  const [communitySubmitting, setCommunitySubmitting] = useState(false);
+  const [communityStatus, setCommunityStatus] = useState(null);
   
   // New state for district/block filtering and sorting
   const [districtFilter, setDistrictFilter] = useState('all');
@@ -68,6 +82,7 @@ const AdminDashboard = () => {
         fetchContacts();
         fetchNonMembers();
         fetchDonors();
+        fetchCommunityMembers();
       } else {
         setError(language === 'en' ? 'Invalid admin password' : 'गलत व्यवस्थापक पासवर्ड');
       }
@@ -129,6 +144,7 @@ const AdminDashboard = () => {
       fetchOathAgreements();
       fetchContacts();
       fetchNonMembers();
+      fetchCommunityMembers();
     }
   }, [fetchOathAgreements, fetchContacts, fetchNonMembers]);
 
@@ -265,6 +281,75 @@ const AdminDashboard = () => {
     }
   };
 
+  // Community Members management
+  const fetchCommunityMembers = async () => {
+    try {
+      const response = await fetch(`${API_URL}/admin/community-members`);
+      const data = await response.json();
+      if (data.success) setCommunityMembers(data.members);
+    } catch (err) {
+      console.error('Error fetching community members:', err);
+    }
+  };
+
+  const handleCommunityMemberSubmit = async (e) => {
+    e.preventDefault();
+    setCommunitySubmitting(true);
+    setCommunityStatus(null);
+    const formData = new FormData();
+    formData.append('fullName', communityForm.fullName);
+    formData.append('designation', communityForm.designation);
+    formData.append('occupation', communityForm.occupation);
+    formData.append('city', communityForm.city);
+    formData.append('state', communityForm.state);
+    formData.append('bio', communityForm.bio);
+    formData.append('awards', communityForm.awards);
+    formData.append('publications', communityForm.publications);
+    if (communityMemberType === 'upadhi') {
+      formData.append('honoraryTitle', communityForm.honoraryTitle);
+    } else {
+      formData.append('prakosth', communityForm.prakosth);
+    }
+    if (communityForm.photo) formData.append('photo', communityForm.photo);
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      const response = await fetch(`${API_URL}/admin/community-members`, {
+        method: 'POST',
+        headers: { 'x-admin-password': pwd },
+        body: formData,
+      });
+      const data = await response.json();
+      if (data.success) {
+        setCommunityStatus({ type: 'success', msg: language === 'en' ? '✅ Member added successfully!' : '✅ सदस्य सफलतापूर्वक जोड़ा गया!' });
+        fetchCommunityMembers();
+        setCommunityForm({ fullName: '', designation: '', occupation: '', city: '', state: '', bio: '', awards: '', publications: '', honoraryTitle: '', prakosth: '', photo: null });
+        document.querySelectorAll('#community-form input[type="file"]').forEach(i => { i.value = ''; });
+        setTimeout(() => setCommunityStatus(null), 4000);
+      } else {
+        setCommunityStatus({ type: 'error', msg: language === 'en' ? `❌ Failed: ${data.message}` : `❌ विफल: ${data.message}` });
+      }
+    } catch (err) {
+      console.error('Error adding community member:', err);
+      setCommunityStatus({ type: 'error', msg: language === 'en' ? '❌ Network error. Please try again.' : '❌ नेटवर्क त्रुटि। पुनः प्रयास करें।' });
+    } finally {
+      setCommunitySubmitting(false);
+    }
+  };
+
+  const handleDeleteCommunityMember = async (id) => {
+    if (!window.confirm(language === 'en' ? 'Delete this member?' : 'इस सदस्य को हटाएं?')) return;
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      await fetch(`${API_URL}/admin/community-members/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-admin-password': pwd },
+      });
+      fetchCommunityMembers();
+    } catch (err) {
+      console.error('Error deleting community member:', err);
+    }
+  };
+
   // Donors management
   const fetchDonors = async () => {
     try {
@@ -278,6 +363,8 @@ const AdminDashboard = () => {
 
   const handleDonorSubmit = async (e) => {
     e.preventDefault();
+    setDonorSubmitting(true);
+    setDonorStatus(null);
     const formData = new FormData();
     formData.append('fullName', donorForm.fullName);
     formData.append('city', donorForm.city);
@@ -295,15 +382,19 @@ const AdminDashboard = () => {
       });
       const data = await response.json();
       if (data.success) {
-        alert(language === 'en' ? 'Donor added successfully!' : 'सहयोगी सफलतापूर्वक जोड़ा गया!');
+        setDonorStatus({ type: 'success', msg: language === 'en' ? '✅ Donor added successfully!' : '✅ सहयोगी सफलतापूर्वक जोड़ा गया!' });
         fetchDonors();
         setDonorForm({ fullName: '', city: '', state: '', donationAmount: '', donationPurpose: '', message: '', photo: null });
         document.querySelectorAll('#donor-form input[type="file"]').forEach(i => { i.value = ''; });
+        setTimeout(() => setDonorStatus(null), 4000);
       } else {
-        alert(language === 'en' ? `Failed: ${data.message}` : `विफल: ${data.message}`);
+        setDonorStatus({ type: 'error', msg: language === 'en' ? `❌ Failed: ${data.message}` : `❌ विफल: ${data.message}` });
       }
     } catch (err) {
       console.error('Error adding donor:', err);
+      setDonorStatus({ type: 'error', msg: language === 'en' ? '❌ Network error. Please try again.' : '❌ नेटवर्क त्रुटि। पुनः प्रयास करें।' });
+    } finally {
+      setDonorSubmitting(false);
     }
   };
 
@@ -325,9 +416,12 @@ const AdminDashboard = () => {
     e.preventDefault();
     
     if (!galleryForm.image) {
-      alert(language === 'en' ? 'Please select an image to upload' : 'कृपया अपलोड करने के लिए एक छवि चुनें');
+      setGalleryStatus({ type: 'error', msg: language === 'en' ? '❌ Please select an image to upload' : '❌ कृपया अपलोड करने के लिए एक छवि चुनें' });
       return;
     }
+
+    setGallerySubmitting(true);
+    setGalleryStatus(null);
     
     const formData = new FormData();
     formData.append('title', galleryForm.title);
@@ -343,18 +437,20 @@ const AdminDashboard = () => {
       });
       const data = await response.json();
       if (data.success) {
-        alert(language === 'en' ? 'Photo uploaded successfully!' : 'फोटो सफलतापूर्वक अपलोड की गई!');
+        setGalleryStatus({ type: 'success', msg: language === 'en' ? '✅ Photo uploaded successfully!' : '✅ फोटो सफलतापूर्वक अपलोड की गई!' });
         fetchGallery();
         setGalleryForm({ title: '', description: '', category: 'general', image: null });
-        // Reset file input
         const fileInputs = document.querySelectorAll('input[type="file"]');
         fileInputs.forEach(input => input.value = '');
+        setTimeout(() => setGalleryStatus(null), 4000);
       } else {
-        alert(language === 'en' ? `Failed to upload photo: ${data.message}` : `फोटो अपलोड करने में विफल: ${data.message}`);
+        setGalleryStatus({ type: 'error', msg: language === 'en' ? `❌ Failed: ${data.message}` : `❌ विफल: ${data.message}` });
       }
     } catch (err) {
       console.error('Error uploading photo:', err);
-      alert(language === 'en' ? 'Error uploading photo. Please try again.' : 'फोटो अपलोड करने में त्रुटि। कृपया पुनः प्रयास करें।');
+      setGalleryStatus({ type: 'error', msg: language === 'en' ? '❌ Network error. Please try again.' : '❌ नेटवर्क त्रुटि। पुनः प्रयास करें।' });
+    } finally {
+      setGallerySubmitting(false);
     }
   };
 
@@ -517,6 +613,12 @@ const AdminDashboard = () => {
           onClick={() => setActiveTab('donors')}
         >
           {language === 'en' ? 'Sahyogi Sadashya' : 'सहयोगी सदस्य'}
+        </button>
+        <button
+          className={activeTab === 'community' ? 'active' : ''}
+          onClick={() => setActiveTab('community')}
+        >
+          {language === 'en' ? 'Upadhi & Prakosht' : 'उपाधि और प्रकोष्ठ'}
         </button>
       </div>
 
@@ -1042,7 +1144,24 @@ const AdminDashboard = () => {
                   </p>
                 )}
               </div>
-              <button type="submit">{language === 'en' ? 'Upload Photo' : 'फोटो अपलोड करें'}</button>
+              <button type="submit" disabled={gallerySubmitting} style={{ opacity: gallerySubmitting ? 0.75 : 1, cursor: gallerySubmitting ? 'not-allowed' : 'pointer' }}>
+                {gallerySubmitting ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <span className="admin-spinner" />
+                    {language === 'en' ? 'Uploading photo...' : 'फोटो अपलोड हो रही है...'}
+                  </span>
+                ) : (language === 'en' ? 'Upload Photo' : 'फोटो अपलोड करें')}
+              </button>
+              {galleryStatus && (
+                <div style={{
+                  marginTop: '12px', padding: '10px 14px', borderRadius: '8px', fontWeight: '600', fontSize: '14px',
+                  background: galleryStatus.type === 'success' ? '#d4edda' : '#f8d7da',
+                  color: galleryStatus.type === 'success' ? '#155724' : '#721c24',
+                  border: `1px solid ${galleryStatus.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`
+                }}>
+                  {galleryStatus.msg}
+                </div>
+              )}
             </form>
           </div>
 
@@ -1320,7 +1439,24 @@ const AdminDashboard = () => {
                   <p style={{marginTop: '5px', color: '#28a745', fontSize: '14px'}}>✓ {donorForm.photo.name}</p>
                 )}
               </div>
-              <button type="submit">{language === 'en' ? 'Add Donor' : 'सहयोगी जोड़ें'}</button>
+              <button type="submit" disabled={donorSubmitting} style={{ opacity: donorSubmitting ? 0.75 : 1, cursor: donorSubmitting ? 'not-allowed' : 'pointer' }}>
+                {donorSubmitting ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <span className="admin-spinner" />
+                    {language === 'en' ? 'Adding donor...' : 'सहयोगी जोड़ा जा रहा है...'}
+                  </span>
+                ) : (language === 'en' ? 'Add Donor' : 'सहयोगी जोड़ें')}
+              </button>
+              {donorStatus && (
+                <div style={{
+                  marginTop: '12px', padding: '10px 14px', borderRadius: '8px', fontWeight: '600', fontSize: '14px',
+                  background: donorStatus.type === 'success' ? '#d4edda' : '#f8d7da',
+                  color: donorStatus.type === 'success' ? '#155724' : '#721c24',
+                  border: `1px solid ${donorStatus.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`
+                }}>
+                  {donorStatus.msg}
+                </div>
+              )}
             </form>
           </div>
 
@@ -1555,6 +1691,224 @@ const AdminDashboard = () => {
                   {language === 'en' ? 'Delete' : 'हटाएं'}
                 </button>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'community' && (
+        <div className="gallery-management">
+          <div className="gallery-form">
+            <h2>{language === 'en' ? '🏅 Add Upadhidharak / Prakosht Member' : '🏅 उपाधिधारक / प्रकोष्ठ सदस्य जोड़ें'}</h2>
+
+            {/* Toggle type */}
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+              <button
+                type="button"
+                onClick={() => setCommunityMemberType('upadhi')}
+                style={{
+                  flex: 1, padding: '10px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer',
+                  background: communityMemberType === 'upadhi' ? 'linear-gradient(135deg, #d4a017, #e8c44a)' : '#f0f0f0',
+                  color: communityMemberType === 'upadhi' ? '#fff' : '#555',
+                  border: 'none'
+                }}
+              >
+                🏆 {language === 'en' ? 'Upadhidharak (उपाधिधारक)' : 'उपाधिधारक'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setCommunityMemberType('prakosht')}
+                style={{
+                  flex: 1, padding: '10px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer',
+                  background: communityMemberType === 'prakosht' ? 'linear-gradient(135deg, #FF6B35, #ff8c5a)' : '#f0f0f0',
+                  color: communityMemberType === 'prakosht' ? '#fff' : '#555',
+                  border: 'none'
+                }}
+              >
+                🏛️ {language === 'en' ? 'Prakosht Member (प्रकोष्ठ)' : 'प्रकोष्ठ सदस्य'}
+              </button>
+            </div>
+
+            <form id="community-form" onSubmit={handleCommunityMemberSubmit}>
+              <input
+                type="text"
+                placeholder={language === 'en' ? 'Full Name *' : 'पूरा नाम *'}
+                value={communityForm.fullName}
+                onChange={(e) => setCommunityForm({ ...communityForm, fullName: e.target.value })}
+                required
+              />
+              <input
+                type="text"
+                placeholder={language === 'en' ? 'Designation (e.g. Dr., Adv.)' : 'पदनाम (जैसे डॉ., अधि.)'}
+                value={communityForm.designation}
+                onChange={(e) => setCommunityForm({ ...communityForm, designation: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder={language === 'en' ? 'Occupation / Role' : 'व्यवसाय / भूमिका'}
+                value={communityForm.occupation}
+                onChange={(e) => setCommunityForm({ ...communityForm, occupation: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder={language === 'en' ? 'City' : 'शहर'}
+                value={communityForm.city}
+                onChange={(e) => setCommunityForm({ ...communityForm, city: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder={language === 'en' ? 'State' : 'राज्य'}
+                value={communityForm.state}
+                onChange={(e) => setCommunityForm({ ...communityForm, state: e.target.value })}
+              />
+              <textarea
+                placeholder={language === 'en' ? 'Bio / Description (optional)' : 'बायो / विवरण (वैकल्पिक)'}
+                value={communityForm.bio}
+                onChange={(e) => setCommunityForm({ ...communityForm, bio: e.target.value })}
+              />
+              <textarea
+                placeholder={language === 'en' ? 'Awards (optional)' : 'पुरस्कार (वैकल्पिक)'}
+                value={communityForm.awards}
+                onChange={(e) => setCommunityForm({ ...communityForm, awards: e.target.value })}
+              />
+              <textarea
+                placeholder={language === 'en' ? 'Publications (optional)' : 'प्रकाशन (वैकल्पिक)'}
+                value={communityForm.publications}
+                onChange={(e) => setCommunityForm({ ...communityForm, publications: e.target.value })}
+              />
+
+              {communityMemberType === 'upadhi' ? (
+                <select
+                  value={communityForm.honoraryTitle}
+                  onChange={(e) => setCommunityForm({ ...communityForm, honoraryTitle: e.target.value })}
+                  required
+                >
+                  <option value="">{language === 'en' ? '-- Select Honorary Title --' : '-- उपाधि चुनें --'}</option>
+                  <option value="मौनस शिरोमणि">मौनस शिरोमणि</option>
+                  <option value="मौनस कुबेर">मौनस कुबेर</option>
+                  <option value="मौनस रत्न">मौनस रत्न</option>
+                  <option value="मौनस कुलभूषण">मौनस कुलभूषण</option>
+                  <option value="मौनस कुलदीपक">मौनस कुलदीपक</option>
+                  <option value="मौनस नायक">मौनस नायक</option>
+                </select>
+              ) : (
+                <select
+                  value={communityForm.prakosth}
+                  onChange={(e) => setCommunityForm({ ...communityForm, prakosth: e.target.value })}
+                  required
+                >
+                  <option value="">{language === 'en' ? '-- Select Prakosht --' : '-- प्रकोष्ठ चुनें --'}</option>
+                  <option value="buddhijivi">{language === 'en' ? 'Intellectual Cell (बुद्धिजीवी प्रकोष्ठ)' : 'बुद्धिजीवी प्रकोष्ठ'}</option>
+                  <option value="manav-seva">{language === 'en' ? 'Human Service Cell (मानव सेवा प्रकोष्ठ)' : 'मानव सेवा प्रकोष्ठ'}</option>
+                  <option value="chikitsa">{language === 'en' ? 'Medical Cell (चिकित्सा प्रकोष्ठ)' : 'चिकित्सा प्रकोष्ठ'}</option>
+                  <option value="vidhi">{language === 'en' ? 'Legal Cell (विधि प्रकोष्ठ)' : 'विधि प्रकोष्ठ'}</option>
+                  <option value="vyapar">{language === 'en' ? 'Business Cell (व्यापार प्रकोष्ठ)' : 'व्यापार प्रकोष्ठ'}</option>
+                  <option value="kisaan">{language === 'en' ? 'Farmer Cell (किसान प्रकोष्ठ)' : 'किसान प्रकोष्ठ'}</option>
+                  <option value="khel">{language === 'en' ? 'Sports & Military Cell (खेल एवं सैनिक प्रकोष्ठ)' : 'खेल एवं सैनिक प्रकोष्ठ'}</option>
+                  <option value="yuva">{language === 'en' ? 'Youth Cell (युवा प्रकोष्ठ)' : 'युवा प्रकोष्ठ'}</option>
+                  <option value="mahila">{language === 'en' ? 'Women Cell (महिला प्रकोष्ठ)' : 'महिला प्रकोष्ठ'}</option>
+                  <option value="veerangana">{language === 'en' ? 'Brave Women Cell (वीरांगना प्रकोष्ठ)' : 'वीरांगना प्रकोष्ठ'}</option>
+                </select>
+              )}
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>
+                  {language === 'en' ? 'Photo (optional):' : 'फोटो (वैकल्पिक):'}
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setCommunityForm({ ...communityForm, photo: e.target.files[0] })}
+                />
+                {communityForm.photo && (
+                  <p style={{ marginTop: '5px', color: '#28a745', fontSize: '14px' }}>✓ {communityForm.photo.name}</p>
+                )}
+              </div>
+              <button type="submit" disabled={communitySubmitting} style={{ opacity: communitySubmitting ? 0.75 : 1, cursor: communitySubmitting ? 'not-allowed' : 'pointer' }}>
+                {communitySubmitting ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <span className="admin-spinner" />
+                    {communityMemberType === 'upadhi'
+                      ? (language === 'en' ? 'Adding Upadhidharak...' : 'उपाधिधारक जोड़ा जा रहा है...')
+                      : (language === 'en' ? 'Adding Prakosht member...' : 'प्रकोष्ठ सदस्य जोड़ा जा रहा है...')}
+                  </span>
+                ) : (
+                  communityMemberType === 'upadhi'
+                    ? (language === 'en' ? '🏆 Add Upadhidharak' : '🏆 उपाधिधारक जोड़ें')
+                    : (language === 'en' ? '🏛️ Add Prakosht Member' : '🏛️ प्रकोष्ठ सदस्य जोड़ें')
+                )}
+              </button>
+              {communityStatus && (
+                <div style={{
+                  marginTop: '12px', padding: '10px 14px', borderRadius: '8px', fontWeight: '600', fontSize: '14px',
+                  background: communityStatus.type === 'success' ? '#d4edda' : '#f8d7da',
+                  color: communityStatus.type === 'success' ? '#155724' : '#721c24',
+                  border: `1px solid ${communityStatus.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`
+                }}>
+                  {communityStatus.msg}
+                </div>
+              )}
+            </form>
+          </div>
+
+          {/* List */}
+          <div className="gallery-list">
+            {/* Upadhidharak section */}
+            <h2>🏆 {language === 'en' ? `Upadhidharak (${communityMembers.filter(m => m.honoraryTitle).length})` : `उपाधिधारक (${communityMembers.filter(m => m.honoraryTitle).length})`}</h2>
+            <div className="gallery-grid">
+              {communityMembers.filter(m => m.honoraryTitle).length === 0 ? (
+                <p style={{ color: '#888' }}>{language === 'en' ? 'No Upadhidharak added yet' : 'अभी तक कोई उपाधिधारक नहीं जोड़ा गया'}</p>
+              ) : communityMembers.filter(m => m.honoraryTitle).map((member) => (
+                <div key={member._id} className="gallery-card">
+                  {member.photoPath
+                    ? <img src={member.photoPath} alt={member.fullName} style={{ objectFit: 'cover' }} />
+                    : <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', background: '#fff9e6' }}>🏆</div>
+                  }
+                  <div className="gallery-info">
+                    <h3>{member.fullName}</h3>
+                    {member.designation && <p style={{ fontStyle: 'italic', color: '#888', fontSize: '13px', marginTop: '-6px' }}>{member.designation}</p>}
+                    <p style={{ fontWeight: 700, color: '#d4a017', fontSize: '1rem' }}>{member.honoraryTitle}</p>
+                    {member.occupation && <p>{member.occupation}</p>}
+                    {(member.city || member.state) && <p>📍 {[member.city, member.state].filter(Boolean).join(', ')}</p>}
+                    <button onClick={() => handleDeleteCommunityMember(member._id)} className="delete-btn">
+                      {language === 'en' ? 'Delete' : 'हटाएं'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Prakosht section */}
+            <h2 style={{ marginTop: '32px' }}>🏛️ {language === 'en' ? `Prakosht Members (${communityMembers.filter(m => m.prakosth).length})` : `प्रकोष्ठ सदस्य (${communityMembers.filter(m => m.prakosth).length})`}</h2>
+            <div className="gallery-grid">
+              {communityMembers.filter(m => m.prakosth).length === 0 ? (
+                <p style={{ color: '#888' }}>{language === 'en' ? 'No Prakosht members added yet' : 'अभी तक कोई प्रकोष्ठ सदस्य नहीं जोड़ा गया'}</p>
+              ) : communityMembers.filter(m => m.prakosth).map((member) => (
+                <div key={member._id} className="gallery-card">
+                  {member.photoPath
+                    ? <img src={member.photoPath} alt={member.fullName} style={{ objectFit: 'cover' }} />
+                    : <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', background: '#fff5ef' }}>🏛️</div>
+                  }
+                  <div className="gallery-info">
+                    <h3>{member.fullName}</h3>
+                    {member.designation && <p style={{ fontStyle: 'italic', color: '#888', fontSize: '13px', marginTop: '-6px' }}>{member.designation}</p>}
+                    <p style={{ fontWeight: 700, color: '#FF6B35', fontSize: '0.95rem' }}>
+                      {{
+                        'buddhijivi': 'बुद्धिजीवी प्रकोष्ठ', 'manav-seva': 'मानव सेवा प्रकोष्ठ',
+                        'chikitsa': 'चिकित्सा प्रकोष्ठ', 'vidhi': 'विधि प्रकोष्ठ',
+                        'vyapar': 'व्यापार प्रकोष्ठ', 'kisaan': 'किसान प्रकोष्ठ',
+                        'khel': 'खेल एवं सैनिक प्रकोष्ठ', 'yuva': 'युवा प्रकोष्ठ',
+                        'mahila': 'महिला प्रकोष्ठ', 'veerangana': 'वीरांगना प्रकोष्ठ'
+                      }[member.prakosth] || member.prakosth}
+                    </p>
+                    {member.occupation && <p>{member.occupation}</p>}
+                    {(member.city || member.state) && <p>📍 {[member.city, member.state].filter(Boolean).join(', ')}</p>}
+                    <button onClick={() => handleDeleteCommunityMember(member._id)} className="delete-btn">
+                      {language === 'en' ? 'Delete' : 'हटाएं'}
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

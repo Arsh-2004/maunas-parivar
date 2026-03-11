@@ -130,8 +130,8 @@ const MembershipCertificate = ({ user, onClose }) => {
                 </div>
                 <div className="cert-sig-block">
                   <img src="/assets/Signature.png" alt="संचालक हस्ताक्षर" className="cert-sig-image" />
-                  <p className="cert-sig-label">संचालक</p>
-                  <p className="cert-sig-name">मौनस परिवार</p>
+                  <p className="cert-sig-label">Ravindra Kumar Singh</p>
+                  <p className="cert-sig-name">संचालक</p>
                 </div>
               </div>
 

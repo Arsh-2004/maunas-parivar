@@ -142,6 +142,14 @@ const About = () => {
       city: language === 'en' ? 'Bhadohi' : 'भदोही',
       state: language === 'en' ? 'Uttar Pradesh' : 'उत्तर प्रदेश',
       photoPath: '/assets/सुरेश कुमार सिंह.jpeg'
+    },
+    {
+      _id: 's4',
+      fullName: language === 'en' ? 'Vineet Singh Maunas' : 'विनीत सिंह मौनस',
+      position: language === 'en' ? 'Katauli, Bhitari, Rampur Naikin' : 'कटौली, भिटारी, रामपुर नैकिन',
+      city: language === 'en' ? 'Sidhi' : 'सीधी',
+      state: language === 'en' ? 'Madhya Pradesh' : 'मध्य प्रदेश',
+      photoPath: '/assets/विनीत सिंह मौनस.jpeg'
     }
   ], [language]);
 
