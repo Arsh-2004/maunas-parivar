@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { getTranslation } from '../translations';
@@ -23,7 +23,6 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { language, toggleLanguage } = useLanguage();
   const { isAuthenticated, logout, user } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
   const t = (path) => getTranslation(language, path);
 
