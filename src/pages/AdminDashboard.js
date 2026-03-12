@@ -437,52 +437,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleSeedCommunityMembers = async () => {
-    if (!window.confirm(language === 'en'
-      ? 'Load existing Prakosht members into the database?'
-      : 'मौजूदा प्रकोष्ठ सदस्यों को डेटाबेस में लोड करें?'
-    )) return;
-    try {
-      const res = await fetch(`${API_URL}/admin/community-members-seed`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-password': localStorage.getItem('adminPassword') || '' },
-        body: JSON.stringify({}),
-      });
-      const data = await res.json();
-      if (data.success) {
-        fetchCommunityMembers();
-        setCommunityStatus({ type: 'success', msg: language === 'en' ? `${data.inserted} members loaded!` : `${data.inserted} सदस्य लोड किए गए!` });
-      } else {
-        setCommunityStatus({ type: 'error', msg: data.message });
-      }
-    } catch {
-      setCommunityStatus({ type: 'error', msg: language === 'en' ? 'Server error.' : 'सर्वर त्रुटि।' });
-    }
-  };
-
-  const handleSeedUpadhiMembers = async () => {
-    if (!window.confirm(language === 'en'
-      ? 'Load existing Upadhidharak members into the database?'
-      : 'मौजूदा उपाधिधारक सदस्यों को डेटाबेस में लोड करें?'
-    )) return;
-    try {
-      const res = await fetch(`${API_URL}/admin/upadhi-members-seed`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-password': localStorage.getItem('adminPassword') || '' },
-        body: JSON.stringify({}),
-      });
-      const data = await res.json();
-      if (data.success) {
-        fetchCommunityMembers();
-        setCommunityStatus({ type: 'success', msg: language === 'en' ? `${data.inserted} members loaded!` : `${data.inserted} सदस्य लोड किए गए!` });
-      } else {
-        setCommunityStatus({ type: 'error', msg: data.message });
-      }
-    } catch {
-      setCommunityStatus({ type: 'error', msg: language === 'en' ? 'Server error.' : 'सर्वर त्रुटि।' });
-    }
-  };
-
   const handleCommunityMemberSubmit = async (e) => {
     e.preventDefault();
     setCommunitySubmitting(true);
