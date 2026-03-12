@@ -59,6 +59,10 @@ const communityMemberSchema = new mongoose.Schema({
   addedAt: {
     type: Date,
     default: Date.now
+  },
+  sortOrder: {
+    type: Number,
+    default: 0
   }
 });
 

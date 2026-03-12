@@ -43,6 +43,38 @@ const AdminDashboard = () => {
   });
   const [communityMemberType, setCommunityMemberType] = useState('upadhi'); // 'upadhi' | 'prakosht'
 
+  // Committee member management
+  const [committeeMembersData, setCommitteeMembersData] = useState([]);
+  const [committeeSubTab, setCommitteeSubTab] = useState('sanrakshak');
+  const [committeeForm, setCommitteeForm] = useState({
+    fullName: '', designation: '', position: '', city: '', state: '',
+    committee: 'sanrakshak', displayPage: 'about', photo: null
+  });
+  const [committeeSubmitting, setCommitteeSubmitting] = useState(false);
+  const [committeeStatus, setCommitteeStatus] = useState(null);
+  const [editingCommittee, setEditingCommittee] = useState(null); // { ...member, newPhoto: null }
+
+  // Edit modals for existing sections
+  const [editingGallery, setEditingGallery] = useState(null);
+  const [editGalleryForm, setEditGalleryForm] = useState({});
+  const [editingDonor, setEditingDonor] = useState(null);
+  const [editDonorForm, setEditDonorForm] = useState({});
+  const [editingCommunity, setEditingCommunity] = useState(null);
+  const [editCommunityForm, setEditCommunityForm] = useState({});
+
+  // Heritage posts management
+  const [heritageData, setHeritageData] = useState([]);
+  const [heritageForm, setHeritageForm] = useState({ titleHi: '', titleEn: '', descriptionHi: '', descriptionEn: '', imageCaption: '', photo: null });
+  const [heritageSubmitting, setHeritageSubmitting] = useState(false);
+  const [heritageStatus, setHeritageStatus] = useState(null);
+  const [editingHeritage, setEditingHeritage] = useState(null);
+  const [editHeritageForm, setEditHeritageForm] = useState({});
+
+  // Search states for admin sections
+  const [upadhiSearch, setUpadhiSearch] = useState('');
+  const [prakosthSearch, setPrakosthSearch] = useState('');
+  const [committeeSearch, setCommitteeSearch] = useState('');
+
   // Submitting / status states for forms
   const [gallerySubmitting, setGallerySubmitting] = useState(false);
   const [galleryStatus, setGalleryStatus] = useState(null); // {type:'success'|'error', msg:''}
@@ -83,7 +115,8 @@ const AdminDashboard = () => {
         fetchNonMembers();
         fetchDonors();
         fetchCommunityMembers();
-      } else {
+        fetchCommitteeMembersData();
+        fetchHeritageData();
         setError(language === 'en' ? 'Invalid admin password' : 'गलत व्यवस्थापक पासवर्ड');
       }
     } catch (err) {
@@ -144,7 +177,10 @@ const AdminDashboard = () => {
       fetchOathAgreements();
       fetchContacts();
       fetchNonMembers();
+      fetchDonors();
       fetchCommunityMembers();
+      fetchCommitteeMembersData();
+      fetchHeritageData();
     }
   }, [fetchOathAgreements, fetchContacts, fetchNonMembers]);
 
@@ -292,6 +328,161 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchCommitteeMembersData = async () => {
+    try {
+      const response = await fetch(`${API_URL}/admin/committee-members`);
+      const data = await response.json();
+      if (data.success) setCommitteeMembersData(data.members);
+    } catch (err) {
+      console.error('Error fetching committee members:', err);
+    }
+  };
+
+  const fetchHeritageData = async () => {
+    try {
+      const response = await fetch(`${API_URL}/admin/heritage-posts`);
+      const data = await response.json();
+      if (data.success) setHeritageData(data.posts);
+    } catch (err) {
+      console.error('Error fetching heritage posts:', err);
+    }
+  };
+
+  const handleAddHeritage = async (e) => {
+    e.preventDefault();
+    setHeritageSubmitting(true);
+    setHeritageStatus(null);
+    const formData = new FormData();
+    formData.append('titleHi', heritageForm.titleHi);
+    formData.append('titleEn', heritageForm.titleEn);
+    formData.append('descriptionHi', heritageForm.descriptionHi);
+    formData.append('descriptionEn', heritageForm.descriptionEn);
+    formData.append('imageCaption', heritageForm.imageCaption);
+    if (heritageForm.photo) formData.append('photo', heritageForm.photo);
+    try {
+      const res = await fetch(`${API_URL}/admin/heritage-posts`, {
+        method: 'POST',
+        headers: { 'x-admin-password': localStorage.getItem('adminPassword') || '' },
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchHeritageData();
+        setHeritageForm({ titleHi: '', titleEn: '', descriptionHi: '', descriptionEn: '', imageCaption: '', photo: null });
+        setHeritageStatus({ type: 'success', msg: language === 'en' ? 'Heritage post added!' : '\u0927\u0930\u094b\u0939\u0930 \u092a\u094b\u0938\u094d\u091f \u091c\u094b\u0921\u093c \u0926\u093f\u092f\u093e \u0917\u092f\u093e!' });
+      } else {
+        setHeritageStatus({ type: 'error', msg: data.message || 'Error' });
+      }
+    } catch {
+      setHeritageStatus({ type: 'error', msg: language === 'en' ? 'Server error.' : '\u0938\u0930\u094d\u0935\u0930 \u0924\u094d\u0930\u0941\u091f\u093f\u0964' });
+    } finally {
+      setHeritageSubmitting(false);
+    }
+  };
+
+  const handleUpdateHeritage = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('titleHi', editHeritageForm.titleHi);
+    formData.append('titleEn', editHeritageForm.titleEn || '');
+    formData.append('descriptionHi', editHeritageForm.descriptionHi);
+    formData.append('descriptionEn', editHeritageForm.descriptionEn || '');
+    formData.append('imageCaption', editHeritageForm.imageCaption || '');
+    if (editHeritageForm.newPhoto) formData.append('photo', editHeritageForm.newPhoto);
+    try {
+      const res = await fetch(`${API_URL}/admin/heritage-posts/${editingHeritage._id}`, {
+        method: 'PUT',
+        headers: { 'x-admin-password': localStorage.getItem('adminPassword') || '' },
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success) { setEditingHeritage(null); fetchHeritageData(); }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteHeritage = async (id) => {
+    if (!window.confirm(language === 'en' ? 'Delete this heritage post?' : 'इस धरोहर पोस्ट को हटाएं?')) return;
+    try {
+      await fetch(`${API_URL}/admin/heritage-posts/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-admin-password': localStorage.getItem('adminPassword') || '' },
+      });
+      fetchHeritageData();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSeedStaticHeritage = async () => {
+    if (!window.confirm(language === 'en'
+      ? 'Initialize the 10 built-in heritage sites into the database? This enables editing them here.'
+      : '10 मूल धरोहर स्थलों को डेटाबेस में जोड़ें? इससे आप उन्हें यहाँ से संपादित कर सकेंगे।'
+    )) return;
+    try {
+      const res = await fetch(`${API_URL}/admin/heritage-posts/seed-static`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': localStorage.getItem('adminPassword') || '' },
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchHeritageData();
+        setHeritageStatus({ type: 'success', msg: language === 'en' ? `${data.inserted} static sites initialized!` : `${data.inserted} मूल धरोहर स्थल जोड़ दिए गए!` });
+      } else {
+        setHeritageStatus({ type: 'error', msg: data.message });
+      }
+    } catch {
+      setHeritageStatus({ type: 'error', msg: language === 'en' ? 'Server error.' : 'सर्वर त्रुटि।' });
+    }
+  };
+
+  const handleSeedCommunityMembers = async () => {
+    if (!window.confirm(language === 'en'
+      ? 'Load existing Prakosht members into the database?'
+      : 'मौजूदा प्रकोष्ठ सदस्यों को डेटाबेस में लोड करें?'
+    )) return;
+    try {
+      const res = await fetch(`${API_URL}/admin/community-members-seed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': localStorage.getItem('adminPassword') || '' },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchCommunityMembers();
+        setCommunityStatus({ type: 'success', msg: language === 'en' ? `${data.inserted} members loaded!` : `${data.inserted} सदस्य लोड किए गए!` });
+      } else {
+        setCommunityStatus({ type: 'error', msg: data.message });
+      }
+    } catch {
+      setCommunityStatus({ type: 'error', msg: language === 'en' ? 'Server error.' : 'सर्वर त्रुटि।' });
+    }
+  };
+
+  const handleSeedUpadhiMembers = async () => {
+    if (!window.confirm(language === 'en'
+      ? 'Load existing Upadhidharak members into the database?'
+      : 'मौजूदा उपाधिधारक सदस्यों को डेटाबेस में लोड करें?'
+    )) return;
+    try {
+      const res = await fetch(`${API_URL}/admin/upadhi-members-seed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': localStorage.getItem('adminPassword') || '' },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchCommunityMembers();
+        setCommunityStatus({ type: 'success', msg: language === 'en' ? `${data.inserted} members loaded!` : `${data.inserted} सदस्य लोड किए गए!` });
+      } else {
+        setCommunityStatus({ type: 'error', msg: data.message });
+      }
+    } catch {
+      setCommunityStatus({ type: 'error', msg: language === 'en' ? 'Server error.' : 'सर्वर त्रुटि।' });
+    }
+  };
+
   const handleCommunityMemberSubmit = async (e) => {
     e.preventDefault();
     setCommunitySubmitting(true);
@@ -340,13 +531,22 @@ const AdminDashboard = () => {
     if (!window.confirm(language === 'en' ? 'Delete this member?' : 'इस सदस्य को हटाएं?')) return;
     try {
       const pwd = localStorage.getItem('adminPassword') || adminPassword;
-      await fetch(`${API_URL}/admin/community-members/${id}`, {
+      const response = await fetch(`${API_URL}/admin/community-members/${id}`, {
         method: 'DELETE',
         headers: { 'x-admin-password': pwd },
       });
-      fetchCommunityMembers();
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        console.error('Delete community member failed:', response.status, errData.message);
+        alert(language === 'en' ? `Delete failed: ${errData.message || response.status}` : `हटाने में विफल: ${errData.message || response.status}`);
+        return;
+      }
+      // Optimistically remove from state immediately, then confirm with server
+      setCommunityMembers(prev => prev.filter(m => String(m._id) !== String(id)));
+      await fetchCommunityMembers();
     } catch (err) {
       console.error('Error deleting community member:', err);
+      alert(language === 'en' ? 'Network error while deleting.' : 'हटाने में नेटवर्क त्रुटि।');
     }
   };
 
@@ -530,6 +730,163 @@ const AdminDashboard = () => {
       return sortOrder === 'asc' ? comparison : -comparison;
     });
 
+  // ===== Generic reorder helper =====
+  const reorderItems = async (items, idx, direction, endpoint, fetchFn) => {
+    const sorted = items.map((item, i) => ({ ...item, _eff: item.sortOrder !== undefined ? item.sortOrder : i }));
+    sorted.sort((a, b) => a._eff - b._eff);
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= sorted.length) return;
+    const updates = sorted.map((item, i) => ({ id: item._id, sortOrder: i }));
+    // Swap the two targeted items
+    const tmpOrder = updates[idx].sortOrder;
+    updates[idx].sortOrder = updates[swapIdx].sortOrder;
+    updates[swapIdx].sortOrder = tmpOrder;
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      await fetch(`${API_URL}/admin/${endpoint}`, {
+        method: 'PUT',
+        headers: { 'x-admin-password': pwd, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ updates }),
+      });
+      fetchFn();
+    } catch (err) { console.error('Reorder error:', err); }
+  };
+
+  // ===== Committee Member Handlers =====
+  const handleAddCommitteeMember = async (e) => {
+    e.preventDefault();
+    setCommitteeSubmitting(true);
+    setCommitteeStatus(null);
+    const formData = new FormData();
+    formData.append('fullName', committeeForm.fullName);
+    formData.append('designation', committeeForm.designation);
+    formData.append('position', committeeForm.position);
+    formData.append('city', committeeForm.city);
+    formData.append('state', committeeForm.state);
+    formData.append('committee', committeeSubTab);
+    formData.append('displayPage', committeeSubTab === 'prabandhan' ? committeeForm.displayPage : 'about');
+    if (committeeForm.photo) formData.append('photo', committeeForm.photo);
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      const res = await fetch(`${API_URL}/admin/committee-members-admin`, {
+        method: 'POST', headers: { 'x-admin-password': pwd }, body: formData,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCommitteeStatus({ type: 'success', msg: language === 'en' ? '✅ Member added!' : '✅ सदस्य जोड़ा गया!' });
+        fetchCommitteeMembersData();
+        setCommitteeForm({ fullName: '', designation: '', position: '', city: '', state: '', committee: committeeSubTab, displayPage: 'about', photo: null });
+        document.querySelectorAll('#committee-form input[type="file"]').forEach(i => { i.value = ''; });
+        setTimeout(() => setCommitteeStatus(null), 4000);
+      } else { setCommitteeStatus({ type: 'error', msg: `❌ ${data.message}` }); }
+    } catch (err) {
+      setCommitteeStatus({ type: 'error', msg: language === 'en' ? '❌ Network error' : '❌ नेटवर्क त्रुटि' });
+    } finally { setCommitteeSubmitting(false); }
+  };
+
+  const handleUpdateCommitteeMember = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('fullName', editingCommittee.fullName);
+    formData.append('designation', editingCommittee.designation || '');
+    formData.append('position', editingCommittee.position || '');
+    formData.append('city', editingCommittee.city || '');
+    formData.append('state', editingCommittee.state || '');
+    formData.append('displayPage', editingCommittee.displayPage || 'about');
+    if (editingCommittee.newPhoto) formData.append('photo', editingCommittee.newPhoto);
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      const res = await fetch(`${API_URL}/admin/committee-members-admin/${editingCommittee._id}`, {
+        method: 'PUT', headers: { 'x-admin-password': pwd }, body: formData,
+      });
+      const data = await res.json();
+      if (data.success) { setEditingCommittee(null); fetchCommitteeMembersData(); }
+    } catch (err) { console.error('Update committee error:', err); }
+  };
+
+  const handleSeedCommitteeMembers = async (committee) => {
+    if (!window.confirm(language === 'en'
+      ? `Load existing ${committee} committee members into the database?`
+      : `${committee === 'sanrakshak' ? 'संरक्षक' : committee === 'prabandhan' ? 'प्रबन्धन' : 'संचालक'} कमेटी के मौजूदा सदस्यों को डेटाबेस में लोड करें?`
+    )) return;
+    try {
+      const res = await fetch(`${API_URL}/admin/committee-members-seed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': localStorage.getItem('adminPassword') || '' },
+        body: JSON.stringify({ committee }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchCommitteeMembersData();
+        setCommitteeStatus({ type: 'success', msg: language === 'en' ? `${data.inserted} members loaded successfully!` : `${data.inserted} सदस्य सफलतापूर्वक लोड किए गए!` });
+      } else {
+        setCommitteeStatus({ type: 'error', msg: data.message || (language === 'en' ? 'Could not load members.' : 'सदस्य लोड नहीं हो सके।') });
+      }
+    } catch {
+      setCommitteeStatus({ type: 'error', msg: language === 'en' ? 'Server error.' : 'सर्वर त्रुटि।' });
+    }
+  };
+
+  const handleDeleteCommitteeMemberAdm = async (id) => {
+    if (!window.confirm(language === 'en' ? 'Delete this member?' : 'इस सदस्य को हटाएं?')) return;
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      await fetch(`${API_URL}/admin/committee-members-admin/${id}`, { method: 'DELETE', headers: { 'x-admin-password': pwd } });
+      fetchCommitteeMembersData();
+    } catch (err) { console.error('Delete committee error:', err); }
+  };
+
+  // ===== Gallery Edit Handler =====
+  const handleUpdateGallery = async (e) => {
+    e.preventDefault();
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      const res = await fetch(`${API_URL}/admin/gallery/${editingGallery._id}`, {
+        method: 'PUT',
+        headers: { 'x-admin-password': pwd, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: editGalleryForm.title, description: editGalleryForm.description, category: editGalleryForm.category }),
+      });
+      const data = await res.json();
+      if (data.success) { setEditingGallery(null); fetchGallery(); }
+    } catch (err) { console.error('Update gallery error:', err); }
+  };
+
+  // ===== Donor Edit Handler =====
+  const handleUpdateDonor = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    Object.entries(editDonorForm).forEach(([k, v]) => {
+      if (v !== null && v !== undefined && k !== 'newPhoto') formData.append(k, String(v));
+    });
+    if (editDonorForm.newPhoto) formData.append('photo', editDonorForm.newPhoto);
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      const res = await fetch(`${API_URL}/admin/donors/${editingDonor._id}`, {
+        method: 'PUT', headers: { 'x-admin-password': pwd }, body: formData,
+      });
+      const data = await res.json();
+      if (data.success) { setEditingDonor(null); fetchDonors(); }
+    } catch (err) { console.error('Update donor error:', err); }
+  };
+
+  // ===== Community Member Edit Handler =====
+  const handleUpdateCommunityMember = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    Object.entries(editCommunityForm).forEach(([k, v]) => {
+      if (v !== null && v !== undefined && k !== 'newPhoto') formData.append(k, String(v));
+    });
+    if (editCommunityForm.newPhoto) formData.append('photo', editCommunityForm.newPhoto);
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      const res = await fetch(`${API_URL}/admin/community-members/${editingCommunity._id}`, {
+        method: 'PUT', headers: { 'x-admin-password': pwd }, body: formData,
+      });
+      const data = await res.json();
+      if (data.success) { setEditingCommunity(null); fetchCommunityMembers(); }
+    } catch (err) { console.error('Update community error:', err); }
+  };
+
   const handleLogout = () => {
     setIsLoggedIn(false);
     setAdminPassword('');
@@ -619,6 +976,18 @@ const AdminDashboard = () => {
           onClick={() => setActiveTab('community')}
         >
           {language === 'en' ? 'Upadhi & Prakosht' : 'उपाधि और प्रकोष्ठ'}
+        </button>
+        <button
+          className={activeTab === 'committees' ? 'active' : ''}
+          onClick={() => setActiveTab('committees')}
+        >
+          {language === 'en' ? 'Committees' : 'कमेटी सदस्य'}
+        </button>
+        <button
+          className={activeTab === 'heritage' ? 'active' : ''}
+          onClick={() => setActiveTab('heritage')}
+        >
+          {language === 'en' ? 'Heritage' : 'धरोहर'}
         </button>
       </div>
 
@@ -1168,16 +1537,26 @@ const AdminDashboard = () => {
           <div className="gallery-list">
             <h2>{language === 'en' ? 'All Photos' : 'सभी फोटो'}</h2>
             <div className="gallery-grid">
-              {gallery.map((photo) => (
+              {[...gallery].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((photo, idx, arr) => (
                 <div key={photo._id} className="gallery-card">
                   <img src={photo.imagePath} alt={photo.title} />
                   <div className="gallery-info">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
+                      <span style={{ background: '#e3f2fd', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '11px', color: '#1565c0', flexShrink: 0 }}>{idx + 1}</span>
+                      <button onClick={() => reorderItems(arr, idx, 'up', 'gallery-reorder', fetchGallery)} disabled={idx === 0} style={{ padding: '2px 7px', cursor: idx === 0 ? 'not-allowed' : 'pointer', opacity: idx === 0 ? 0.35 : 1, background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', fontSize: '12px' }}>↑</button>
+                      <button onClick={() => reorderItems(arr, idx, 'down', 'gallery-reorder', fetchGallery)} disabled={idx === arr.length - 1} style={{ padding: '2px 7px', cursor: idx === arr.length - 1 ? 'not-allowed' : 'pointer', opacity: idx === arr.length - 1 ? 0.35 : 1, background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', fontSize: '12px' }}>↓</button>
+                    </div>
                     <h3>{photo.title}</h3>
                     <p>{photo.description}</p>
                     <span className="category-badge">{photo.category}</span>
-                    <button onClick={() => handleDeletePhoto(photo._id)} className="delete-btn">
-                      {language === 'en' ? 'Delete' : 'हटाएं'}
-                    </button>
+                    <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+                      <button onClick={() => { setEditingGallery(photo); setEditGalleryForm({ title: photo.title, description: photo.description || '', category: photo.category }); }} className="view-btn-inline" style={{ fontSize: '12px', padding: '4px 10px' }}>
+                        {language === 'en' ? '✏️ Edit' : '✏️ संपादित'}
+                      </button>
+                      <button onClick={() => handleDeletePhoto(photo._id)} className="delete-btn">
+                        {language === 'en' ? 'Delete' : 'हटाएं'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1465,21 +1844,31 @@ const AdminDashboard = () => {
             <div className="gallery-grid">
               {donors.length === 0 ? (
                 <p style={{ color: '#888' }}>{language === 'en' ? 'No donors added yet' : 'अभी तक कोई सहयोगी नहीं जोड़ा गया'}</p>
-              ) : donors.map((donor) => (
+              ) : [...donors].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((donor, idx, arr) => (
                 <div key={donor._id} className="gallery-card">
                   {donor.photoPath
                     ? <img src={donor.photoPath} alt={donor.fullName} style={{ objectFit: 'cover' }} />
                     : <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', background: '#fff5ef' }}>🙏</div>
                   }
                   <div className="gallery-info">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
+                      <span style={{ background: '#e3f2fd', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '11px', color: '#1565c0', flexShrink: 0 }}>{idx + 1}</span>
+                      <button onClick={() => reorderItems(arr, idx, 'up', 'donors-reorder', fetchDonors)} disabled={idx === 0} style={{ padding: '2px 7px', cursor: idx === 0 ? 'not-allowed' : 'pointer', opacity: idx === 0 ? 0.35 : 1, background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', fontSize: '12px' }}>↑</button>
+                      <button onClick={() => reorderItems(arr, idx, 'down', 'donors-reorder', fetchDonors)} disabled={idx === arr.length - 1} style={{ padding: '2px 7px', cursor: idx === arr.length - 1 ? 'not-allowed' : 'pointer', opacity: idx === arr.length - 1 ? 0.35 : 1, background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', fontSize: '12px' }}>↓</button>
+                    </div>
                     <h3>{donor.fullName}</h3>
                     <p style={{ fontWeight: 700, color: '#FF6B35', fontSize: '1.05rem' }}>₹{Number(donor.donationAmount).toLocaleString('en-IN')}</p>
                     {donor.donationPurpose && <p>{donor.donationPurpose}</p>}
                     {(donor.city || donor.state) && <p>📍 {[donor.city, donor.state].filter(Boolean).join(', ')}</p>}
                     {donor.message && <p style={{ fontStyle: 'italic', color: '#888' }}>"{donor.message}"</p>}
-                    <button onClick={() => handleDeleteDonor(donor._id)} className="delete-btn">
-                      {language === 'en' ? 'Delete' : 'हटाएं'}
-                    </button>
+                    <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+                      <button onClick={() => { setEditingDonor(donor); setEditDonorForm({ fullName: donor.fullName, city: donor.city || '', state: donor.state || '', donationAmount: donor.donationAmount, donationPurpose: donor.donationPurpose || '', message: donor.message || '', newPhoto: null }); }} className="view-btn-inline" style={{ fontSize: '12px', padding: '4px 10px' }}>
+                        {language === 'en' ? '✏️ Edit' : '✏️ संपादित'}
+                      </button>
+                      <button onClick={() => handleDeleteDonor(donor._id)} className="delete-btn">
+                        {language === 'en' ? 'Delete' : 'हटाएं'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1855,24 +2244,43 @@ const AdminDashboard = () => {
           <div className="gallery-list">
             {/* Upadhidharak section */}
             <h2>🏆 {language === 'en' ? `Upadhidharak (${communityMembers.filter(m => m.honoraryTitle).length})` : `उपाधिधारक (${communityMembers.filter(m => m.honoraryTitle).length})`}</h2>
+            <input
+              type="text"
+              placeholder={language === 'en' ? '🔍 Search Upadhidharak members...' : '🔍 उपाधिधारक सदस्य खोजें...'}
+              value={upadhiSearch}
+              onChange={e => setUpadhiSearch(e.target.value)}
+              style={{ width: '100%', padding: '9px 14px', borderRadius: '8px', border: '1.5px solid #ffe082', marginBottom: '14px', fontSize: '14px', boxSizing: 'border-box', background: '#fffdf0' }}
+            />
             <div className="gallery-grid">
               {communityMembers.filter(m => m.honoraryTitle).length === 0 ? (
-                <p style={{ color: '#888' }}>{language === 'en' ? 'No Upadhidharak added yet' : 'अभी तक कोई उपाधिधारक नहीं जोड़ा गया'}</p>
-              ) : communityMembers.filter(m => m.honoraryTitle).map((member) => (
+                <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '20px', background: '#fffdf0', borderRadius: '10px', border: '1.5px dashed #ffe082' }}>
+                  <p style={{ color: '#888' }}>{language === 'en' ? 'No Upadhidharak added yet. Use the form above to add members.' : 'अभी तक कोई उपाधिधारक नहीं जोड़ा गया। ऊपर दिए फॉर्म से सदस्य जोड़ें।'}</p>
+                </div>
+              ) : [...communityMembers.filter(m => m.honoraryTitle && (!upadhiSearch || m.fullName.toLowerCase().includes(upadhiSearch.toLowerCase()) || (m.honoraryTitle && m.honoraryTitle.toLowerCase().includes(upadhiSearch.toLowerCase())) || (m.city && m.city.toLowerCase().includes(upadhiSearch.toLowerCase()))))].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((member, idx, arr) => (
                 <div key={member._id} className="gallery-card">
                   {member.photoPath
                     ? <img src={member.photoPath} alt={member.fullName} style={{ objectFit: 'cover' }} />
                     : <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', background: '#fff9e6' }}>🏆</div>
                   }
                   <div className="gallery-info">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
+                      <span style={{ background: '#e3f2fd', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '11px', color: '#1565c0', flexShrink: 0 }}>{idx + 1}</span>
+                      <button onClick={() => reorderItems(arr, idx, 'up', 'community-members-reorder', fetchCommunityMembers)} disabled={idx === 0} style={{ padding: '2px 7px', opacity: idx === 0 ? 0.35 : 1, background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', fontSize: '12px' }}>↑</button>
+                      <button onClick={() => reorderItems(arr, idx, 'down', 'community-members-reorder', fetchCommunityMembers)} disabled={idx === arr.length - 1} style={{ padding: '2px 7px', opacity: idx === arr.length - 1 ? 0.35 : 1, background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', fontSize: '12px' }}>↓</button>
+                    </div>
                     <h3>{member.fullName}</h3>
                     {member.designation && <p style={{ fontStyle: 'italic', color: '#888', fontSize: '13px', marginTop: '-6px' }}>{member.designation}</p>}
                     <p style={{ fontWeight: 700, color: '#d4a017', fontSize: '1rem' }}>{member.honoraryTitle}</p>
                     {member.occupation && <p>{member.occupation}</p>}
                     {(member.city || member.state) && <p>📍 {[member.city, member.state].filter(Boolean).join(', ')}</p>}
-                    <button onClick={() => handleDeleteCommunityMember(member._id)} className="delete-btn">
-                      {language === 'en' ? 'Delete' : 'हटाएं'}
-                    </button>
+                    <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+                      <button onClick={() => { setEditingCommunity(member); setEditCommunityForm({ fullName: member.fullName, designation: member.designation || '', occupation: member.occupation || '', city: member.city || '', state: member.state || '', bio: member.bio || '', awards: member.awards || '', publications: member.publications || '', honoraryTitle: member.honoraryTitle || '', prakosth: member.prakosth || '', newPhoto: null }); }} className="view-btn-inline" style={{ fontSize: '12px', padding: '4px 10px' }}>
+                        {language === 'en' ? '✏️ Edit' : '✏️ संपादित'}
+                      </button>
+                      <button onClick={() => handleDeleteCommunityMember(member._id)} className="delete-btn">
+                        {language === 'en' ? 'Delete' : 'हटाएं'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1880,16 +2288,30 @@ const AdminDashboard = () => {
 
             {/* Prakosht section */}
             <h2 style={{ marginTop: '32px' }}>🏛️ {language === 'en' ? `Prakosht Members (${communityMembers.filter(m => m.prakosth).length})` : `प्रकोष्ठ सदस्य (${communityMembers.filter(m => m.prakosth).length})`}</h2>
+            <input
+              type="text"
+              placeholder={language === 'en' ? '🔍 Search Prakosht members...' : '🔍 प्रकोष्ठ सदस्य खोजें...'}
+              value={prakosthSearch}
+              onChange={e => setPrakosthSearch(e.target.value)}
+              style={{ width: '100%', padding: '9px 14px', borderRadius: '8px', border: '1.5px solid #ffcc80', marginBottom: '14px', fontSize: '14px', boxSizing: 'border-box', background: '#fff8f0' }}
+            />
             <div className="gallery-grid">
               {communityMembers.filter(m => m.prakosth).length === 0 ? (
-                <p style={{ color: '#888' }}>{language === 'en' ? 'No Prakosht members added yet' : 'अभी तक कोई प्रकोष्ठ सदस्य नहीं जोड़ा गया'}</p>
-              ) : communityMembers.filter(m => m.prakosth).map((member) => (
+                <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '20px', background: '#fff8f0', borderRadius: '10px', border: '1.5px dashed #ffcc80' }}>
+                  <p style={{ color: '#888' }}>{language === 'en' ? 'No Prakosht members added yet. Use the form above to add members.' : 'अभी तक कोई प्रकोष्ठ सदस्य नहीं जोड़ा गया। ऊपर दिए फॉर्म से सदस्य जोड़ें।'}</p>
+                </div>
+              ) : [...communityMembers.filter(m => m.prakosth && (!prakosthSearch || m.fullName.toLowerCase().includes(prakosthSearch.toLowerCase()) || (m.prakosth && m.prakosth.toLowerCase().includes(prakosthSearch.toLowerCase())) || (m.city && m.city.toLowerCase().includes(prakosthSearch.toLowerCase()))))].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((member, idx, arr) => (
                 <div key={member._id} className="gallery-card">
                   {member.photoPath
                     ? <img src={member.photoPath} alt={member.fullName} style={{ objectFit: 'cover' }} />
                     : <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', background: '#fff5ef' }}>🏛️</div>
                   }
                   <div className="gallery-info">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
+                      <span style={{ background: '#e3f2fd', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '11px', color: '#1565c0', flexShrink: 0 }}>{idx + 1}</span>
+                      <button onClick={() => reorderItems(arr, idx, 'up', 'community-members-reorder', fetchCommunityMembers)} disabled={idx === 0} style={{ padding: '2px 7px', opacity: idx === 0 ? 0.35 : 1, background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', fontSize: '12px' }}>↑</button>
+                      <button onClick={() => reorderItems(arr, idx, 'down', 'community-members-reorder', fetchCommunityMembers)} disabled={idx === arr.length - 1} style={{ padding: '2px 7px', opacity: idx === arr.length - 1 ? 0.35 : 1, background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', fontSize: '12px' }}>↓</button>
+                    </div>
                     <h3>{member.fullName}</h3>
                     {member.designation && <p style={{ fontStyle: 'italic', color: '#888', fontSize: '13px', marginTop: '-6px' }}>{member.designation}</p>}
                     <p style={{ fontWeight: 700, color: '#FF6B35', fontSize: '0.95rem' }}>
@@ -1903,13 +2325,491 @@ const AdminDashboard = () => {
                     </p>
                     {member.occupation && <p>{member.occupation}</p>}
                     {(member.city || member.state) && <p>📍 {[member.city, member.state].filter(Boolean).join(', ')}</p>}
-                    <button onClick={() => handleDeleteCommunityMember(member._id)} className="delete-btn">
-                      {language === 'en' ? 'Delete' : 'हटाएं'}
-                    </button>
+                    <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+                      <button onClick={() => { setEditingCommunity(member); setEditCommunityForm({ fullName: member.fullName, designation: member.designation || '', occupation: member.occupation || '', city: member.city || '', state: member.state || '', bio: member.bio || '', awards: member.awards || '', publications: member.publications || '', honoraryTitle: member.honoraryTitle || '', prakosth: member.prakosth || '', newPhoto: null }); }} className="view-btn-inline" style={{ fontSize: '12px', padding: '4px 10px' }}>
+                        {language === 'en' ? '✏️ Edit' : '✏️ संपादित'}
+                      </button>
+                      <button onClick={() => handleDeleteCommunityMember(member._id)} className="delete-btn">
+                        {language === 'en' ? 'Delete' : 'हटाएं'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== COMMITTEES TAB ===== */}
+      {activeTab === 'committees' && (
+        <div className="gallery-management">
+          {/* Sub-tabs for 3 committees */}
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            {[
+              { id: 'sanrakshak', label: 'संरक्षक कमेटी', labelEn: 'Sanrakshak Committee', color: '#5678c9' },
+              { id: 'prabandhan', label: 'प्रबन्धन कमेटी', labelEn: 'Prabandhan Committee', color: '#e07b39' },
+              { id: 'sanchalan', label: 'संचालक कमेटी', labelEn: 'Sanchalan Committee', color: '#28a745' },
+            ].map(tab => (
+              <button key={tab.id} type="button" onClick={() => {
+                setCommitteeSubTab(tab.id);
+                setCommitteeForm(f => ({ ...f, committee: tab.id }));
+              }} style={{
+                flex: 1, minWidth: '150px', padding: '12px 16px', borderRadius: '10px', fontWeight: '700',
+                cursor: 'pointer', border: 'none', fontSize: '14px',
+                background: committeeSubTab === tab.id ? tab.color : '#f0f0f0',
+                color: committeeSubTab === tab.id ? '#fff' : '#555',
+              }}>
+                {language === 'en' ? tab.labelEn : tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="gallery-form">
+            <h2>
+              {language === 'en'
+                ? `➕ Add Member to ${committeeSubTab === 'sanrakshak' ? 'Sanrakshak' : committeeSubTab === 'prabandhan' ? 'Prabandhan' : 'Sanchalan'} Committee`
+                : `➕ ${committeeSubTab === 'sanrakshak' ? 'संरक्षक' : committeeSubTab === 'prabandhan' ? 'प्रबन्धन' : 'संचालक'} कमेटी में सदस्य जोड़ें`}
+            </h2>
+            <form id="committee-form" onSubmit={handleAddCommitteeMember}>
+              <input type="text" placeholder={language === 'en' ? 'Full Name *' : 'पूरा नाम *'}
+                value={committeeForm.fullName} onChange={e => setCommitteeForm({ ...committeeForm, fullName: e.target.value })} required />
+              <input type="text" placeholder={language === 'en' ? 'Designation / Role (e.g. President)' : 'पद / भूमिका (जैसे अध्यक्ष)'}
+                value={committeeForm.designation} onChange={e => setCommitteeForm({ ...committeeForm, designation: e.target.value })} />
+              <input type="text" placeholder={language === 'en' ? 'Location / Village / Town' : 'स्थान / गाँव / नगर'}
+                value={committeeForm.position} onChange={e => setCommitteeForm({ ...committeeForm, position: e.target.value })} />
+              <input type="text" placeholder={language === 'en' ? 'City' : 'शहर'}
+                value={committeeForm.city} onChange={e => setCommitteeForm({ ...committeeForm, city: e.target.value })} />
+              <input type="text" placeholder={language === 'en' ? 'State' : 'राज्य'}
+                value={committeeForm.state} onChange={e => setCommitteeForm({ ...committeeForm, state: e.target.value })} />
+              {/* Display page — only for Prabandhan */}
+              {committeeSubTab === 'prabandhan' && (
+                <div style={{ background: '#fff8f0', border: '1.5px solid #ffe0b2', borderRadius: '10px', padding: '14px', marginBottom: '10px' }}>
+                  <label style={{ fontWeight: '700', fontSize: '14px', color: '#e07b39', display: 'block', marginBottom: '10px' }}>
+                    📍 {language === 'en' ? 'Display this member on:' : 'यह सदस्य कहाँ दिखाएं:'}
+                  </label>
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                    {[
+                      { val: 'about', label: language === 'en' ? 'About Page only' : 'केवल About पेज' },
+                      { val: 'home', label: language === 'en' ? 'Home Page only' : 'केवल Home पेज' },
+                      { val: 'both', label: language === 'en' ? 'Both Pages' : 'दोनों पेज' },
+                    ].map(opt => (
+                      <label key={opt.val} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontWeight: committeeForm.displayPage === opt.val ? '700' : '400', color: committeeForm.displayPage === opt.val ? '#e07b39' : '#555' }}>
+                        <input type="radio" name="displayPage" value={opt.val}
+                          checked={committeeForm.displayPage === opt.val}
+                          onChange={e => setCommitteeForm({ ...committeeForm, displayPage: e.target.value })} />
+                        {opt.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div>
+                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>
+                  {language === 'en' ? 'Photo (optional):' : 'फोटो (वैकल्पिक):'}
+                </label>
+                <input type="file" accept="image/*" onChange={e => setCommitteeForm({ ...committeeForm, photo: e.target.files[0] })} />
+                {committeeForm.photo && <p style={{ marginTop: '5px', color: '#28a745', fontSize: '14px' }}>✓ {committeeForm.photo.name}</p>}
+              </div>
+              <button type="submit" disabled={committeeSubmitting} style={{ opacity: committeeSubmitting ? 0.75 : 1, cursor: committeeSubmitting ? 'not-allowed' : 'pointer' }}>
+                {committeeSubmitting ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <span className="admin-spinner" />
+                    {language === 'en' ? 'Adding...' : 'जोड़ा जा रहा है...'}
+                  </span>
+                ) : (language === 'en' ? '➕ Add Member' : '➕ सदस्य जोड़ें')}
+              </button>
+              {committeeStatus && (
+                <div style={{ marginTop: '12px', padding: '10px 14px', borderRadius: '8px', fontWeight: '600', fontSize: '14px', background: committeeStatus.type === 'success' ? '#d4edda' : '#f8d7da', color: committeeStatus.type === 'success' ? '#155724' : '#721c24', border: `1px solid ${committeeStatus.type === 'success' ? '#c3e6cb' : '#f5c6cb'}` }}>
+                  {committeeStatus.msg}
+                </div>
+              )}
+            </form>
+          </div>
+
+          {/* Members List for selected sub-tab */}
+          <div className="gallery-list">
+            {(() => {
+              const tabMembers = committeeMembersData.filter(m => m.committee === committeeSubTab);
+              const sorted = [...tabMembers].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+              const tabColor = committeeSubTab === 'sanrakshak' ? '#5678c9' : committeeSubTab === 'prabandhan' ? '#e07b39' : '#28a745';
+              return (
+                <>
+                  <h2 style={{ color: tabColor }}>
+                    {language === 'en'
+                      ? `${committeeSubTab === 'sanrakshak' ? 'Sanrakshak' : committeeSubTab === 'prabandhan' ? 'Prabandhan' : 'Sanchalan'} Committee Members (${sorted.length})`
+                      : `${committeeSubTab === 'sanrakshak' ? 'संरक्षक' : committeeSubTab === 'prabandhan' ? 'प्रबन्धन' : 'संचालक'} कमेटी सदस्य (${sorted.length})`}
+                  </h2>
+                  {/* Committee search bar */}
+                  {sorted.length > 0 && (
+                    <input
+                      type="text"
+                      placeholder={language === 'en' ? '🔍 Search members...' : '🔍 सदस्य खोजें...'}
+                      value={committeeSearch}
+                      onChange={e => setCommitteeSearch(e.target.value)}
+                      style={{ width: '100%', padding: '9px 14px', borderRadius: '8px', border: `1.5px solid ${tabColor}44`, marginBottom: '14px', fontSize: '14px', boxSizing: 'border-box', background: '#f8f8ff' }}
+                    />
+                  )}
+                  {sorted.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '24px', background: '#f8f9ff', borderRadius: '12px', border: '1.5px dashed #c5cae9' }}>
+                      <p style={{ color: '#888', marginBottom: '14px' }}>{language === 'en' ? 'No members in database yet.' : 'डेटाबेस में अभी तक कोई सदस्य नहीं है।'}</p>
+                      <button
+                        onClick={() => handleSeedCommitteeMembers(committeeSubTab)}
+                        style={{ background: tabColor, color: '#fff', border: 'none', borderRadius: '8px', padding: '10px 20px', fontWeight: '700', cursor: 'pointer', fontSize: '14px' }}
+                      >
+                        📥 {language === 'en' ? 'Load Existing Members' : 'मौजूदा सदस्य लोड करें'}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="gallery-grid">
+                      {sorted
+                        .filter(m => !committeeSearch || m.fullName.toLowerCase().includes(committeeSearch.toLowerCase()) || (m.designation && m.designation.toLowerCase().includes(committeeSearch.toLowerCase())) || (m.city && m.city.toLowerCase().includes(committeeSearch.toLowerCase())))
+                        .map((member, idx, filteredArr) => (
+                        <div key={member._id} className="gallery-card">
+                          {member.photoPath
+                            ? <img src={member.photoPath} alt={member.fullName} style={{ objectFit: 'cover' }} />
+                            : <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', background: '#f0f4ff' }}>👤</div>
+                          }
+                          <div className="gallery-info">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
+                              <span style={{ background: tabColor, color: '#fff', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '11px', flexShrink: 0 }}>{sorted.indexOf(member) + 1}</span>
+                              <button onClick={() => reorderItems(sorted, sorted.indexOf(member), 'up', 'committee-members-reorder', fetchCommitteeMembersData)} disabled={sorted.indexOf(member) === 0} style={{ padding: '2px 7px', opacity: sorted.indexOf(member) === 0 ? 0.35 : 1, background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', fontSize: '12px' }}>↑</button>
+                              <button onClick={() => reorderItems(sorted, sorted.indexOf(member), 'down', 'committee-members-reorder', fetchCommitteeMembersData)} disabled={sorted.indexOf(member) === sorted.length - 1} style={{ padding: '2px 7px', opacity: sorted.indexOf(member) === sorted.length - 1 ? 0.35 : 1, background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', fontSize: '12px' }}>↓</button>
+                            </div>
+                            <h3>{member.fullName}</h3>
+                            {member.designation && <p style={{ fontWeight: 700, color: tabColor, fontSize: '0.9rem' }}>{member.designation}</p>}
+                            {member.position && <p style={{ fontStyle: 'italic', color: '#888', fontSize: '13px' }}>📍 {member.position}</p>}
+                            {(member.city || member.state) && <p>📍 {[member.city, member.state].filter(Boolean).join(', ')}</p>}
+                            {member.committee === 'prabandhan' && member.displayPage && (
+                              <p style={{ fontSize: '11px' }}>
+                                <span style={{ background: '#fff3e0', color: '#e07b39', borderRadius: '4px', padding: '2px 6px', fontWeight: '600' }}>
+                                  {member.displayPage === 'about' ? (language === 'en' ? 'About Page' : 'About पेज') : member.displayPage === 'home' ? (language === 'en' ? 'Home Page' : 'Home पेज') : (language === 'en' ? 'Both Pages' : 'दोनों पेज')}
+                                </span>
+                              </p>
+                            )}
+                            <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+                              <button onClick={() => setEditingCommittee({ ...member, newPhoto: null })} className="view-btn-inline" style={{ fontSize: '12px', padding: '4px 10px' }}>
+                                ✏️ {language === 'en' ? 'Edit' : 'संपादित'}
+                              </button>
+                              <button onClick={() => handleDeleteCommitteeMemberAdm(member._id)} className="delete-btn" style={{ fontSize: '12px', padding: '5px 12px' }}>
+                                {language === 'en' ? 'Delete' : 'हटाएं'}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
+      {/* ===== HERITAGE TAB ===== */}
+      {activeTab === 'heritage' && (
+        <div className="admin-section">
+          <h1>🏛️ {language === 'en' ? 'Heritage Posts — हमारे ऐतिहासिक धरोहर' : 'हमारे ऐतिहासिक धरोहर'}</h1>
+          <p style={{ color: '#888', marginBottom: '20px', fontSize: '14px' }}>
+            {language === 'en'
+              ? 'Manage all heritage entries. First initialize the 10 built-in sites into the database (one-time), then you can edit or delete any entry.'
+              : 'सभी धरोहर प्रविष्टियाँ प्रबंधित करें। पहले "10 मूल स्थल जोड़ें" बटन दबाएं (एक बार), फिर किसी भी प्रविष्टि को संपादित या हटाया जा सकता है।'}
+          </p>
+
+          <div className="gallery-upload-section">
+            <h2>➕ {language === 'en' ? 'Add New Heritage Post' : 'नया धरोहर पोस्ट जोड़ें'}</h2>
+            <form onSubmit={handleAddHeritage} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <input type="text" placeholder="शीर्षक (हिंदी) *" value={heritageForm.titleHi}
+                onChange={e => setHeritageForm({ ...heritageForm, titleHi: e.target.value })} required />
+              <input type="text" placeholder="Title (English)" value={heritageForm.titleEn}
+                onChange={e => setHeritageForm({ ...heritageForm, titleEn: e.target.value })} />
+              <textarea placeholder="विवरण (हिंदी) *" value={heritageForm.descriptionHi} rows={4}
+                onChange={e => setHeritageForm({ ...heritageForm, descriptionHi: e.target.value })} required
+                style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd', fontSize: '14px', resize: 'vertical' }} />
+              <textarea placeholder="Description (English)" value={heritageForm.descriptionEn} rows={3}
+                onChange={e => setHeritageForm({ ...heritageForm, descriptionEn: e.target.value })}
+                style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd', fontSize: '14px', resize: 'vertical' }} />
+              <input type="text" placeholder={language === 'en' ? 'Image Caption (optional)' : 'फोटो कैप्शन (वैकल्पिक)'}
+                value={heritageForm.imageCaption} onChange={e => setHeritageForm({ ...heritageForm, imageCaption: e.target.value })} />
+              <div>
+                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>
+                  {language === 'en' ? 'Photo (optional):' : 'फोटो (वैकल्पिक):'}
+                </label>
+                <input type="file" accept="image/*" onChange={e => setHeritageForm({ ...heritageForm, photo: e.target.files[0] })} />
+                {heritageForm.photo && <p style={{ marginTop: '5px', color: '#28a745', fontSize: '14px' }}>✓ {heritageForm.photo.name}</p>}
+              </div>
+              <button type="submit" disabled={heritageSubmitting} style={{ opacity: heritageSubmitting ? 0.75 : 1 }}>
+                {heritageSubmitting ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <span className="admin-spinner" />
+                    {language === 'en' ? 'Adding...' : 'जोड़ा जा रहा है...'}
+                  </span>
+                ) : (language === 'en' ? '🏛️ Add Heritage Post' : '🏛️ धरोहर पोस्ट जोड़ें')}
+              </button>
+              {heritageStatus && (
+                <div style={{ marginTop: '10px', padding: '10px 14px', borderRadius: '8px', fontWeight: '600', fontSize: '14px',
+                  background: heritageStatus.type === 'success' ? '#d4edda' : '#f8d7da',
+                  color: heritageStatus.type === 'success' ? '#155724' : '#721c24',
+                  border: `1px solid ${heritageStatus.type === 'success' ? '#c3e6cb' : '#f5c6cb'}` }}>
+                  {heritageStatus.msg}
+                </div>
+              )}
+            </form>
+          </div>
+
+          <div className="gallery-list" style={{ marginTop: '30px' }}>
+            {(() => {
+              const builtInCount = heritageData.filter(p => p.isBuiltIn).length;
+              return (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                    <h2 style={{ margin: 0 }}>🏛️ {language === 'en' ? `All Heritage Entries (${heritageData.length})` : `सभी धरोहर प्रविष्टियाँ (${heritageData.length})`}</h2>
+                    {builtInCount === 0 && (
+                      <button onClick={handleSeedStaticHeritage}
+                        style={{ background: '#8b4513', color: '#fff', border: 'none', borderRadius: '8px', padding: '7px 16px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}>
+                        🌱 {language === 'en' ? 'Initialize 10 Built-in Sites' : '10 मूल स्थल जोड़ें (एक बार)'}
+                      </button>
+                    )}
+                  </div>
+                  {builtInCount === 0 && (
+                    <p style={{ color: '#888', fontSize: '13px', marginBottom: '12px' }}>
+                      {language === 'en'
+                        ? 'Click the button above to load the 10 built-in heritage sites into the database so you can edit them.'
+                        : 'ऊपर बटन दबाएं ताकि 10 मूल धरोहर स्थल डेटाबेस में आ जाएं और आप उन्हें संपादित कर सकें।'}
+                    </p>
+                  )}
+                  {heritageData.length === 0 ? (
+                    <p style={{ color: '#888' }}>{language === 'en' ? 'No heritage posts yet.' : 'अभी कोई धरोहर प्रविष्टि नहीं।'}</p>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {[...heritageData].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((post, idx, arr) => (
+                        <div key={post._id} style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', background: post.isBuiltIn ? '#fdf9f3' : '#fafafa', border: `1.5px solid ${post.isBuiltIn ? '#d4b896' : '#e0e0e0'}`, borderRadius: '12px', padding: '14px 16px' }}>
+                          {/* Sequence + reorder */}
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', minWidth: '36px' }}>
+                            <span style={{ background: '#8b4513', color: '#fff', borderRadius: '50%', width: '26px', height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '12px' }}>{idx + 1}</span>
+                            <button onClick={() => reorderItems(arr, idx, 'up', 'heritage-posts-reorder', fetchHeritageData)} disabled={idx === 0} style={{ padding: '2px 7px', opacity: idx === 0 ? 0.3 : 1, background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', fontSize: '12px', cursor: idx === 0 ? 'not-allowed' : 'pointer' }}>↑</button>
+                            <button onClick={() => reorderItems(arr, idx, 'down', 'heritage-posts-reorder', fetchHeritageData)} disabled={idx === arr.length - 1} style={{ padding: '2px 7px', opacity: idx === arr.length - 1 ? 0.3 : 1, background: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', fontSize: '12px', cursor: idx === arr.length - 1 ? 'not-allowed' : 'pointer' }}>↓</button>
+                          </div>
+                          {/* Photo */}
+                          {post.imagePath
+                            ? <img src={post.imagePath} alt={post.titleHi} style={{ width: '80px', height: '60px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} />
+                            : <div style={{ width: '80px', height: '60px', borderRadius: '8px', background: '#f5f0e8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', flexShrink: 0 }}>🏛️</div>
+                          }
+                          {/* Info */}
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                              <span style={{ fontWeight: '700', fontSize: '15px', color: '#222' }}>{post.titleHi}</span>
+                              {post.isBuiltIn && <span style={{ background: '#f5ede0', color: '#8b4513', border: '1px solid #d4b896', borderRadius: '6px', padding: '2px 8px', fontSize: '11px', fontWeight: '600' }}>📌 Built-in</span>}
+                            </div>
+                            {post.titleEn && <div style={{ fontSize: '13px', color: '#666', fontStyle: 'italic' }}>{post.titleEn}</div>}
+                            <div style={{ fontSize: '13px', color: '#555', marginTop: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '400px' }}>{post.descriptionHi}</div>
+                            {post.imageCaption && <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>📷 {post.imageCaption}</div>}
+                          </div>
+                          {/* Actions */}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flexShrink: 0 }}>
+                            <button onClick={() => { setEditingHeritage(post); setEditHeritageForm({ titleHi: post.titleHi, titleEn: post.titleEn || '', descriptionHi: post.descriptionHi, descriptionEn: post.descriptionEn || '', imageCaption: post.imageCaption || '', newPhoto: null }); }}
+                              className="view-btn-inline" style={{ fontSize: '12px', padding: '5px 12px' }}>✏️ {language === 'en' ? 'Edit' : 'संपादित'}</button>
+                            <button onClick={() => handleDeleteHeritage(post._id)} className="delete-btn" style={{ fontSize: '12px', padding: '5px 12px' }}>
+                              {language === 'en' ? 'Delete' : 'हटाएं'}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
+      {/* ===== EDIT MODALS ===== */}
+
+
+      {/* Edit Gallery Modal */}
+      {editingGallery && (
+        <div className="modal-overlay" onClick={() => setEditingGallery(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '500px' }}>
+            <button className="modal-close" onClick={() => setEditingGallery(null)}>×</button>
+            <h2>✏️ {language === 'en' ? 'Edit Photo' : 'फोटो संपादित करें'}</h2>
+            <form onSubmit={handleUpdateGallery} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <input type="text" placeholder={language === 'en' ? 'Title *' : 'शीर्षक *'} value={editGalleryForm.title || ''}
+                onChange={e => setEditGalleryForm({ ...editGalleryForm, title: e.target.value })} required style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd' }} />
+              <textarea placeholder={language === 'en' ? 'Description' : 'विवरण'} value={editGalleryForm.description || ''}
+                onChange={e => setEditGalleryForm({ ...editGalleryForm, description: e.target.value })} style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd', minHeight: '80px' }} />
+              <select value={editGalleryForm.category || 'general'} onChange={e => setEditGalleryForm({ ...editGalleryForm, category: e.target.value })} style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd' }}>
+                <option value="general">{language === 'en' ? 'General' : 'सामान्य'}</option>
+                <option value="events">{language === 'en' ? 'Events' : 'कार्यक्रम'}</option>
+                <option value="community">{language === 'en' ? 'Community' : 'समुदाय'}</option>
+              </select>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button type="submit" className="approve-btn" style={{ flex: 1 }}>{language === 'en' ? 'Save Changes' : 'परिवर्तन सहेजें'}</button>
+                <button type="button" onClick={() => setEditingGallery(null)} className="delete-btn" style={{ flex: 1 }}>{language === 'en' ? 'Cancel' : 'रद्द करें'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Donor Modal */}
+      {editingDonor && (
+        <div className="modal-overlay" onClick={() => setEditingDonor(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '500px' }}>
+            <button className="modal-close" onClick={() => setEditingDonor(null)}>×</button>
+            <h2>✏️ {language === 'en' ? 'Edit Donor' : 'सहयोगी संपादित करें'}</h2>
+            <form onSubmit={handleUpdateDonor} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {[
+                ['fullName', language === 'en' ? 'Full Name *' : 'पूरा नाम *', 'text', true],
+                ['city', language === 'en' ? 'City' : 'शहर', 'text', false],
+                ['state', language === 'en' ? 'State' : 'राज्य', 'text', false],
+                ['donationAmount', language === 'en' ? 'Donation Amount (₹)' : 'दान राशि (₹)', 'number', false],
+                ['donationPurpose', language === 'en' ? 'Donation Purpose' : 'दान का उद्देश्य', 'text', false],
+              ].map(([field, ph, type, req]) => (
+                <input key={field} type={type} placeholder={ph} required={req} value={editDonorForm[field] || ''}
+                  onChange={e => setEditDonorForm({ ...editDonorForm, [field]: e.target.value })} style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd' }} />
+              ))}
+              <textarea placeholder={language === 'en' ? 'Message' : 'संदेश'} value={editDonorForm.message || ''}
+                onChange={e => setEditDonorForm({ ...editDonorForm, message: e.target.value })} style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd', minHeight: '70px' }} />
+              <div>
+                <label style={{ fontWeight: '600', display: 'block', marginBottom: '5px' }}>{language === 'en' ? 'Replace Photo (optional):' : 'फोटो बदलें (वैकल्पिक):'}</label>
+                <input type="file" accept="image/*" onChange={e => setEditDonorForm({ ...editDonorForm, newPhoto: e.target.files[0] })} />
+              </div>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button type="submit" className="approve-btn" style={{ flex: 1 }}>{language === 'en' ? 'Save Changes' : 'परिवर्तन सहेजें'}</button>
+                <button type="button" onClick={() => setEditingDonor(null)} className="delete-btn" style={{ flex: 1 }}>{language === 'en' ? 'Cancel' : 'रद्द करें'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Community Member Modal */}
+      {editingCommunity && (
+        <div className="modal-overlay" onClick={() => setEditingCommunity(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '520px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <button className="modal-close" onClick={() => setEditingCommunity(null)}>×</button>
+            <h2>✏️ {language === 'en' ? 'Edit Member' : 'सदस्य संपादित करें'}</h2>
+            <form onSubmit={handleUpdateCommunityMember} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {[
+                ['fullName', language === 'en' ? 'Full Name *' : 'पूरा नाम *', true],
+                ['designation', language === 'en' ? 'Designation' : 'पदनाम', false],
+                ['occupation', language === 'en' ? 'Occupation' : 'व्यवसाय', false],
+                ['city', language === 'en' ? 'City' : 'शहर', false],
+                ['state', language === 'en' ? 'State' : 'राज्य', false],
+              ].map(([field, ph, req]) => (
+                <input key={field} type="text" placeholder={ph} required={req} value={editCommunityForm[field] || ''}
+                  onChange={e => setEditCommunityForm({ ...editCommunityForm, [field]: e.target.value })} style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd' }} />
+              ))}
+              {['bio', 'awards', 'publications'].map(field => (
+                <textarea key={field} placeholder={field.charAt(0).toUpperCase() + field.slice(1)} value={editCommunityForm[field] || ''}
+                  onChange={e => setEditCommunityForm({ ...editCommunityForm, [field]: e.target.value })} style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd', minHeight: '70px' }} />
+              ))}
+              {editingCommunity.honoraryTitle && (
+                <select value={editCommunityForm.honoraryTitle || ''} onChange={e => setEditCommunityForm({ ...editCommunityForm, honoraryTitle: e.target.value })} style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd' }}>
+                  <option value="">-- {language === 'en' ? 'Select Honorary Title' : 'उपाधि चुनें'} --</option>
+                  {['मौनस शिरोमणि', 'मौनस कुबेर', 'मौनस रत्न', 'मौनस कुलभूषण', 'मौनस कुलदीपक', 'मौनस नायक'].map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              )}
+              {editingCommunity.prakosth && (
+                <select value={editCommunityForm.prakosth || ''} onChange={e => setEditCommunityForm({ ...editCommunityForm, prakosth: e.target.value })} style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd' }}>
+                  <option value="">-- {language === 'en' ? 'Select Prakosht' : 'प्रकोष्ठ चुनें'} --</option>
+                  {[['buddhijivi','बुद्धिजीवी प्रकोष्ठ'],['manav-seva','मानव सेवा प्रकोष्ठ'],['chikitsa','चिकित्सा प्रकोष्ठ'],['vidhi','विधि प्रकोष्ठ'],['vyapar','व्यापार प्रकोष्ठ'],['kisaan','किसान प्रकोष्ठ'],['khel','खेल एवं सैनिक प्रकोष्ठ'],['yuva','युवा प्रकोष्ठ'],['mahila','महिला प्रकोष्ठ'],['veerangana','वीरांगना प्रकोष्ठ']].map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                </select>
+              )}
+              <div>
+                <label style={{ fontWeight: '600', display: 'block', marginBottom: '5px' }}>{language === 'en' ? 'Replace Photo (optional):' : 'फोटो बदलें (वैकल्पिक):'}</label>
+                <input type="file" accept="image/*" onChange={e => setEditCommunityForm({ ...editCommunityForm, newPhoto: e.target.files[0] })} />
+              </div>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button type="submit" className="approve-btn" style={{ flex: 1 }}>{language === 'en' ? 'Save Changes' : 'परिवर्तन सहेजें'}</button>
+                <button type="button" onClick={() => setEditingCommunity(null)} className="delete-btn" style={{ flex: 1 }}>{language === 'en' ? 'Cancel' : 'रद्द करें'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Committee Member Modal */}
+      {editingCommittee && (
+        <div className="modal-overlay" onClick={() => setEditingCommittee(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <button className="modal-close" onClick={() => setEditingCommittee(null)}>×</button>
+            <h2>✏️ {language === 'en' ? 'Edit Committee Member' : 'कमेटी सदस्य संपादित करें'}</h2>
+            <form onSubmit={handleUpdateCommitteeMember} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {[
+                ['fullName', language === 'en' ? 'Full Name *' : 'पूरा नाम *', true],
+                ['designation', language === 'en' ? 'Designation / Role' : 'पद / भूमिका', false],
+                ['position', language === 'en' ? 'Location / Village / Town' : 'स्थान / गाँव / नगर', false],
+                ['city', language === 'en' ? 'City' : 'शहर', false],
+                ['state', language === 'en' ? 'State' : 'राज्य', false],
+              ].map(([field, ph, req]) => (
+                <input key={field} type="text" placeholder={ph} required={req} value={editingCommittee[field] || ''}
+                  onChange={e => setEditingCommittee({ ...editingCommittee, [field]: e.target.value })} style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd' }} />
+              ))}
+              {editingCommittee.committee === 'prabandhan' && (
+                <div style={{ background: '#fff8f0', border: '1.5px solid #ffe0b2', borderRadius: '10px', padding: '14px' }}>
+                  <label style={{ fontWeight: '700', fontSize: '14px', color: '#e07b39', display: 'block', marginBottom: '10px' }}>
+                    📍 {language === 'en' ? 'Display on:' : 'कहाँ दिखाएं:'}
+                  </label>
+                  <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+                    {[['about', language === 'en' ? 'About Page' : 'About पेज'], ['home', language === 'en' ? 'Home Page' : 'Home पेज'], ['both', language === 'en' ? 'Both Pages' : 'दोनों पेज']].map(([val, lbl]) => (
+                      <label key={val} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontWeight: editingCommittee.displayPage === val ? '700' : '400', color: editingCommittee.displayPage === val ? '#e07b39' : '#555' }}>
+                        <input type="radio" name="editDisplayPage" value={val} checked={editingCommittee.displayPage === val} onChange={e => setEditingCommittee({ ...editingCommittee, displayPage: e.target.value })} />
+                        {lbl}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div>
+                <label style={{ fontWeight: '600', display: 'block', marginBottom: '5px' }}>{language === 'en' ? 'Replace Photo (optional):' : 'फोटो बदलें (वैकल्पिक):'}</label>
+                <input type="file" accept="image/*" onChange={e => setEditingCommittee({ ...editingCommittee, newPhoto: e.target.files[0] })} />
+              </div>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button type="submit" className="approve-btn" style={{ flex: 1 }}>{language === 'en' ? 'Save Changes' : 'परिवर्तन सहेजें'}</button>
+                <button type="button" onClick={() => setEditingCommittee(null)} className="delete-btn" style={{ flex: 1 }}>{language === 'en' ? 'Cancel' : 'रद्द करें'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Heritage Modal */}
+      {editingHeritage && (
+        <div className="modal-overlay" onClick={() => setEditingHeritage(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '560px' }}>
+            <button className="modal-close" onClick={() => setEditingHeritage(null)}>×</button>
+            <h2>✏️ {language === 'en' ? 'Edit Heritage Post' : 'धरोहर पोस्ट संपादित करें'}</h2>
+            <form onSubmit={handleUpdateHeritage} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <input type="text" placeholder="शीर्षक (हिंदी) *" value={editHeritageForm.titleHi || ''}
+                onChange={e => setEditHeritageForm({ ...editHeritageForm, titleHi: e.target.value })} required
+                style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd' }} />
+              <input type="text" placeholder="Title (English)" value={editHeritageForm.titleEn || ''}
+                onChange={e => setEditHeritageForm({ ...editHeritageForm, titleEn: e.target.value })}
+                style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd' }} />
+              <textarea placeholder="विवरण (हिंदी) *" value={editHeritageForm.descriptionHi || ''} rows={4}
+                onChange={e => setEditHeritageForm({ ...editHeritageForm, descriptionHi: e.target.value })} required
+                style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd', fontSize: '14px', resize: 'vertical' }} />
+              <textarea placeholder="Description (English)" value={editHeritageForm.descriptionEn || ''} rows={3}
+                onChange={e => setEditHeritageForm({ ...editHeritageForm, descriptionEn: e.target.value })}
+                style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd', fontSize: '14px', resize: 'vertical' }} />
+              <input type="text" placeholder={language === 'en' ? 'Image Caption' : 'फोटो कैप्शन'}
+                value={editHeritageForm.imageCaption || ''} onChange={e => setEditHeritageForm({ ...editHeritageForm, imageCaption: e.target.value })}
+                style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd' }} />
+              {editingHeritage.imagePath && (
+                <img src={editingHeritage.imagePath} alt="current" style={{ width: '100%', maxHeight: '160px', objectFit: 'cover', borderRadius: '8px' }} />
+              )}
+              <div>
+                <label style={{ fontWeight: '600', fontSize: '13px' }}>{language === 'en' ? 'Replace Photo (optional):' : 'फोटो बदलें (वैकल्पिक):'}</label>
+                <input type="file" accept="image/*" onChange={e => setEditHeritageForm({ ...editHeritageForm, newPhoto: e.target.files[0] })} style={{ marginTop: '5px' }} />
+              </div>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button type="submit" className="approve-btn" style={{ flex: 1 }}>{language === 'en' ? 'Save Changes' : 'परिवर्तन सहेजें'}</button>
+                <button type="button" onClick={() => setEditingHeritage(null)} className="delete-btn" style={{ flex: 1 }}>{language === 'en' ? 'Cancel' : 'रद्द करें'}</button>
+              </div>
+            </form>
           </div>
         </div>
       )}

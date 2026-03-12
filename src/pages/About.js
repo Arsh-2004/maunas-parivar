@@ -218,75 +218,38 @@ const About = () => {
     try {
       setLoading(true);
       
-      // For prabandhan committee, use static members
-      if (committeeId === 'prabandhan') {
-        setCommitteeMembers(prev => ({
-          ...prev,
-          [committeeId]: getPrabandhanMembers()
-        }));
-        setLoading(false);
-        return;
-      }
+      const staticFallbacks = {
+        prabandhan: getPrabandhanMembers,
+        sanchalan: getSanchalanMembers,
+        sanrakshak: getSanrakshakMembers,
+      };
 
-      // For sanchalan committee, use static members
-      if (committeeId === 'sanchalan') {
-        setCommitteeMembers(prev => ({
-          ...prev,
-          [committeeId]: getSanchalanMembers()
-        }));
-        setLoading(false);
-        return;
-      }
-
-      // For sanrakshak committee, use static members
-      if (committeeId === 'sanrakshak') {
-        setCommitteeMembers(prev => ({
-          ...prev,
-          [committeeId]: getSanrakshakMembers()
-        }));
-        setLoading(false);
-        return;
-      }
-      
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/committee-members/${committeeId}`);
+      // Try to fetch from API first
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${apiUrl}/admin/committee-members?committee=${committeeId}&page=about`);
       const data = await response.json();
-      
-      if (data.success) {
-        setCommitteeMembers(prev => ({
-          ...prev,
-          [committeeId]: data.members || []
-        }));
+
+      if (data.success && data.members && data.members.length > 0) {
+        // Use API data if available
+        setCommitteeMembers(prev => ({ ...prev, [committeeId]: data.members }));
+      } else if (staticFallbacks[committeeId]) {
+        // Fallback to static members
+        setCommitteeMembers(prev => ({ ...prev, [committeeId]: staticFallbacks[committeeId]() }));
       } else {
-        // If no API data, show placeholder
-        setCommitteeMembers(prev => ({
-          ...prev,
-          [committeeId]: []
-        }));
+        setCommitteeMembers(prev => ({ ...prev, [committeeId]: [] }));
       }
     } catch (error) {
       console.error('Error fetching committee members:', error);
-      
-      // For prabandhan committee, use static members even on error
-      if (committeeId === 'prabandhan') {
-        setCommitteeMembers(prev => ({
-          ...prev,
-          [committeeId]: getPrabandhanMembers()
-        }));
-      } else if (committeeId === 'sanchalan') {
-        setCommitteeMembers(prev => ({
-          ...prev,
-          [committeeId]: getSanchalanMembers()
-        }));
-      } else if (committeeId === 'sanrakshak') {
-        setCommitteeMembers(prev => ({
-          ...prev,
-          [committeeId]: getSanrakshakMembers()
-        }));
+      // On error, use static fallback if available
+      const staticFallbacks = {
+        prabandhan: getPrabandhanMembers,
+        sanchalan: getSanchalanMembers,
+        sanrakshak: getSanrakshakMembers,
+      };
+      if (staticFallbacks[committeeId]) {
+        setCommitteeMembers(prev => ({ ...prev, [committeeId]: staticFallbacks[committeeId]() }));
       } else {
-        setCommitteeMembers(prev => ({
-          ...prev,
-          [committeeId]: []
-        }));
+        setCommitteeMembers(prev => ({ ...prev, [committeeId]: [] }));
       }
     } finally {
       setLoading(false);

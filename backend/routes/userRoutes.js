@@ -470,43 +470,27 @@ router.get('/id-card/:userId', async (req, res) => {
   }
 });
 
-// Get committee members
+// Get committee members (now uses CommitteeMember model, supports ?page=about|home)
 router.get('/committee-members/:committeeId', async (req, res) => {
   try {
     const { committeeId } = req.params;
-    
-    // Map committee IDs to database committee field values
-    const committeeMap = {
-      'sanrakshak': 'संरक्षक कमेटी',
-      'prabandhan': 'प्रबन्धन कमेटी',
-      'sanchalan': 'संचालक कमेटी'
-    };
-    
-    const committeeName = committeeMap[committeeId];
-    
-    if (!committeeName) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid committee ID'
-      });
+    const { page } = req.query;
+
+    const validCommittees = ['sanrakshak', 'prabandhan', 'sanchalan'];
+    if (!validCommittees.includes(committeeId)) {
+      return res.status(400).json({ success: false, message: 'Invalid committee ID' });
     }
-    
-    // Fetch members from the committee field
-    const members = await User.find({
-      committee: committeeName,
-      status: 'approved'
-    }).select('fullName position city state phone photoPath committee');
-    
-    res.json({
-      success: true,
-      members: members || []
-    });
+
+    const CommitteeMember = require('../models/CommitteeMember');
+    const query = { committee: committeeId };
+    if (page === 'home') query.displayPage = { $in: ['home', 'both'] };
+    else if (page === 'about') query.displayPage = { $in: ['about', 'both'] };
+
+    const members = await CommitteeMember.find(query).sort({ sortOrder: 1, addedAt: 1 });
+    res.json({ success: true, members: members || [] });
   } catch (error) {
     console.error('Error fetching committee members:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch committee members'
-    });
+    res.status(500).json({ success: false, message: 'Failed to fetch committee members' });
   }
 });
 

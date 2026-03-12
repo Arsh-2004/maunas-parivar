@@ -8,7 +8,7 @@
 
 .nm-hero {
   background: linear-gradient(135deg, #d94700 0%, #FF6B35 35%, #F7931E 65%, #e8521a 100%);
-  padding: 90px 0 70px;
+  padding: 90px 0 90px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -53,11 +53,11 @@
 .nm-hero-sub {
   font-size: 1.18rem;
   font-weight: 600;
-  color: rgba(255,255,255,0.96);
+  color: #000;
   max-width: 700px;
   margin: 0 auto 36px;
   line-height: 1.75;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.18);
+  text-shadow: none;
 }
 
 .nm-hero-btn {
@@ -82,36 +82,37 @@
 
 /* ---- Container ---- */
 .nm-container {
-  padding-top: 32px;
+  padding-top: 0;
   padding-bottom: 60px;
 }
 
 /* ---- Stats Bar ---- */
 .nm-stats-bar {
   display: flex;
-  gap: 20px;
+  gap: 32px;
   justify-content: center;
-  margin-bottom: 28px;
+  margin-top: -50px;
+  margin-bottom: 48px;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 10;
 }
 
 .nm-stat {
   background: #fff;
-  border-radius: 14px;
-  padding: 18px 32px;
+  border-radius: 16px;
+  padding: 24px 44px;
   text-align: center;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-  min-width: 120px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+  min-width: 140px;
+  border: 1px solid rgba(0,0,0,0.06);
 }
 
 .nm-stat-num {
   display: block;
   font-size: 2rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #FF6B35, #F7931E);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1a1a1a;
   line-height: 1;
   margin-bottom: 4px;
 }

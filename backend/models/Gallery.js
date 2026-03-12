@@ -25,6 +25,10 @@ const gallerySchema = new mongoose.Schema({
   uploadedAt: {
     type: Date,
     default: Date.now
+  },
+  sortOrder: {
+    type: Number,
+    default: 0
   }
 });
 

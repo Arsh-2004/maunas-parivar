@@ -1,10 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import './Home.css';
 
+const STATIC_TEAM = [
+  { _id: 's1', fullName: 'Shri Ravi Kumar Singh Ji', fullNameHi: 'श्री रवि कुमार सिंह जी', city: 'Varanasi', cityHi: 'वाराणसी', photoPath: '/assets/national-president.jpeg', designation: '' },
+  { _id: 's2', fullName: 'Dr J P Singh Ji', fullNameHi: 'डॉ जे पी सिंह जी', city: 'Varanasi', cityHi: 'वाराणसी', photoPath: '/assets/national-vice-president.jpeg', designation: '' },
+  { _id: 's3', fullName: 'Dr Om Prakash Singh Ji', fullNameHi: 'डॉ ओम प्रकाश सिंह जी', city: 'Varanasi', cityHi: 'वाराणसी', photoPath: '/assets/National Secretary.jpeg', designation: '' },
+  { _id: 's4', fullName: 'Shri Suresh Singh Ji', fullNameHi: 'श्री सुरेश सिंह जी', city: 'Varanasi', cityHi: 'वाराणसी', photoPath: '/assets/National Treasurer.jpeg', designation: '' },
+  { _id: 's5', fullName: 'Shri Rohit Singh Ji', fullNameHi: 'श्री रोहित सिंह जी', city: 'Varanasi', cityHi: 'वाराणसी', photoPath: '/assets/rohit-singh.jpeg', designation: '' },
+  { _id: 's6', fullName: 'Shri Shailendra Pratap Singh Ji', fullNameHi: 'श्री शैलेन्द्र प्रताप सिंह जी', city: 'Varanasi', cityHi: 'वाराणसी', photoPath: '/assets/shailendra.jpeg', designation: '' },
+  { _id: 's7', fullName: 'Rajan Singh Ji', fullNameHi: 'श्री राजन सिंह जी', city: 'Gird Badgaon Bhadohi', cityHi: 'गिर्द बड़गांव भदोही', photoPath: '/assets/rajan-singh.jpeg', designation: '' },
+  { _id: 's8', fullName: 'Shri Vinod Singh Ji', fullNameHi: 'श्री विनोद सिंह जी', city: 'Suriawan Bhadohi', cityHi: 'सुरियावां भदोही', photoPath: '/assets/श्री विनोद सिंह जी.jpeg', designation: '' },
+  { _id: 's9', fullName: 'Shri Ambika Singh Ji', fullNameHi: 'श्री अंबिका सिंह जी', city: 'Mathaha Bhadohi', cityHi: 'मठहाॅ भदोही', photoPath: '/assets/श्री अंबिका सिंह जी.jpeg', designation: '' },
+  { _id: 's10', fullName: 'Shri Ashish Singh Ji', fullNameHi: 'श्री आशीष सिंह जी', city: 'Bhadohi', cityHi: 'भदोही', photoPath: '/assets/ashishsingh.jpeg', designation: '' },
+];
+
 const Home = () => {
   const { language } = useLanguage();
+  const [homeTeamMembers, setHomeTeamMembers] = useState(null);
+
+  useEffect(() => {
+    const fetchHomeTeam = async () => {
+      try {
+        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+        const res = await fetch(`${apiUrl}/admin/committee-members?committee=prabandhan&page=home`);
+        const data = await res.json();
+        if (data.success && data.members && data.members.length > 0) {
+          setHomeTeamMembers(data.members);
+        } else {
+          setHomeTeamMembers(STATIC_TEAM);
+        }
+      } catch {
+        setHomeTeamMembers(STATIC_TEAM);
+      }
+    };
+    fetchHomeTeam();
+  }, []);
+
+  const teamToRender = homeTeamMembers || STATIC_TEAM;
 
   return (
     <div className="home">
@@ -140,172 +174,34 @@ const Home = () => {
             <div className="underline"></div>
           </div>
           <div className="team-grid">
-            <div className="team-card">
-              <div className="team-image">
-                <img 
-                  src="/assets/national-president.jpeg" 
-                  alt="National President"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Shri Ravi Kumar Singh Ji' : 'श्री रवि कुमार सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
-            </div>
-            <div className="team-card">
-              <div className="team-image">
-                <img 
-                  src="/assets/national-vice-president.jpeg" 
-                  alt="Vice President"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Dr J P Singh Ji' : 'डॉ जे पी सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
-            </div>
-            <div className="team-card">
-              <div className="team-image">
-                <img 
-                  src="/assets/National Secretary.jpeg" 
-                  alt="General Secretary"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Dr Om Prakash Singh Ji' : 'डॉ ओम प्रकाश सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
-            </div>
-            <div className="team-card">
-              <div className="team-image">
-                <img 
-                  src="/assets/National Treasurer.jpeg" 
-                  alt="Treasurer"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Shri Suresh Singh Ji' : 'श्री सुरेश सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
-            </div>
-            <div className="team-card">
-              <div className="team-image">
-                <img 
-                  src="/assets/rohit-singh.jpeg" 
-                  alt="Rohit Singh"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Shri Rohit Singh Ji' : 'श्री रोहित सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
-            </div>
-            <div className="team-card">
-              <div className="team-image">
-                <img 
-                  src="/assets/shailendra.jpeg" 
-                  alt="Shailendra Pratap Singh"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Shri Shailendra Pratap Singh Ji' : 'श्री शैलेन्द्र प्रताप सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Varanasi' : 'वाराणसी'}</p>
-            </div>
-            <div className="team-card">
-              <div className="team-image">
-                <img 
-                  src="/assets/rajan-singh.jpeg" 
-                  alt="Rajan Singh"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Rajan Singh Ji' : 'श्री राजन सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Gird Badgaon Bhadohi' : 'गिर्द बड़गांव भदोही'}</p>
-            </div>
-            
-
-            <div className="team-card">
-              <div className="team-image">
-                <img 
-                  src="/assets/श्री विनोद सिंह जी.jpeg" 
-                  alt="Vinod Singh"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Shri Vinod Singh Ji' : 'श्री विनोद सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Suriawan Bhadohi' : 'सुरियावां भदोही'}</p>
-            </div>
-
-
-            <div className="team-card">
-              <div className="team-image">
-                <img 
-                  src="/assets/श्री अंबिका सिंह जी.jpeg" 
-                  alt="Ambika Singh"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Shri Ambika Singh Ji' : 'श्री अंबिका सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Mathaha Bhadohi' : 'मठहाॅ भदोही'}</p>
-            </div>
-
-            <div className="team-card">
-              <div className="team-image">
-                <img 
-                  src="/assets/ashishsingh.jpeg" 
-                  alt="Ashish Singh"
-                  className="team-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="image-placeholder" style={{display: 'none'}}>👤</div>
-              </div>
-              <h3 className="member-name">{language === 'en' ? 'Shri Ashish Singh Ji' : 'श्री आशीष सिंह जी'}</h3>
-              <p className="designation">{language === 'en' ? 'Bhadohi' : 'भदोही'}</p>
-            </div>
-            
+            {teamToRender.map((member) => {
+              const name = language === 'en'
+                ? (member.fullName || member.fullNameHi || '')
+                : (member.fullNameHi || member.fullName || '');
+              const city = language === 'en'
+                ? (member.city || member.cityHi || '')
+                : (member.cityHi || member.city || '');
+              const photo = member.photoPath || '';
+              const label = [member.designation, member.position, city].filter(Boolean).join(' · ');
+              return (
+                <div className="team-card" key={member._id}>
+                  <div className="team-image">
+                    <img
+                      src={photo}
+                      alt={name}
+                      className="team-photo"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div className="image-placeholder" style={{display: 'none'}}>👤</div>
+                  </div>
+                  <h3 className="member-name">{name}</h3>
+                  {label && <p className="designation">{label}</p>}
+                </div>
+              );
+            })}
           </div>
           {/* <div className="text-center" style={{ marginTop: '30px' }}>
             <Link to="/community" className="btn btn-primary">{language === 'en' ? 'View All Members' : 'सभी सदस्यों को देखें'}</Link>
