@@ -15,12 +15,38 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // Middleware
-// Configure CORS for production
+// Configure CORS for local + production domains.
+// FRONTEND_URLS can be a comma-separated list.
+const defaultAllowedOrigins = [
+  'http://localhost:3000',
+  'https://maunas.in',
+  'https://www.maunas.in'
+];
+
+const envAllowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const allowedOrigins = envAllowedOrigins.length > 0 ? envAllowedOrigins : defaultAllowedOrigins;
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    // Allow non-browser requests (no Origin header)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };
+
 app.use(cors(corsOptions));
 
 // Trust proxy to get real IP address (important for deployed apps)
