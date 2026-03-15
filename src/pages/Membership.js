@@ -4,7 +4,14 @@ import { getTranslation } from '../translations';
 import { indianStates } from '../data/indianStates';
 import './Membership.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://maunas-parivar.onrender.com/api';
+
+const getAdaptiveUploadTimeout = (totalBytes) => {
+  const oneMB = 1024 * 1024;
+  const totalMB = totalBytes / oneMB;
+  // Base 60s + 8s per MB, capped at 5 minutes for very slow mobile networks.
+  return Math.min(300000, Math.max(60000, 60000 + Math.ceil(totalMB * 8000)));
+};
 
 const Membership = () => {
   const { language } = useLanguage();
@@ -571,8 +578,26 @@ const Membership = () => {
         submitData.append('donationDocument', formData.donationDocument);
       }
 
+      const uploadFiles = [
+        formData.idProof,
+        formData.addressProof,
+        formData.photo,
+        formData.donationDocument,
+        ...effectiveFamilyPhotos
+      ].filter(Boolean);
+
+      const totalUploadBytes = uploadFiles.reduce((sum, file) => sum + (file.size || 0), 0);
+      const timeoutMs = getAdaptiveUploadTimeout(totalUploadBytes);
+
+      const networkType = navigator.connection?.effectiveType || 'unknown';
+      console.log('Registration upload diagnostics:', {
+        totalUploadMB: (totalUploadBytes / (1024 * 1024)).toFixed(2),
+        timeoutMs,
+        networkType
+      });
+
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
       
       try {
         const response = await fetch(`${API_URL}/users/register`, {
@@ -654,8 +679,8 @@ const Membership = () => {
         // Provide more specific error messages
         if (fetchError.name === 'AbortError') {
           errorMsg = language === 'en' 
-            ? 'Request timeout. Please check your internet connection and try again.' 
-            : 'अनुरोध समय समाप्त। कृपया अपने इंटरनेट कनेक्शन की जांच करें और पुन: प्रयास करें।';
+            ? 'Upload timed out on slow network. Please try again with smaller files or stronger internet.' 
+            : 'धीमे नेटवर्क के कारण अपलोड का समय समाप्त हो गया। कृपया छोटी फाइलें या बेहतर इंटरनेट के साथ पुनः प्रयास करें।';
         } else if (fetchError.message === 'Failed to fetch') {
           errorMsg = language === 'en' 
             ? 'Cannot connect to server. Please verify the API endpoint is correct and the server is running.' 
