@@ -29,28 +29,51 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req, file, cb) => {
-    // Only accept image files
-    const allowedTypes = /jpeg|jpg|png/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-    
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error('Only JPEG, JPG, and PNG images are allowed!'));
+    const ext = path.extname(file.originalname).toLowerCase();
+    const imageExt = ['.jpg', '.jpeg', '.png', '.heic', '.heif', '.webp'];
+    const imageMime = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/heif', 'image/webp'];
+    const isImage = imageExt.includes(ext) || imageMime.includes((file.mimetype || '').toLowerCase());
+
+    const pdfExt = ext === '.pdf';
+    const pdfMime = (file.mimetype || '').toLowerCase() === 'application/pdf';
+    const isPdf = pdfExt || pdfMime;
+
+    const documentFields = ['idProof', 'addressProof', 'donationDocument'];
+    const imageOnlyFields = ['photo', 'familyMemberPhoto', 'image'];
+
+    if (documentFields.includes(file.fieldname)) {
+      if (isPdf || isImage) {
+        return cb(null, true);
+      }
+      return cb(new Error('Only PDF or image files are allowed for documents.'));
     }
+
+    if (imageOnlyFields.includes(file.fieldname)) {
+      if (isImage) {
+        return cb(null, true);
+      }
+      return cb(new Error('Only image files are allowed for photos.'));
+    }
+
+    if (isImage || isPdf) {
+      return cb(null, true);
+    }
+
+    cb(new Error('Unsupported file type. Please upload PDF or image files.'));
   }
 });
 
 // Function to upload file to Cloudinary and delete local file
 const uploadToCloudinary = async (filePath, folder) => {
   try {
+    const ext = path.extname(filePath).toLowerCase();
+    const isPdf = ext === '.pdf';
     const uploadOptions = {
       folder: `maunas-parivar/${folder}`,
-      resource_type: 'image'
+      resource_type: isPdf ? 'raw' : 'image'
     };
     
-    console.log(`Uploading image to Cloudinary:`, filePath);
+    console.log(`Uploading ${isPdf ? 'document' : 'image'} to Cloudinary:`, filePath);
     const result = await cloudinary.uploader.upload(filePath, uploadOptions);
     console.log('Cloudinary upload success:', result.secure_url);
     

@@ -30,6 +30,8 @@ const envAllowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL
 
 const allowedOrigins = envAllowedOrigins.length > 0 ? envAllowedOrigins : defaultAllowedOrigins;
 
+console.log('✅ CORS allowed origins:', allowedOrigins);
+
 const corsOptions = {
   origin: (origin, callback) => {
     // Allow non-browser requests (no Origin header)
@@ -37,17 +39,45 @@ const corsOptions = {
       return callback(null, true);
     }
 
+    // Check if origin is in whitelist
     if (allowedOrigins.includes(origin)) {
+      console.log(`✅ CORS allowed: ${origin}`);
       return callback(null, true);
     }
 
+    // Check if origin is from same domain but different port (helpful for mobile testing)
+    // e.g., https://maunas.in from https://maunas.in:3000
+    const originHostname = new URL(origin).hostname;
+    const isLocalhost = originHostname.includes('localhost') || originHostname.includes('127.0.0.1');
+    const isSameDomain = allowedOrigins.some(allowed => {
+      try {
+        return new URL(allowed).hostname === originHostname;
+      } catch {
+        return false;
+      }
+    });
+
+    if (isLocalhost || isSameDomain) {
+      console.log(`✅ CORS allowed (same domain variant): ${origin}`);
+      return callback(null, true);
+    }
+
+    // Log rejected origins to help debug mobile issues
+    console.warn(`⚠️  CORS BLOCKED: ${origin}`);
+    console.warn(`📱 Allowed origins: ${allowedOrigins.join(', ')}`);
+    console.warn(`📱 If this is your mobile user's browser, add the origin to FRONTEND_URLS env var`);
     return callback(new Error(`CORS blocked for origin: ${origin}`));
   },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 
 app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly
+app.options('*', cors(corsOptions));
 
 // Trust proxy to get real IP address (important for deployed apps)
 app.set('trust proxy', 1);
@@ -81,31 +111,6 @@ app.use('/uploads', (req, res, next) => {
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Global error handling middleware for network issues
-app.use((err, req, res, next) => {
-  console.error('❌ Server error:', {
-    message: err.message,
-    stack: err.stack,
-    url: req.originalUrl,
-    method: req.method,
-    ip: req.clientIp
-  });
-  
-  // Handle CORS errors
-  if (err.message && err.message.includes('CORS')) {
-    return res.status(403).json({
-      success: false,
-      message: 'CORS error: This domain is not allowed to access this API',
-      origin: req.get('origin')
-    });
-  }
-  
-  res.status(500).json({
-    success: false,
-    message: 'Server error. Please try again later.'
-  });
-});
-
 // MongoDB Connection with retry logic
 const connectDB = async () => {
   try {
@@ -134,6 +139,55 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/contact', contactRoutes);
+
+// Global error handling middleware for network and upload issues
+app.use((err, req, res, next) => {
+  console.error('❌ Server error:', {
+    message: err.message,
+    name: err.name,
+    stack: err.stack,
+    url: req.originalUrl,
+    method: req.method,
+    ip: req.clientIp
+  });
+
+  if (err.message && err.message.includes('CORS')) {
+    return res.status(403).json({
+      success: false,
+      message: 'CORS error: This domain is not allowed to access this API',
+      origin: req.get('origin')
+    });
+  }
+
+  if (err.name === 'MulterError') {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({
+        success: false,
+        code: 'FILE_TOO_LARGE',
+        message: 'File size too large. Maximum allowed size is 10MB per file.'
+      });
+    }
+
+    return res.status(400).json({
+      success: false,
+      code: err.code || 'UPLOAD_ERROR',
+      message: err.message || 'File upload failed.'
+    });
+  }
+
+  if (err.message && (err.message.includes('Only image files') || err.message.includes('Only PDF') || err.message.includes('Unsupported file type'))) {
+    return res.status(400).json({
+      success: false,
+      code: 'INVALID_FILE_TYPE',
+      message: err.message
+    });
+  }
+
+  res.status(500).json({
+    success: false,
+    message: 'Server error. Please try again later.'
+  });
+});
 
 // Health check route
 app.get('/api/health', (req, res) => {
