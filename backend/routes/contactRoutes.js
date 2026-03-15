@@ -44,13 +44,34 @@ router.post('/', async (req, res) => {
   try {
     const { name, email, phone, subject, message } = req.body;
 
+    console.log('📨 Contact form submission from IP:', req.clientIp);
+    console.log('📨 Form data received:', { name, email, phone, subject });
+
     if (!name || !email || !subject || !message) {
-      return res.status(400).json({ success: false, message: 'Please fill all required fields' });
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Please fill all required fields',
+        missingFields: {
+          name: !name,
+          email: !email,
+          subject: !subject,
+          message: !message
+        }
+      });
     }
 
     // Save to MongoDB
-    const contact = new Contact({ name, email, phone, subject, message });
+    const contact = new Contact({ 
+      name, 
+      email, 
+      phone, 
+      subject, 
+      message,
+      submittedAt: new Date(),
+      submittedFromIp: req.clientIp
+    });
     await contact.save();
+    console.log('✅ Contact message saved to DB:', contact._id);
 
     // Send email notification if email credentials are configured
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS && process.env.ADMIN_EMAIL) {
@@ -77,6 +98,8 @@ router.post('/', async (req, res) => {
           `
         });
 
+        console.log('✅ Admin notification email sent');
+
         // Auto-reply to sender
         await transporter.sendMail({
           from: `"Kshatriya Maunas Parivar" <${process.env.EMAIL_USER}>`,
@@ -94,18 +117,49 @@ router.post('/', async (req, res) => {
             </div>
           `
         });
+
+        console.log('✅ Auto-reply email sent to:', email);
+
       } catch (emailErr) {
-        console.error('❌ Email sending failed (message still saved to DB):', emailErr.message);
-        console.error('   Code:', emailErr.code);
-        console.error('   EMAIL_USER:', process.env.EMAIL_USER);
+        console.error('❌ Email sending failed (message still saved to DB):', {
+          message: emailErr.message,
+          code: emailErr.code,
+          emailUser: process.env.EMAIL_USER
+        });
         // Message is already saved to DB, don't fail the request
       }
+    } else {
+      console.warn('⚠️ Email credentials not configured - skipping email notifications');
     }
 
-    res.json({ success: true, message: 'Message submitted successfully' });
+    res.json({ 
+      success: true, 
+      message: 'Message submitted successfully',
+      contactId: contact._id
+    });
   } catch (error) {
-    console.error('Contact form error:', error);
-    res.status(500).json({ success: false, message: 'Failed to submit message' });
+    console.error('❌ Contact form error:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+      ip: req.clientIp
+    });
+    
+    // Handle MongoDB validation errors
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(e => e.message);
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Validation error: ' + messages.join(', '),
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to submit message. Please try again later.',
+      code: 'CONTACT_FAILED'
+    });
   }
 });
 

@@ -30,20 +30,42 @@ const Contact = () => {
     e.preventDefault();
     setSubmitting(true);
     setSubmitStatus(null);
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    
     try {
+      console.log('Contact: Submitting to', `${API_URL}/contact`);
+      
       const response = await fetch(`${API_URL}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
+        credentials: 'include',
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
+      
+      console.log('Contact: Response status', response.status);
+      
       const data = await response.json();
       if (data.success) {
         setSubmitStatus('success');
         setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
       } else {
+        console.error('Contact: Server error', data);
         setSubmitStatus('error');
       }
     } catch (err) {
+      clearTimeout(timeoutId);
+      
+      console.error('Contact: Fetch error', {
+        message: err.message,
+        name: err.name,
+        url: `${API_URL}/contact`
+      });
+      
       setSubmitStatus('error');
     } finally {
       setSubmitting(false);

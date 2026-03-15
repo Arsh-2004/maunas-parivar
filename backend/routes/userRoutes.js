@@ -105,12 +105,18 @@ router.post('/register', upload.fields([
   { name: 'familyMemberPhoto', maxCount: 20 }
 ]), async (req, res) => {
   try {
+    console.log('📝 Registration attempt from IP:', req.clientIp);
+    console.log('📝 Request body fields:', Object.keys(req.body));
+    console.log('📝 Uploaded files:', req.files ? Object.keys(req.files) : 'none');
+
     // Check if phone number already exists
     const existingUser = await User.findOne({ phone: req.body.phone });
     if (existingUser) {
+      console.warn('⚠️ Phone number already registered:', req.body.phone);
       return res.status(400).json({ 
         success: false, 
-        message: 'Phone number already registered' 
+        message: 'Phone number already registered',
+        code: 'PHONE_EXISTS'
       });
     }
 
@@ -118,29 +124,75 @@ router.post('/register', upload.fields([
     if (!req.files || !req.files.idProof) {
       return res.status(400).json({ 
         success: false, 
-        message: 'ID proof document is required' 
+        message: 'ID proof document is required',
+        code: 'MISSING_ID_PROOF'
       });
     }
     if (!req.files.addressProof) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Address proof document is required' 
+        message: 'Address proof document is required',
+        code: 'MISSING_ADDRESS_PROOF'
       });
     }
     if (!req.files.photo) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Photo is required' 
+        message: 'Photo is required',
+        code: 'MISSING_PHOTO'
       });
     }
 
-    // Upload files to Cloudinary
-    const idProofUrl = await uploadToCloudinary(req.files.idProof[0].path, 'documents');
-    const addressProofUrl = await uploadToCloudinary(req.files.addressProof[0].path, 'documents');
-    const photoUrl = await uploadToCloudinary(req.files.photo[0].path, 'photos');
-    const donationDocUrl = req.files.donationDocument 
-      ? await uploadToCloudinary(req.files.donationDocument[0].path, 'documents')
-      : null;
+    console.log('📤 Uploading files to Cloudinary...');
+    
+    // Upload files to Cloudinary with error handling
+    let idProofUrl, addressProofUrl, photoUrl, donationDocUrl;
+    
+    try {
+      idProofUrl = await uploadToCloudinary(req.files.idProof[0].path, 'documents');
+      console.log('✅ ID Proof uploaded:', idProofUrl);
+    } catch (uploadErr) {
+      console.error('❌ ID Proof upload failed:', uploadErr);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to upload ID proof. Please try again.',
+        code: 'UPLOAD_FAILED'
+      });
+    }
+
+    try {
+      addressProofUrl = await uploadToCloudinary(req.files.addressProof[0].path, 'documents');
+      console.log('✅ Address Proof uploaded:', addressProofUrl);
+    } catch (uploadErr) {
+      console.error('❌ Address Proof upload failed:', uploadErr);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to upload address proof. Please try again.',
+        code: 'UPLOAD_FAILED'
+      });
+    }
+
+    try {
+      photoUrl = await uploadToCloudinary(req.files.photo[0].path, 'photos');
+      console.log('✅ Photo uploaded:', photoUrl);
+    } catch (uploadErr) {
+      console.error('❌ Photo upload failed:', uploadErr);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to upload photo. Please try again.',
+        code: 'UPLOAD_FAILED'
+      });
+    }
+
+    if (req.files.donationDocument) {
+      try {
+        donationDocUrl = await uploadToCloudinary(req.files.donationDocument[0].path, 'documents');
+        console.log('✅ Donation Document uploaded:', donationDocUrl);
+      } catch (uploadErr) {
+        console.warn('⚠️ Donation Document upload failed (optional):', uploadErr);
+        donationDocUrl = null;
+      }
+    }
 
     // Create new user
     // Parse optional family members from JSON string
@@ -156,7 +208,11 @@ router.post('/register', upload.fields([
                 let photoPath = '';
                 const photoFiles = req.files && req.files.familyMemberPhoto;
                 if (photoFiles && photoFiles[i]) {
-                  photoPath = await uploadToCloudinary(photoFiles[i].path, 'photos');
+                  try {
+                    photoPath = await uploadToCloudinary(photoFiles[i].path, 'photos');
+                  } catch (uploadErr) {
+                    console.warn('⚠️ Family member photo upload failed (optional):', uploadErr);
+                  }
                 }
                 return {
                   name: m.name.trim(),
@@ -173,7 +229,7 @@ router.post('/register', upload.fields([
           );
         }
       } catch (e) {
-        // ignore malformed JSON
+        console.warn('⚠️ Family members parsing error (optional):', e);
       }
     }
 
@@ -200,22 +256,59 @@ router.post('/register', upload.fields([
       photoPath: photoUrl,
       donationDocumentPath: donationDocUrl,
       familyMembers,
-      status: 'pending'
+      status: 'pending',
+      registeredAt: new Date(),
+      registeredFromIp: req.clientIp
     };
 
     const user = new User(userData);
     await user.save();
 
+    console.log('✅ User registered successfully:', user._id, req.body.phone);
+
     res.status(201).json({ 
       success: true, 
       message: 'Registration successful! Your application is pending approval.',
-      userId: user._id
+      userId: user._id,
+      data: {
+        fullName: user.fullName,
+        phone: user.phone,
+        status: user.status
+      }
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('❌ Registration error:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+      phone: req.body?.phone,
+      ip: req.clientIp
+    });
+
+    // Handle MongoDB duplicate key error
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({ 
+        success: false, 
+        message: `This ${field} is already registered. Please use a different ${field}.`,
+        code: 'DUPLICATE_' + field.toUpperCase()
+      });
+    }
+
+    // Handle validation errors
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(e => e.message);
+      return res.status(400).json({
+        success: false,
+        message: 'Validation error: ' + messages.join(', '),
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
     res.status(500).json({ 
       success: false, 
-      message: 'Registration failed. Please try again.' 
+      message: 'Registration failed. Please try again later.',
+      code: 'REGISTRATION_FAILED'
     });
   }
 });

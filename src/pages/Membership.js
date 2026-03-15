@@ -571,64 +571,103 @@ const Membership = () => {
         submitData.append('donationDocument', formData.donationDocument);
       }
 
-      const response = await fetch(`${API_URL}/users/register`, {
-        method: 'POST',
-        body: submitData,
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setMessage({
-          type: 'success',
-          text: language === 'en' 
-            ? 'Registration successful! Your application is pending approval. You will be notified once approved.' 
-            : 'पंजीकरण सफल! आपका आवेदन अनुमोदन के लिए लंबित है। अनुमोदित होने पर आपको सूचित किया जाएगा।'
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      
+      try {
+        const response = await fetch(`${API_URL}/users/register`, {
+          method: 'POST',
+          body: submitData,
+          credentials: 'include', // Include cookies for CORS
+          signal: controller.signal
         });
-        setShowModal(true);
-        setShowReviewModal(false);
-        setShowConfirmation(false);
-        setEducationCategory('');
-        setOtherEducationText('');
-        setSubDegreeOther('');
-        setDobDay('');
-        setDobMonth('');
-        setDobYear('');
-        setFamilyMembers([]);
-        setFamilyMemberPhotos([]);
-        setNewFamilyMember({ name: '', relation: '', gender: '', dateOfBirth: '', occupation: '', phone: '' });
-        setFmDobDay(''); setFmDobMonth(''); setFmDobYear('');
-        setFmPhotoFile(null); setFmPhotoPreview('');
-        setShowFamilyForm(true);
-        setFormData({
-          fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '', education: '',
-          phone: '', password: '', confirmPassword: '', address: '', village: '', block: '', tehsil: '', district: '', city: '', state: '', pincode: '', occupation: '',
-          idProof: null, addressProof: null, photo: null, donationDocument: null
+
+        clearTimeout(timeoutId);
+
+        // Log response details for debugging
+        console.log('Registration response:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url
         });
-        // Reset file inputs
-        document.getElementById('idProof').value = '';
-        document.getElementById('addressProof').value = '';
-        document.getElementById('photo').value = '';
-        const donationInput = document.getElementById('donationDocument');
-        if (donationInput) donationInput.value = '';
-        // Scroll to top
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
+
+        const data = await response.json();
+
+        if (data.success) {
+          setMessage({
+            type: 'success',
+            text: language === 'en' 
+              ? 'Registration successful! Your application is pending approval. You will be notified once approved.' 
+              : 'पंजीकरण सफल! आपका आवेदन अनुमोदन के लिए लंबित है। अनुमोदित होने पर आपको सूचित किया जाएगा।'
+          });
+          setShowModal(true);
+          setShowReviewModal(false);
+          setShowConfirmation(false);
+          setEducationCategory('');
+          setOtherEducationText('');
+          setSubDegreeOther('');
+          setDobDay('');
+          setDobMonth('');
+          setDobYear('');
+          setFamilyMembers([]);
+          setFamilyMemberPhotos([]);
+          setNewFamilyMember({ name: '', relation: '', gender: '', dateOfBirth: '', occupation: '', phone: '' });
+          setFmDobDay(''); setFmDobMonth(''); setFmDobYear('');
+          setFmPhotoFile(null); setFmPhotoPreview('');
+          setShowFamilyForm(true);
+          setFormData({
+            fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '', education: '',
+            phone: '', password: '', confirmPassword: '', address: '', village: '', block: '', tehsil: '', district: '', city: '', state: '', pincode: '', occupation: '',
+            idProof: null, addressProof: null, photo: null, donationDocument: null
+          });
+          // Reset file inputs
+          document.getElementById('idProof').value = '';
+          document.getElementById('addressProof').value = '';
+          document.getElementById('photo').value = '';
+          const donationInput = document.getElementById('donationDocument');
+          if (donationInput) donationInput.value = '';
+          // Scroll to top
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          setMessage({
+            type: 'error',
+            text: data.message || (language === 'en' ? 'Registration failed. Please try again.' : 'पंजीकरण विफल। कृपया पुन: प्रयास करें।')
+          });
+          showNotification('error', data.message || (language === 'en' ? '❌ Registration failed. Please try again.' : '❌ पंजीकरण विफल। कृपया पुन: प्रयास करें।'));
+        }
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        
+        // Detailed error logging for debugging
+        console.error('Registration fetch error:', {
+          message: fetchError.message,
+          name: fetchError.name,
+          code: fetchError.code,
+          apiUrl: API_URL,
+          stack: fetchError.stack
+        });
+
+        let errorMsg = language === 'en' 
+          ? 'Connection error. Please check if the server is running.' 
+          : 'कनेक्शन त्रुटि। कृपया जांचें कि सर्वर चल रहा है।';
+        
+        // Provide more specific error messages
+        if (fetchError.name === 'AbortError') {
+          errorMsg = language === 'en' 
+            ? 'Request timeout. Please check your internet connection and try again.' 
+            : 'अनुरोध समय समाप्त। कृपया अपने इंटरनेट कनेक्शन की जांच करें और पुन: प्रयास करें।';
+        } else if (fetchError.message === 'Failed to fetch') {
+          errorMsg = language === 'en' 
+            ? 'Cannot connect to server. Please verify the API endpoint is correct and the server is running.' 
+            : 'सर्वर से कनेक्ट नहीं हो सकता। कृपया सत्यापित करें कि API अंतिम बिंदु सही है और सर्वर चल रहा है।';
+        }
+        
         setMessage({
           type: 'error',
-          text: data.message || (language === 'en' ? 'Registration failed. Please try again.' : 'पंजीकरण विफल। कृपया पुन: प्रयास करें।')
+          text: errorMsg
         });
-        showNotification('error', data.message || (language === 'en' ? '❌ Registration failed. Please try again.' : '❌ पंजीकरण विफल। कृपया पुन: प्रयास करें।'));
+        showNotification('error', `❌ ${errorMsg}`);
       }
-    } catch (error) {
-      const errorMsg = language === 'en' 
-        ? 'Connection error. Please check if the server is running.' 
-        : 'कनेक्शन त्रुटि। कृपया जांचें कि सर्वर चल रहा है।';
-      setMessage({
-        type: 'error',
-        text: errorMsg
-      });
-      showNotification('error', `❌ ${errorMsg}`);
     } finally {
       setLoading(false);
     }
