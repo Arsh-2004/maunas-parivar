@@ -17,11 +17,14 @@ if (!fs.existsSync(uploadsDir)) {
 // Middleware
 // Configure CORS for production
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: ['https://maunas.in', 'https://www.maunas.in', 'http://localhost:3000'],
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-password'],  // ← YOUR HEADER GOES HERE
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));  // ← This handles the preflight OPTIONS request
 
 // Trust proxy to get real IP address (important for deployed apps)
 app.set('trust proxy', 1);
