@@ -134,13 +134,15 @@ router.post('/register', upload.fields([
       });
     }
 
-    // Upload files to Cloudinary
-    const idProofUrl = await uploadToCloudinary(req.files.idProof[0].path, 'documents');
-    const addressProofUrl = await uploadToCloudinary(req.files.addressProof[0].path, 'documents');
-    const photoUrl = await uploadToCloudinary(req.files.photo[0].path, 'photos');
-    const donationDocUrl = req.files.donationDocument 
-      ? await uploadToCloudinary(req.files.donationDocument[0].path, 'documents')
-      : null;
+    // Upload core files in parallel to reduce request time on slow networks.
+    const [idProofUrl, addressProofUrl, photoUrl, donationDocUrl] = await Promise.all([
+      uploadToCloudinary(req.files.idProof[0].path, 'documents'),
+      uploadToCloudinary(req.files.addressProof[0].path, 'documents'),
+      uploadToCloudinary(req.files.photo[0].path, 'photos'),
+      req.files.donationDocument
+        ? uploadToCloudinary(req.files.donationDocument[0].path, 'documents')
+        : Promise.resolve(null)
+    ]);
 
     // Create new user
     // Parse optional family members from JSON string

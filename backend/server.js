@@ -16,15 +16,54 @@ if (!fs.existsSync(uploadsDir)) {
 
 // Middleware
 // Configure CORS for production
+const defaultAllowedOrigins = [
+  'https://maunas.in',
+  'https://www.maunas.in',
+  'https://maunas.netlify.app',
+  'http://localhost:3000'
+];
+
+const envAllowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const allowedOrigins = Array.from(new Set([...defaultAllowedOrigins, ...envAllowedOrigins]));
+
+const isAllowedOrigin = (origin) => {
+  if (!origin) {
+    return true;
+  }
+
+  if (allowedOrigins.includes(origin)) {
+    return true;
+  }
+
+  try {
+    const hostname = new URL(origin).hostname.toLowerCase();
+    return hostname === 'maunas.in' || hostname.endsWith('.maunas.in');
+  } catch (error) {
+    return false;
+  }
+};
+
 const corsOptions = {
-  origin: ['https://maunas.in', 'https://www.maunas.in', 'http://localhost:3000'],
+  origin: (origin, callback) => {
+    if (isAllowedOrigin(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-password'],  // ← YOUR HEADER GOES HERE
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-admin-password'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   optionsSuccessStatus: 200
 };
+
+console.log('CORS allowed origins:', allowedOrigins);
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));  // ← This handles the preflight OPTIONS request
+app.options('*', cors(corsOptions));
 
 // Trust proxy to get real IP address (important for deployed apps)
 app.set('trust proxy', 1);
@@ -73,6 +112,58 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/contact', contactRoutes);
+
+// Global error handling middleware for CORS and upload failures
+app.use((err, req, res, next) => {
+  if (!err) {
+    return next();
+  }
+
+  console.error('Server error:', {
+    message: err.message,
+    name: err.name,
+    code: err.code,
+    path: req.originalUrl,
+    method: req.method
+  });
+
+  if (err.message && err.message.includes('CORS blocked')) {
+    return res.status(403).json({
+      success: false,
+      code: 'CORS_BLOCKED',
+      message: 'Request blocked by CORS policy for this origin.'
+    });
+  }
+
+  if (err.name === 'MulterError') {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({
+        success: false,
+        code: 'FILE_TOO_LARGE',
+        message: 'One of the files is too large. Please upload smaller files.'
+      });
+    }
+
+    return res.status(400).json({
+      success: false,
+      code: err.code || 'UPLOAD_ERROR',
+      message: err.message || 'File upload failed.'
+    });
+  }
+
+  if (err.message && err.message.includes('Only JPEG, JPG, and PNG images are allowed!')) {
+    return res.status(400).json({
+      success: false,
+      code: 'INVALID_FILE_TYPE',
+      message: err.message
+    });
+  }
+
+  return res.status(500).json({
+    success: false,
+    message: 'Server error. Please try again later.'
+  });
+});
 
 // Health check route
 app.get('/api/health', (req, res) => {
