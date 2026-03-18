@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { getTranslation } from '../translations';
 import './Events.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_URL = '/api';
 
 const Events = () => {
   const { language } = useLanguage();

@@ -23,7 +23,7 @@ const Home = () => {
   useEffect(() => {
     const fetchHomeTeam = async () => {
       try {
-        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+        const apiUrl = '/api';
         const res = await fetch(`${apiUrl}/admin/committee-members?committee=prabandhan&page=home`);
         const data = await res.json();
         if (data.success && data.members && data.members.length > 0) {

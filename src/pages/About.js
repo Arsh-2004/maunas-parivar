@@ -225,7 +225,7 @@ const About = () => {
       };
 
       // Try to fetch from API first
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      const apiUrl = '/api';
       const response = await fetch(`${apiUrl}/admin/committee-members?committee=${committeeId}&page=about`);
       const data = await response.json();
 

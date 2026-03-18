@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import DigitalIDCard from '../components/DigitalIDCard';
 import './MemberProfile.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_URL = '/api';
 
 const MemberProfile = () => {
   const { userId } = useParams();
