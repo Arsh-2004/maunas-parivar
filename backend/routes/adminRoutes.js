@@ -392,7 +392,7 @@ router.get('/search', adminAuth, async (req, res) => {
 router.post('/gallery', adminAuth, upload.single('image'), async (req, res) => {
   try {
     console.log('Uploading gallery photo with data:', req.body);
-    console.log('File received:', req.file ? req.file.path : 'No file');
+    console.log('File received:', req.file ? req.file.originalname : 'No file');
     
     if (!req.file) {
       return res.status(400).json({ 
@@ -402,7 +402,7 @@ router.post('/gallery', adminAuth, upload.single('image'), async (req, res) => {
     }
 
     // Upload to Cloudinary
-    const cloudinaryUrl = await uploadToCloudinary(req.file.path, 'gallery');
+    const cloudinaryUrl = await uploadToCloudinary(req.file, 'gallery');
 
     const galleryData = {
       title: req.body.title,
@@ -621,7 +621,7 @@ router.post('/donors', adminAuth, upload.single('photo'), async (req, res) => {
   try {
     let photoPath = null;
     if (req.file) {
-      photoPath = await uploadToCloudinary(req.file.path, 'donors');
+      photoPath = await uploadToCloudinary(req.file, 'donors');
     }
 
     const donor = new Donor({
@@ -682,7 +682,7 @@ router.post('/community-members', adminAuth, upload.single('photo'), async (req,
   try {
     let photoPath = null;
     if (req.file) {
-      photoPath = await uploadToCloudinary(req.file.path, 'community-members');
+      photoPath = await uploadToCloudinary(req.file, 'community-members');
     }
 
     const member = new CommunityMember({
@@ -724,7 +724,7 @@ router.put('/community-members/:id', adminAuth, upload.single('photo'), async (r
     const member = await CommunityMember.findById(req.params.id);
     if (!member) return res.status(404).json({ success: false, message: 'Not found' });
     if (req.file) {
-      member.photoPath = await uploadToCloudinary(req.file.path, 'community-members');
+      member.photoPath = await uploadToCloudinary(req.file, 'community-members');
     }
     if (req.body.fullName) member.fullName = req.body.fullName;
     if (req.body.designation !== undefined) member.designation = req.body.designation;
@@ -790,7 +790,7 @@ router.put('/donors/:id', adminAuth, upload.single('photo'), async (req, res) =>
     const donor = await Donor.findById(req.params.id);
     if (!donor) return res.status(404).json({ success: false, message: 'Not found' });
     if (req.file) {
-      donor.photoPath = await uploadToCloudinary(req.file.path, 'donors');
+      donor.photoPath = await uploadToCloudinary(req.file, 'donors');
     }
     if (req.body.fullName) donor.fullName = req.body.fullName;
     if (req.body.city !== undefined) donor.city = req.body.city;
@@ -840,7 +840,7 @@ router.post('/committee-members-admin', adminAuth, upload.single('photo'), async
   try {
     let photoPath = null;
     if (req.file) {
-      photoPath = await uploadToCloudinary(req.file.path, 'committee-members');
+      photoPath = await uploadToCloudinary(req.file, 'committee-members');
     }
     const maxOrder = await CommitteeMember.findOne({ committee: req.body.committee }).sort({ sortOrder: -1 });
     const sortOrder = maxOrder ? maxOrder.sortOrder + 1 : 0;
@@ -869,7 +869,7 @@ router.put('/committee-members-admin/:id', adminAuth, upload.single('photo'), as
     const member = await CommitteeMember.findById(req.params.id);
     if (!member) return res.status(404).json({ success: false, message: 'Not found' });
     if (req.file) {
-      member.photoPath = await uploadToCloudinary(req.file.path, 'committee-members');
+      member.photoPath = await uploadToCloudinary(req.file, 'committee-members');
     }
     if (req.body.fullName) member.fullName = req.body.fullName;
     if (req.body.designation !== undefined) member.designation = req.body.designation;
@@ -945,7 +945,7 @@ router.post('/heritage-posts', adminAuth, upload.single('photo'), async (req, re
   try {
     let imagePath = null;
     if (req.file) {
-      imagePath = await uploadToCloudinary(req.file.path, 'heritage');
+      imagePath = await uploadToCloudinary(req.file, 'heritage');
     }
     const maxOrder = await HeritagePost.findOne().sort({ sortOrder: -1 });
     const sortOrder = maxOrder ? maxOrder.sortOrder + 1 : 0;
@@ -975,7 +975,7 @@ router.put('/heritage-posts/:id', adminAuth, upload.single('photo'), async (req,
       imageCaption: req.body.imageCaption || '',
     };
     if (req.file) {
-      update.imagePath = await uploadToCloudinary(req.file.path, 'heritage');
+      update.imagePath = await uploadToCloudinary(req.file, 'heritage');
     }
     const post = await HeritagePost.findByIdAndUpdate(req.params.id, update, { new: true });
     res.json({ success: true, post });

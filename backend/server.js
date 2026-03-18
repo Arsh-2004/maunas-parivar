@@ -6,6 +6,7 @@ const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
+const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 180000);
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -15,12 +16,12 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // Middleware
-// Configure CORS for local + production domains.
-// FRONTEND_URLS can be a comma-separated list.
+// Configure CORS for production
 const defaultAllowedOrigins = [
-  'http://localhost:3000',
   'https://maunas.in',
-  'https://www.maunas.in'
+  'https://www.maunas.in',
+  'https://maunas.netlify.app',
+  'http://localhost:3000'
 ];
 
 const envAllowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || '')
@@ -28,59 +29,54 @@ const envAllowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL
   .map((origin) => origin.trim())
   .filter(Boolean);
 
-const allowedOrigins = envAllowedOrigins.length > 0 ? envAllowedOrigins : defaultAllowedOrigins;
+const allowedOrigins = Array.from(new Set([...defaultAllowedOrigins, ...envAllowedOrigins]));
 
-console.log('✅ CORS allowed origins:', allowedOrigins);
+const isAllowedOrigin = (origin) => {
+  if (!origin) {
+    return true;
+  }
+
+  if (allowedOrigins.includes(origin)) {
+    return true;
+  }
+
+  try {
+    const hostname = new URL(origin).hostname.toLowerCase();
+    return hostname === 'maunas.in' || hostname.endsWith('.maunas.in');
+  } catch (error) {
+    return false;
+  }
+};
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow non-browser requests (no Origin header)
-    if (!origin) {
+    if (isAllowedOrigin(origin)) {
       return callback(null, true);
     }
 
-    // Check if origin is in whitelist
-    if (allowedOrigins.includes(origin)) {
-      console.log(`✅ CORS allowed: ${origin}`);
-      return callback(null, true);
-    }
-
-    // Check if origin is from same domain but different port (helpful for mobile testing)
-    // e.g., https://maunas.in from https://maunas.in:3000
-    const originHostname = new URL(origin).hostname;
-    const isLocalhost = originHostname.includes('localhost') || originHostname.includes('127.0.0.1');
-    const isSameDomain = allowedOrigins.some(allowed => {
-      try {
-        return new URL(allowed).hostname === originHostname;
-      } catch {
-        return false;
-      }
-    });
-
-    if (isLocalhost || isSameDomain) {
-      console.log(`✅ CORS allowed (same domain variant): ${origin}`);
-      return callback(null, true);
-    }
-
-    // Log rejected origins to help debug mobile issues
-    console.warn(`⚠️  CORS BLOCKED: ${origin}`);
-    console.warn(`📱 Allowed origins: ${allowedOrigins.join(', ')}`);
-    console.warn(`📱 If this is your mobile user's browser, add the origin to FRONTEND_URLS env var`);
     return callback(new Error(`CORS blocked for origin: ${origin}`));
   },
   credentials: true,
-  optionsSuccessStatus: 200,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-admin-password'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  optionsSuccessStatus: 200
 };
 
+console.log('CORS allowed origins:', allowedOrigins);
 app.use(cors(corsOptions));
-
-// Handle preflight requests explicitly
 app.options('*', cors(corsOptions));
 
 // Trust proxy to get real IP address (important for deployed apps)
 app.set('trust proxy', 1);
+
+// Keep upload requests alive longer on unstable mobile networks and avoid proxy buffering where supported.
+app.use((req, res, next) => {
+  req.setTimeout(REQUEST_TIMEOUT_MS);
+  res.setTimeout(REQUEST_TIMEOUT_MS);
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.setHeader('Cache-Control', 'no-transform');
+  next();
+});
 
 // Middleware to capture real IP address
 app.use((req, res, next) => {
@@ -108,26 +104,13 @@ app.use('/uploads', (req, res, next) => {
   next();
 }, express.static(uploadsDir));
 
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb', parameterLimit: 1000 }));
 
-// MongoDB Connection with retry logic
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-      retryWrites: true
-    });
-    console.log('✅ Connected to MongoDB Atlas');
-  } catch (err) {
-    console.error('❌ MongoDB connection error:', err);
-    // Retry after 5 seconds
-    setTimeout(connectDB, 5000);
-  }
-};
-
-connectDB();
+// MongoDB Connection
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ Connected to MongoDB Atlas'))
+  .catch((err) => console.error('❌ MongoDB connection error:', err));
 
 // Routes
 const userRoutes = require('./routes/userRoutes');
@@ -140,22 +123,25 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/contact', contactRoutes);
 
-// Global error handling middleware for network and upload issues
+// Global error handling middleware for CORS and upload failures
 app.use((err, req, res, next) => {
-  console.error('❌ Server error:', {
+  if (!err) {
+    return next();
+  }
+
+  console.error('Server error:', {
     message: err.message,
     name: err.name,
-    stack: err.stack,
-    url: req.originalUrl,
-    method: req.method,
-    ip: req.clientIp
+    code: err.code,
+    path: req.originalUrl,
+    method: req.method
   });
 
-  if (err.message && err.message.includes('CORS')) {
+  if (err.message && err.message.includes('CORS blocked')) {
     return res.status(403).json({
       success: false,
-      message: 'CORS error: This domain is not allowed to access this API',
-      origin: req.get('origin')
+      code: 'CORS_BLOCKED',
+      message: 'Request blocked by CORS policy for this origin.'
     });
   }
 
@@ -164,7 +150,7 @@ app.use((err, req, res, next) => {
       return res.status(400).json({
         success: false,
         code: 'FILE_TOO_LARGE',
-        message: 'File size too large. Maximum allowed size is 10MB per file.'
+        message: 'One of the files is too large. Please upload smaller files.'
       });
     }
 
@@ -175,7 +161,7 @@ app.use((err, req, res, next) => {
     });
   }
 
-  if (err.message && (err.message.includes('Only image files') || err.message.includes('Only PDF') || err.message.includes('Unsupported file type'))) {
+  if (err.message && err.message.includes('Only JPEG, JPG, and PNG images are allowed!')) {
     return res.status(400).json({
       success: false,
       code: 'INVALID_FILE_TYPE',
@@ -183,7 +169,7 @@ app.use((err, req, res, next) => {
     });
   }
 
-  res.status(500).json({
+  return res.status(500).json({
     success: false,
     message: 'Server error. Please try again later.'
   });
@@ -196,6 +182,11 @@ app.get('/api/health', (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
+server.requestTimeout = REQUEST_TIMEOUT_MS;
+server.headersTimeout = REQUEST_TIMEOUT_MS + 5000;
+server.setTimeout(REQUEST_TIMEOUT_MS);
+server.keepAliveTimeout = 65000;

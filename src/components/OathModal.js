@@ -74,12 +74,9 @@ const OathModal = () => {
     
     console.log('OathModal: User agreed to oath', formData);
     
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-    
     try {
       // Save oath agreement to backend
-      const API_URL = process.env.REACT_APP_API_URL || 'https://maunas-parivar.onrender.com/api';
+      const API_URL = '/api';
       console.log('OathModal: Attempting to save to:', `${API_URL}/users/save-oath`);
       
       const response = await fetch(`${API_URL}/users/save-oath`, {
@@ -91,12 +88,8 @@ const OathModal = () => {
           name: formData.name,
           mobileNumber: formData.mobileNumber,
           agreedAt: new Date().toISOString()
-        }),
-        credentials: 'include',
-        signal: controller.signal
+        })
       });
-      
-      clearTimeout(timeoutId);
       
       const data = await response.json();
       
@@ -104,21 +97,11 @@ const OathModal = () => {
         console.log('OathModal: Oath saved to backend successfully', data);
       } else {
         console.warn('OathModal: Failed to save oath to backend:', data.message);
-        // Don't block the user - oath is saved locally
-        console.log('OathModal: Proceeding with local storage only');
+        alert('Note: Your agreement was recorded locally, but could not be saved to the server.');
       }
     } catch (error) {
-      clearTimeout(timeoutId);
-      
-      console.error('OathModal: Error saving oath:', {
-        message: error.message,
-        name: error.name,
-        code: error.code,
-        apiUrl: process.env.REACT_APP_API_URL
-      });
-      
-      // Don't block the user - oath is saved locally
-      console.log('OathModal: Proceeding with local storage only - backend unavailable');
+      console.error('OathModal: Error saving oath:', error);
+      alert('Note: Your agreement was recorded locally, but could not be saved to the server. Please check if the backend is running.');
     }
     
     localStorage.setItem('oathAgreed', 'true');

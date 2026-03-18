@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import './Gallery.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://maunas-parivar.onrender.com/api';
+const API_URL = '/api';
 
 const Gallery = () => {
   const { language } = useLanguage();

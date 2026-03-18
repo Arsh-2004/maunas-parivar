@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import './Login.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://maunas-parivar.onrender.com/api';
+const API_URL = '/api';
 
 const Login = () => {
   const { language } = useLanguage();

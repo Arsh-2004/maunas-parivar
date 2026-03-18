@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import MembershipCertificate from '../components/MembershipCertificate';
 import './AdminDashboard.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://maunas-parivar.onrender.com/api';
+const API_URL = '/api';
 
 const AdminDashboard = () => {
   const { language } = useLanguage();

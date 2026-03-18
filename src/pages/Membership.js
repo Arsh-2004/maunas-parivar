@@ -4,14 +4,7 @@ import { getTranslation } from '../translations';
 import { indianStates } from '../data/indianStates';
 import './Membership.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://maunas-parivar.onrender.com/api';
-
-const getAdaptiveUploadTimeout = (totalBytes) => {
-  const oneMB = 1024 * 1024;
-  const totalMB = totalBytes / oneMB;
-  // Base 60s + 8s per MB, capped at 5 minutes for very slow mobile networks.
-  return Math.min(300000, Math.max(60000, 60000 + Math.ceil(totalMB * 8000)));
-};
+const API_URL = '/api';
 
 const Membership = () => {
   const { language } = useLanguage();
@@ -43,6 +36,7 @@ const Membership = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -108,6 +102,76 @@ const Membership = () => {
     setTimeout(() => {
       setNotification({ type: '', text: '', show: false });
     }, 5000); // Auto close after 5 seconds
+  };
+
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const warmUpBackend = async () => {
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      try {
+        const res = await fetch(`${API_URL}/health`, {
+          method: 'GET',
+          cache: 'no-store'
+        });
+
+        if (res.ok) {
+          return true;
+        }
+      } catch (error) {
+        // Ignore warm-up failures and retry.
+      }
+
+      await wait(attempt * 1200);
+    }
+
+    return false;
+  };
+
+  const submitRegistrationWithProgress = ({ url, formData, timeoutMs = 180000, onProgress }) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', url, true);
+      xhr.timeout = timeoutMs;
+
+      xhr.upload.onprogress = (event) => {
+        if (!event.lengthComputable || typeof onProgress !== 'function') {
+          return;
+        }
+
+        const percent = Math.min(100, Math.max(0, Math.round((event.loaded / event.total) * 100)));
+        onProgress(percent);
+      };
+
+      xhr.onload = () => {
+        if (typeof onProgress === 'function') {
+          onProgress(100);
+        }
+
+        resolve({
+          ok: xhr.status >= 200 && xhr.status < 300,
+          status: xhr.status,
+          body: xhr.responseText || ''
+        });
+      };
+
+      xhr.onerror = () => {
+        reject(new Error('NetworkError: Upload request failed'));
+      };
+
+      xhr.ontimeout = () => {
+        const timeoutError = new Error('Upload request timed out');
+        timeoutError.name = 'AbortError';
+        reject(timeoutError);
+      };
+
+      xhr.onabort = () => {
+        const abortError = new Error('Upload request was aborted');
+        abortError.name = 'AbortError';
+        reject(abortError);
+      };
+
+      xhr.send(formData);
+    });
   };
 
   const handleChange = (e) => {
@@ -525,15 +589,59 @@ const Membership = () => {
       return;
     }
 
+    const pendingMemberName = newFamilyMember.name.trim();
+    const effectiveFamilyPhotosForSize = pendingMemberName
+      ? [...familyMemberPhotos, fmPhotoFile]
+      : familyMemberPhotos;
+
+    const oversizedFamilyPhoto = effectiveFamilyPhotosForSize.find((file) => file && file.size > 2 * 1024 * 1024);
+    if (oversizedFamilyPhoto) {
+      showNotification('error', language === 'en'
+        ? '❌ Family member photo size should be less than 2MB'
+        : '❌ परिवार सदस्य की फोटो 2MB से कम होनी चाहिए');
+      return;
+    }
+
+    const allUploadFiles = [
+      formData.idProof,
+      formData.addressProof,
+      formData.photo,
+      formData.donationDocument,
+      ...effectiveFamilyPhotosForSize
+    ].filter(Boolean);
+
+    const totalUploadBytes = allUploadFiles.reduce((sum, file) => sum + file.size, 0);
+    if (totalUploadBytes > 18 * 1024 * 1024) {
+      showNotification('error', language === 'en'
+        ? '❌ Total upload size is too large for mobile network. Please reduce file sizes and try again.'
+        : '❌ कुल अपलोड आकार मोबाइल नेटवर्क के लिए बहुत बड़ा है। कृपया फाइल का आकार कम करें और फिर प्रयास करें।');
+      return;
+    }
+
     // All validations passed - show review modal
     setShowReviewModal(true);
   };
 
   const handleConfirmRegistration = async () => {
+    if (loading) {
+      return;
+    }
+
     setLoading(true);
+    setUploadProgress(0);
     setMessage({ type: '', text: '' });
 
     try {
+      const backendReady = await warmUpBackend();
+      if (!backendReady) {
+        showNotification(
+          'warning',
+          language === 'en'
+            ? '⚠️ Server is waking up. Registration may take longer on mobile data.'
+            : '⚠️ सर्वर शुरू हो रहा है। मोबाइल डेटा पर पंजीकरण में अधिक समय लग सकता है।'
+        );
+      }
+
       // Create FormData for file upload
       const submitData = new FormData();
       submitData.append('fullName', formData.fullName);
@@ -578,123 +686,106 @@ const Membership = () => {
         submitData.append('donationDocument', formData.donationDocument);
       }
 
-      const uploadFiles = [
-        formData.idProof,
-        formData.addressProof,
-        formData.photo,
-        formData.donationDocument,
-        ...effectiveFamilyPhotos
-      ].filter(Boolean);
-
-      const totalUploadBytes = uploadFiles.reduce((sum, file) => sum + (file.size || 0), 0);
-      const timeoutMs = getAdaptiveUploadTimeout(totalUploadBytes);
-
-      const networkType = navigator.connection?.effectiveType || 'unknown';
-      console.log('Registration upload diagnostics:', {
-        totalUploadMB: (totalUploadBytes / (1024 * 1024)).toFixed(2),
-        timeoutMs,
-        networkType
+      const response = await submitRegistrationWithProgress({
+        url: `${API_URL}/users/register`,
+        formData: submitData,
+        timeoutMs: 180000,
+        onProgress: setUploadProgress
       });
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-      
+      const rawResponse = response.body;
+      let data = {};
+
       try {
-        const response = await fetch(`${API_URL}/users/register`, {
-          method: 'POST',
-          body: submitData,
-          credentials: 'include', // Include cookies for CORS
-          signal: controller.signal
-        });
+        data = rawResponse ? JSON.parse(rawResponse) : {};
+      } catch (parseError) {
+        data = {
+          success: false,
+          message: rawResponse || 'Unexpected server response.'
+        };
+      }
 
-        clearTimeout(timeoutId);
+      if (!response.ok || !data.success) {
+        const fallbackMessage = language === 'en'
+          ? `Registration failed (HTTP ${response.status}). Please try again.`
+          : `पंजीकरण विफल (HTTP ${response.status})। कृपया पुनः प्रयास करें।`;
 
-        // Log response details for debugging
-        console.log('Registration response:', {
-          status: response.status,
-          statusText: response.statusText,
-          url: response.url
-        });
+        const errorText = data.message || fallbackMessage;
 
-        const data = await response.json();
-
-        if (data.success) {
-          setMessage({
-            type: 'success',
-            text: language === 'en' 
-              ? 'Registration successful! Your application is pending approval. You will be notified once approved.' 
-              : 'पंजीकरण सफल! आपका आवेदन अनुमोदन के लिए लंबित है। अनुमोदित होने पर आपको सूचित किया जाएगा।'
-          });
-          setShowModal(true);
-          setShowReviewModal(false);
-          setShowConfirmation(false);
-          setEducationCategory('');
-          setOtherEducationText('');
-          setSubDegreeOther('');
-          setDobDay('');
-          setDobMonth('');
-          setDobYear('');
-          setFamilyMembers([]);
-          setFamilyMemberPhotos([]);
-          setNewFamilyMember({ name: '', relation: '', gender: '', dateOfBirth: '', occupation: '', phone: '' });
-          setFmDobDay(''); setFmDobMonth(''); setFmDobYear('');
-          setFmPhotoFile(null); setFmPhotoPreview('');
-          setShowFamilyForm(true);
-          setFormData({
-            fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '', education: '',
-            phone: '', password: '', confirmPassword: '', address: '', village: '', block: '', tehsil: '', district: '', city: '', state: '', pincode: '', occupation: '',
-            idProof: null, addressProof: null, photo: null, donationDocument: null
-          });
-          // Reset file inputs
-          document.getElementById('idProof').value = '';
-          document.getElementById('addressProof').value = '';
-          document.getElementById('photo').value = '';
-          const donationInput = document.getElementById('donationDocument');
-          if (donationInput) donationInput.value = '';
-          // Scroll to top
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          setMessage({
-            type: 'error',
-            text: data.message || (language === 'en' ? 'Registration failed. Please try again.' : 'पंजीकरण विफल। कृपया पुन: प्रयास करें।')
-          });
-          showNotification('error', data.message || (language === 'en' ? '❌ Registration failed. Please try again.' : '❌ पंजीकरण विफल। कृपया पुन: प्रयास करें।'));
-        }
-      } catch (fetchError) {
-        clearTimeout(timeoutId);
-        
-        // Detailed error logging for debugging
-        console.error('Registration fetch error:', {
-          message: fetchError.message,
-          name: fetchError.name,
-          code: fetchError.code,
-          apiUrl: API_URL,
-          stack: fetchError.stack
-        });
-
-        let errorMsg = language === 'en' 
-          ? 'Connection error. Please check if the server is running.' 
-          : 'कनेक्शन त्रुटि। कृपया जांचें कि सर्वर चल रहा है।';
-        
-        // Provide more specific error messages
-        if (fetchError.name === 'AbortError') {
-          errorMsg = language === 'en' 
-            ? 'Upload timed out on slow network. Please try again with smaller files or stronger internet.' 
-            : 'धीमे नेटवर्क के कारण अपलोड का समय समाप्त हो गया। कृपया छोटी फाइलें या बेहतर इंटरनेट के साथ पुनः प्रयास करें।';
-        } else if (fetchError.message === 'Failed to fetch') {
-          errorMsg = language === 'en' 
-            ? 'Cannot connect to server. Please verify the API endpoint is correct and the server is running.' 
-            : 'सर्वर से कनेक्ट नहीं हो सकता। कृपया सत्यापित करें कि API अंतिम बिंदु सही है और सर्वर चल रहा है।';
-        }
-        
         setMessage({
           type: 'error',
-          text: errorMsg
+          text: errorText
         });
-        showNotification('error', `❌ ${errorMsg}`);
+        showNotification('error', errorText.startsWith('❌') ? errorText : `❌ ${errorText}`);
+        return;
       }
+
+      setMessage({
+        type: 'success',
+        text: language === 'en'
+          ? 'Registration successful! Your application is pending approval. You will be notified once approved.'
+          : 'पंजीकरण सफल! आपका आवेदन अनुमोदन के लिए लंबित है। अनुमोदित होने पर आपको सूचित किया जाएगा।'
+      });
+      setUploadProgress(100);
+      setShowModal(true);
+      setShowReviewModal(false);
+      setShowConfirmation(false);
+      setEducationCategory('');
+      setOtherEducationText('');
+      setSubDegreeOther('');
+      setDobDay('');
+      setDobMonth('');
+      setDobYear('');
+      setFamilyMembers([]);
+      setFamilyMemberPhotos([]);
+      setNewFamilyMember({ name: '', relation: '', gender: '', dateOfBirth: '', occupation: '', phone: '' });
+      setFmDobDay(''); setFmDobMonth(''); setFmDobYear('');
+      setFmPhotoFile(null); setFmPhotoPreview('');
+      setShowFamilyForm(true);
+      setFormData({
+        fullName: '', fatherName: '', dateOfBirth: '', gender: '', email: '', education: '',
+        phone: '', password: '', confirmPassword: '', address: '', village: '', block: '', tehsil: '', district: '', city: '', state: '', pincode: '', occupation: '',
+        idProof: null, addressProof: null, photo: null, donationDocument: null
+      });
+
+      // Reset file inputs
+      document.getElementById('idProof').value = '';
+      document.getElementById('addressProof').value = '';
+      document.getElementById('photo').value = '';
+      const donationInput = document.getElementById('donationDocument');
+      if (donationInput) donationInput.value = '';
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+      const isTimeout = error && error.name === 'AbortError';
+      const isNetworkIssue = error && error.message && /Failed to fetch|NetworkError|Load failed/i.test(error.message);
+
+      let errorMsg;
+      if (isTimeout) {
+        errorMsg = language === 'en'
+          ? 'Upload timed out on mobile data. Please reduce image size and try again.'
+          : 'मोबाइल डेटा पर अपलोड का समय समाप्त हो गया। कृपया इमेज का आकार कम करके फिर प्रयास करें।';
+      } else if (isNetworkIssue) {
+        errorMsg = language === 'en'
+          ? 'Network interrupted during upload. Please use a stable network and try again.'
+          : 'अपलोड के दौरान नेटवर्क बाधित हुआ। कृपया स्थिर नेटवर्क पर फिर प्रयास करें।';
+      } else {
+        errorMsg = (error && error.message)
+          ? error.message
+          : (language === 'en'
+            ? 'Registration failed. Please try again.'
+            : 'पंजीकरण विफल। कृपया पुनः प्रयास करें।');
+      }
+
+      setMessage({
+        type: 'error',
+        text: errorMsg
+      });
+      showNotification('error', `❌ ${errorMsg}`);
     } finally {
       setLoading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -900,6 +991,26 @@ const Membership = () => {
               </label>
             </div>
 
+            {loading && (
+              <div className="upload-progress-card">
+                <div className="upload-progress-header">
+                  <span>{language === 'en' ? 'Uploading documents...' : 'दस्तावेज़ अपलोड हो रहे हैं...'}</span>
+                  <strong>{uploadProgress}%</strong>
+                </div>
+                <div className="upload-progress-track">
+                  <div
+                    className="upload-progress-fill"
+                    style={{ width: `${Math.max(uploadProgress, 5)}%` }}
+                  />
+                </div>
+                <p className="upload-progress-help">
+                  {language === 'en'
+                    ? 'Please keep this screen open until upload completes.'
+                    : 'कृपया अपलोड पूरा होने तक यह स्क्रीन खुली रखें।'}
+                </p>
+              </div>
+            )}
+
             <div className="confirmation-actions">
               <button 
                 className="modal-btn cancel-btn" 
@@ -917,7 +1028,7 @@ const Membership = () => {
                 disabled={loading || !confirmCheckbox}
               >
                 {loading
-                  ? (language === 'en' ? 'Confirming...' : 'पुष्टि हो रही है...')
+                  ? (language === 'en' ? `Confirming... ${uploadProgress}%` : `पुष्टि हो रही है... ${uploadProgress}%`)
                   : (language === 'en' ? 'Confirm Registration' : 'पंजीकरण की पुष्टि करें')
                 }
               </button>
@@ -2003,6 +2114,25 @@ const Membership = () => {
                             onChange={e => {
                               const file = e.target.files[0];
                               if (file) {
+                                const mimeType = (file.type || '').toLowerCase();
+                                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+
+                                if (!allowedTypes.includes(mimeType)) {
+                                  showNotification('error', language === 'en'
+                                    ? '❌ Family member photo must be JPG or PNG'
+                                    : '❌ परिवार सदस्य की फोटो JPG या PNG होनी चाहिए');
+                                  e.target.value = '';
+                                  return;
+                                }
+
+                                if (file.size > 2 * 1024 * 1024) {
+                                  showNotification('error', language === 'en'
+                                    ? '❌ Family member photo must be less than 2MB'
+                                    : '❌ परिवार सदस्य की फोटो 2MB से कम होनी चाहिए');
+                                  e.target.value = '';
+                                  return;
+                                }
+
                                 setFmPhotoFile(file);
                                 setFmPhotoPreview(URL.createObjectURL(file));
                               }
