@@ -36,6 +36,7 @@ const Membership = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -124,6 +125,53 @@ const Membership = () => {
     }
 
     return false;
+  };
+
+  const submitRegistrationWithProgress = ({ url, formData, timeoutMs = 180000, onProgress }) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', url, true);
+      xhr.timeout = timeoutMs;
+
+      xhr.upload.onprogress = (event) => {
+        if (!event.lengthComputable || typeof onProgress !== 'function') {
+          return;
+        }
+
+        const percent = Math.min(100, Math.max(0, Math.round((event.loaded / event.total) * 100)));
+        onProgress(percent);
+      };
+
+      xhr.onload = () => {
+        if (typeof onProgress === 'function') {
+          onProgress(100);
+        }
+
+        resolve({
+          ok: xhr.status >= 200 && xhr.status < 300,
+          status: xhr.status,
+          body: xhr.responseText || ''
+        });
+      };
+
+      xhr.onerror = () => {
+        reject(new Error('NetworkError: Upload request failed'));
+      };
+
+      xhr.ontimeout = () => {
+        const timeoutError = new Error('Upload request timed out');
+        timeoutError.name = 'AbortError';
+        reject(timeoutError);
+      };
+
+      xhr.onabort = () => {
+        const abortError = new Error('Upload request was aborted');
+        abortError.name = 'AbortError';
+        reject(abortError);
+      };
+
+      xhr.send(formData);
+    });
   };
 
   const handleChange = (e) => {
@@ -580,6 +628,7 @@ const Membership = () => {
     }
 
     setLoading(true);
+    setUploadProgress(0);
     setMessage({ type: '', text: '' });
 
     try {
@@ -637,41 +686,14 @@ const Membership = () => {
         submitData.append('donationDocument', formData.donationDocument);
       }
 
-      let response;
-      let requestError;
+      const response = await submitRegistrationWithProgress({
+        url: `${API_URL}/users/register`,
+        formData: submitData,
+        timeoutMs: 180000,
+        onProgress: setUploadProgress
+      });
 
-      for (let attempt = 1; attempt <= 2; attempt += 1) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 90000);
-
-        try {
-          response = await fetch(`${API_URL}/users/register`, {
-            method: 'POST',
-            body: submitData,
-            signal: controller.signal
-          });
-
-          clearTimeout(timeoutId);
-          requestError = null;
-          break;
-        } catch (error) {
-          clearTimeout(timeoutId);
-          requestError = error;
-
-          const retriable = error?.name === 'AbortError' || /Failed to fetch|NetworkError|Load failed/i.test(error?.message || '');
-          if (!retriable || attempt === 2) {
-            throw error;
-          }
-
-          await wait(1500 * attempt);
-        }
-      }
-
-      if (!response && requestError) {
-        throw requestError;
-      }
-
-      const rawResponse = await response.text();
+      const rawResponse = response.body;
       let data = {};
 
       try {
@@ -704,6 +726,7 @@ const Membership = () => {
           ? 'Registration successful! Your application is pending approval. You will be notified once approved.'
           : 'पंजीकरण सफल! आपका आवेदन अनुमोदन के लिए लंबित है। अनुमोदित होने पर आपको सूचित किया जाएगा।'
       });
+      setUploadProgress(100);
       setShowModal(true);
       setShowReviewModal(false);
       setShowConfirmation(false);
@@ -762,6 +785,7 @@ const Membership = () => {
       showNotification('error', `❌ ${errorMsg}`);
     } finally {
       setLoading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -967,6 +991,26 @@ const Membership = () => {
               </label>
             </div>
 
+            {loading && (
+              <div className="upload-progress-card">
+                <div className="upload-progress-header">
+                  <span>{language === 'en' ? 'Uploading documents...' : 'दस्तावेज़ अपलोड हो रहे हैं...'}</span>
+                  <strong>{uploadProgress}%</strong>
+                </div>
+                <div className="upload-progress-track">
+                  <div
+                    className="upload-progress-fill"
+                    style={{ width: `${Math.max(uploadProgress, 5)}%` }}
+                  />
+                </div>
+                <p className="upload-progress-help">
+                  {language === 'en'
+                    ? 'Please keep this screen open until upload completes.'
+                    : 'कृपया अपलोड पूरा होने तक यह स्क्रीन खुली रखें।'}
+                </p>
+              </div>
+            )}
+
             <div className="confirmation-actions">
               <button 
                 className="modal-btn cancel-btn" 
@@ -984,7 +1028,7 @@ const Membership = () => {
                 disabled={loading || !confirmCheckbox}
               >
                 {loading
-                  ? (language === 'en' ? 'Confirming...' : 'पुष्टि हो रही है...')
+                  ? (language === 'en' ? `Confirming... ${uploadProgress}%` : `पुष्टि हो रही है... ${uploadProgress}%`)
                   : (language === 'en' ? 'Confirm Registration' : 'पंजीकरण की पुष्टि करें')
                 }
               </button>

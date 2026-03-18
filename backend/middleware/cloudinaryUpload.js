@@ -1,7 +1,6 @@
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 
 // Configure Cloudinary
 cloudinary.config({
@@ -10,57 +9,85 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Use disk storage temporarily, then upload to Cloudinary
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, '../uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+const MAX_FILE_SIZE_BYTES = Number(process.env.UPLOAD_MAX_FILE_SIZE_BYTES || 6 * 1024 * 1024);
+const MAX_UPLOAD_FILES = Number(process.env.UPLOAD_MAX_FILES || 24);
+
+const storage = multer.memoryStorage();
+
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = /jpeg|jpg|png/;
+  const extname = allowedTypes.test(path.extname(file.originalname || '').toLowerCase());
+  const mimetype = allowedTypes.test(file.mimetype || '');
+
+  if (mimetype && extname) {
+    return cb(null, true);
   }
-});
+
+  return cb(new Error('Only JPEG, JPG, and PNG images are allowed!'));
+};
 
 const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
-  fileFilter: (req, file, cb) => {
-    // Only accept image files
-    const allowedTypes = /jpeg|jpg|png/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-    
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error('Only JPEG, JPG, and PNG images are allowed!'));
-    }
-  }
+  storage,
+  limits: {
+    fileSize: MAX_FILE_SIZE_BYTES,
+    files: MAX_UPLOAD_FILES,
+    fields: 80
+  },
+  fileFilter
 });
 
-// Function to upload file to Cloudinary and delete local file
-const uploadToCloudinary = async (filePath, folder) => {
+const uploadBufferToCloudinary = (buffer, folder, mimeType) => {
+  const uploadOptions = {
+    folder: `maunas-parivar/${folder}`,
+    resource_type: 'auto',
+    use_filename: true,
+    unique_filename: true
+  };
+
+  if ((mimeType || '').startsWith('image/')) {
+    uploadOptions.quality = 'auto:good';
+    uploadOptions.fetch_format = 'auto';
+  }
+
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(uploadOptions, (error, result) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(result);
+    });
+
+    uploadStream.end(buffer);
+  });
+};
+
+// Accepts multer memory file object or raw Buffer.
+const uploadToCloudinary = async (fileInput, folder) => {
   try {
-    const uploadOptions = {
-      folder: `maunas-parivar/${folder}`,
-      resource_type: 'image'
-    };
-    
-    console.log(`Uploading image to Cloudinary:`, filePath);
-    const result = await cloudinary.uploader.upload(filePath, uploadOptions);
-    console.log('Cloudinary upload success:', result.secure_url);
-    
-    // Delete local file after successful upload
-    fs.unlinkSync(filePath);
-    
+    if (!fileInput) {
+      throw new Error('No file data provided for upload');
+    }
+
+    // Keep a legacy fallback so old utility scripts passing file paths do not crash.
+    if (typeof fileInput === 'string') {
+      const result = await cloudinary.uploader.upload(fileInput, {
+        folder: `maunas-parivar/${folder}`,
+        resource_type: 'auto'
+      });
+      return result.secure_url;
+    }
+
+    const buffer = Buffer.isBuffer(fileInput) ? fileInput : fileInput.buffer;
+    const mimeType = fileInput.mimetype || '';
+
+    if (!Buffer.isBuffer(buffer) || buffer.length === 0) {
+      throw new Error('Invalid file buffer for Cloudinary upload');
+    }
+
+    const result = await uploadBufferToCloudinary(buffer, folder, mimeType);
     return result.secure_url;
   } catch (error) {
     console.error('Cloudinary upload error:', error);
-    console.error('File path:', filePath);
     throw error;
   }
 };

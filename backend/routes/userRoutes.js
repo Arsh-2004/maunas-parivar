@@ -3,6 +3,63 @@ const router = express.Router();
 const User = require('../models/User');
 const OathAgreement = require('../models/OathAgreement');
 const { upload, uploadToCloudinary } = require('../middleware/cloudinaryUpload');
+const { mapWithConcurrency } = require('../utils/promisePool');
+
+const REGISTER_UPLOAD_CONCURRENCY = Number(process.env.REGISTER_UPLOAD_CONCURRENCY || 2);
+const REGISTER_MAX_TOTAL_UPLOAD_BYTES = Number(process.env.REGISTER_MAX_TOTAL_UPLOAD_BYTES || 20 * 1024 * 1024);
+const REGISTER_MAX_FAMILY_FILES = 20;
+
+const getFileSize = (file) => {
+  if (!file) {
+    return 0;
+  }
+
+  if (typeof file.size === 'number') {
+    return file.size;
+  }
+
+  if (Buffer.isBuffer(file.buffer)) {
+    return file.buffer.length;
+  }
+
+  return 0;
+};
+
+const parseFamilyMembers = (rawFamilyMembers) => {
+  if (!rawFamilyMembers) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(rawFamilyMembers);
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed
+      .map((member, sourceIndex) => ({ member, sourceIndex }))
+      .filter(({ member }) => {
+        return member
+          && typeof member === 'object'
+          && member.name
+          && member.name.trim()
+          && member.relation
+          && member.relation.trim();
+      })
+      .map(({ member, sourceIndex }) => ({
+        sourceIndex,
+        name: member.name.trim(),
+        relation: member.relation.trim(),
+        dateOfBirth: member.dateOfBirth || null,
+        gender: member.gender || null,
+        occupation: member.occupation || '',
+        phone: member.phone || ''
+      }));
+  } catch (error) {
+    return [];
+  }
+};
 
 // Save oath agreement
 router.post('/save-oath', async (req, res) => {
@@ -97,16 +154,75 @@ router.get('/', async (req, res) => {
 });
 
 // Register new user
-router.post('/register', upload.fields([
+const registerUpload = upload.fields([
   { name: 'idProof', maxCount: 1 },
   { name: 'addressProof', maxCount: 1 },
   { name: 'photo', maxCount: 1 },
   { name: 'donationDocument', maxCount: 1 },
   { name: 'familyMemberPhoto', maxCount: 20 }
-]), async (req, res) => {
+]);
+
+router.post('/register', registerUpload, async (req, res) => {
   try {
+    if (!req.body.phone || !req.body.phone.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Phone number is required'
+      });
+    }
+
+    const idProofFile = req.files?.idProof?.[0];
+    const addressProofFile = req.files?.addressProof?.[0];
+    const photoFile = req.files?.photo?.[0];
+    const donationDocumentFile = req.files?.donationDocument?.[0] || null;
+    const familyPhotoFiles = Array.isArray(req.files?.familyMemberPhoto) ? req.files.familyMemberPhoto : [];
+
+    if (!idProofFile) {
+      return res.status(400).json({
+        success: false,
+        message: 'ID proof document is required'
+      });
+    }
+
+    if (!addressProofFile) {
+      return res.status(400).json({
+        success: false,
+        message: 'Address proof document is required'
+      });
+    }
+
+    if (!photoFile) {
+      return res.status(400).json({
+        success: false,
+        message: 'Photo is required'
+      });
+    }
+
+    if (familyPhotoFiles.length > REGISTER_MAX_FAMILY_FILES) {
+      return res.status(400).json({
+        success: false,
+        message: 'Too many family member photos uploaded'
+      });
+    }
+
+    const allUploadFiles = [
+      idProofFile,
+      addressProofFile,
+      photoFile,
+      donationDocumentFile,
+      ...familyPhotoFiles
+    ].filter(Boolean);
+
+    const totalUploadBytes = allUploadFiles.reduce((total, file) => total + getFileSize(file), 0);
+    if (totalUploadBytes > REGISTER_MAX_TOTAL_UPLOAD_BYTES) {
+      return res.status(400).json({
+        success: false,
+        message: 'Total upload size is too large. Please compress files and try again.'
+      });
+    }
+
     // Check if phone number already exists
-    const existingUser = await User.findOne({ phone: req.body.phone });
+    const existingUser = await User.findOne({ phone: req.body.phone.trim() });
     if (existingUser) {
       return res.status(400).json({ 
         success: false, 
@@ -114,70 +230,54 @@ router.post('/register', upload.fields([
       });
     }
 
-    // Check if required files were uploaded
-    if (!req.files || !req.files.idProof) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'ID proof document is required' 
-      });
-    }
-    if (!req.files.addressProof) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Address proof document is required' 
-      });
-    }
-    if (!req.files.photo) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Photo is required' 
-      });
+    const normalizedFamilyMembers = parseFamilyMembers(req.body.familyMembers);
+
+    const uploadJobs = [
+      { key: 'idProofPath', folder: 'documents', file: idProofFile },
+      { key: 'addressProofPath', folder: 'documents', file: addressProofFile },
+      { key: 'photoPath', folder: 'photos', file: photoFile }
+    ];
+
+    if (donationDocumentFile) {
+      uploadJobs.push({ key: 'donationDocumentPath', folder: 'documents', file: donationDocumentFile });
     }
 
-    // Upload core files in parallel to reduce request time on slow networks.
-    const [idProofUrl, addressProofUrl, photoUrl, donationDocUrl] = await Promise.all([
-      uploadToCloudinary(req.files.idProof[0].path, 'documents'),
-      uploadToCloudinary(req.files.addressProof[0].path, 'documents'),
-      uploadToCloudinary(req.files.photo[0].path, 'photos'),
-      req.files.donationDocument
-        ? uploadToCloudinary(req.files.donationDocument[0].path, 'documents')
-        : Promise.resolve(null)
-    ]);
-
-    // Create new user
-    // Parse optional family members from JSON string
-    let familyMembers = [];
-    if (req.body.familyMembers) {
-      try {
-        const parsed = JSON.parse(req.body.familyMembers);
-        if (Array.isArray(parsed)) {
-          familyMembers = await Promise.all(
-            parsed
-              .filter(m => m.name && m.name.trim() && m.relation && m.relation.trim())
-              .map(async (m, i) => {
-                let photoPath = '';
-                const photoFiles = req.files && req.files.familyMemberPhoto;
-                if (photoFiles && photoFiles[i]) {
-                  photoPath = await uploadToCloudinary(photoFiles[i].path, 'photos');
-                }
-                return {
-                  name: m.name.trim(),
-                  relation: m.relation.trim(),
-                  dateOfBirth: m.dateOfBirth || null,
-                  gender: m.gender || null,
-                  occupation: m.occupation || '',
-                  phone: m.phone || '',
-                  photoPath,
-                  addedAt: new Date(),
-                  addedFrom: 'registration'
-                };
-              })
-          );
-        }
-      } catch (e) {
-        // ignore malformed JSON
+    normalizedFamilyMembers.forEach((member, memberIndex) => {
+      const familyPhotoFile = familyPhotoFiles[member.sourceIndex];
+      if (familyPhotoFile) {
+        uploadJobs.push({
+          key: `familyMemberPhoto:${memberIndex}`,
+          folder: 'photos',
+          file: familyPhotoFile
+        });
       }
-    }
+    });
+
+    const uploadResults = await mapWithConcurrency(
+      uploadJobs,
+      async (job) => {
+        const uploadedUrl = await uploadToCloudinary(job.file, job.folder);
+        return { key: job.key, uploadedUrl };
+      },
+      REGISTER_UPLOAD_CONCURRENCY
+    );
+
+    const uploadedPathMap = uploadResults.reduce((accumulator, result) => {
+      accumulator[result.key] = result.uploadedUrl;
+      return accumulator;
+    }, {});
+
+    const familyMembers = normalizedFamilyMembers.map((member, memberIndex) => ({
+      name: member.name,
+      relation: member.relation,
+      dateOfBirth: member.dateOfBirth,
+      gender: member.gender,
+      occupation: member.occupation,
+      phone: member.phone,
+      photoPath: uploadedPathMap[`familyMemberPhoto:${memberIndex}`] || '',
+      addedAt: new Date(),
+      addedFrom: 'registration'
+    }));
 
     const userData = {
       fullName: req.body.fullName,
@@ -197,10 +297,10 @@ router.post('/register', upload.fields([
       pincode: req.body.pincode,
       occupation: req.body.occupation,
       education: req.body.education,
-      idProofPath: idProofUrl,
-      addressProofPath: addressProofUrl,
-      photoPath: photoUrl,
-      donationDocumentPath: donationDocUrl,
+      idProofPath: uploadedPathMap.idProofPath,
+      addressProofPath: uploadedPathMap.addressProofPath,
+      photoPath: uploadedPathMap.photoPath,
+      donationDocumentPath: uploadedPathMap.donationDocumentPath || null,
       familyMembers,
       status: 'pending'
     };
@@ -380,7 +480,7 @@ router.put('/update-profile/:id', upload.single('photo'), async (req, res) => {
 
     // Update photo if new one uploaded
     if (req.file) {
-      const photoUrl = await uploadToCloudinary(req.file.path, 'photos');
+      const photoUrl = await uploadToCloudinary(req.file, 'photos');
       user.photoPath = photoUrl;
     }
 
@@ -523,7 +623,7 @@ router.post('/add-non-member', upload.single('photo'), async (req, res) => {
 
     let photoPath = null;
     if (req.file) {
-      photoPath = await uploadToCloudinary(req.file.path, 'non-member-photos');
+      photoPath = await uploadToCloudinary(req.file, 'non-member-photos');
     }
 
     const record = new NonMemberRecord({
@@ -633,7 +733,7 @@ router.post('/family/:userId/add', familyUpload, async (req, res) => {
 
     // Upload photo if provided
     if (req.files && req.files.familyMemberPhoto && req.files.familyMemberPhoto[0]) {
-      newMember.photoPath = await uploadToCloudinary(req.files.familyMemberPhoto[0].path, 'photos');
+      newMember.photoPath = await uploadToCloudinary(req.files.familyMemberPhoto[0], 'photos');
     }
 
     requestingUser.familyMembers.push(newMember);
@@ -687,7 +787,7 @@ router.put('/family/:userId/edit/:memberId', familyEditUpload, async (req, res) 
 
     // Upload new photo if provided
     if (req.files && req.files.familyMemberPhoto && req.files.familyMemberPhoto[0]) {
-      member.photoPath = await uploadToCloudinary(req.files.familyMemberPhoto[0].path, 'photos');
+      member.photoPath = await uploadToCloudinary(req.files.familyMemberPhoto[0], 'photos');
     }
 
     await requestingUser.save();

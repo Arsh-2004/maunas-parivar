@@ -6,6 +6,7 @@ const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
+const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 180000);
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -68,6 +69,15 @@ app.options('*', cors(corsOptions));
 // Trust proxy to get real IP address (important for deployed apps)
 app.set('trust proxy', 1);
 
+// Keep upload requests alive longer on unstable mobile networks and avoid proxy buffering where supported.
+app.use((req, res, next) => {
+  req.setTimeout(REQUEST_TIMEOUT_MS);
+  res.setTimeout(REQUEST_TIMEOUT_MS);
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.setHeader('Cache-Control', 'no-transform');
+  next();
+});
+
 // Middleware to capture real IP address
 app.use((req, res, next) => {
   // Try multiple header sources for the real IP
@@ -94,8 +104,8 @@ app.use('/uploads', (req, res, next) => {
   next();
 }, express.static(uploadsDir));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb', parameterLimit: 1000 }));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)
@@ -172,6 +182,11 @@ app.get('/api/health', (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
+server.requestTimeout = REQUEST_TIMEOUT_MS;
+server.headersTimeout = REQUEST_TIMEOUT_MS + 5000;
+server.setTimeout(REQUEST_TIMEOUT_MS);
+server.keepAliveTimeout = 65000;
