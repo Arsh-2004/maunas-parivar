@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const OathAgreement = require('../models/OathAgreement');
+const SahyogSubmission = require('../models/SahyogSubmission');
 const { upload, uploadToCloudinary } = require('../middleware/cloudinaryUpload');
 const { mapWithConcurrency } = require('../utils/promisePool');
 
@@ -149,6 +150,59 @@ router.get('/', async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Failed to fetch users' 
+    });
+  }
+});
+
+// Submit Sahyog contribution proof (public)
+router.post('/sahyog-submissions', upload.single('paymentScreenshot'), async (req, res) => {
+  try {
+    const { fullName, contactNumber, email, amount, message } = req.body;
+
+    if (!fullName || !fullName.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Full name is required'
+      });
+    }
+
+    if (!contactNumber || !contactNumber.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Contact number is required'
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment screenshot is required'
+      });
+    }
+
+    const screenshotPath = await uploadToCloudinary(req.file, 'sahyog-submissions');
+
+    const submission = new SahyogSubmission({
+      fullName: fullName.trim(),
+      contactNumber: contactNumber.trim(),
+      email: (email || '').trim(),
+      amount: amount ? Number(amount) : null,
+      message: (message || '').trim(),
+      screenshotPath
+    });
+
+    await submission.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Sahyog submission received successfully',
+      submission
+    });
+  } catch (error) {
+    console.error('Sahyog submission error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to submit sahyog details'
     });
   }
 });

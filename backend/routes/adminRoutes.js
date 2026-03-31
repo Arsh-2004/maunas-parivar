@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Gallery = require('../models/Gallery');
 const OathAgreement = require('../models/OathAgreement');
 const Donor = require('../models/Donor');
+const SahyogSubmission = require('../models/SahyogSubmission');
 const CommunityMember = require('../models/CommunityMember');
 const CommitteeMember = require('../models/CommitteeMember');
 const HeritagePost = require('../models/Heritage');
@@ -611,6 +612,52 @@ router.delete('/contacts/:id', adminAuth, async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to delete message' });
+  }
+});
+
+// ===== Sahyog Submissions (Public Form Notifications) =====
+
+router.get('/sahyog-submissions', adminAuth, async (req, res) => {
+  try {
+    const submissions = await SahyogSubmission.find().sort({ submittedAt: -1 });
+    res.json({ success: true, count: submissions.length, submissions });
+  } catch (error) {
+    console.error('Fetch sahyog submissions error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch sahyog submissions' });
+  }
+});
+
+router.patch('/sahyog-submissions/:id/status', adminAuth, async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!['pending', 'verified', 'rejected'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status value' });
+    }
+
+    const submission = await SahyogSubmission.findByIdAndUpdate(
+      req.params.id,
+      { status, reviewedAt: status === 'pending' ? null : new Date() },
+      { new: true }
+    );
+
+    if (!submission) {
+      return res.status(404).json({ success: false, message: 'Submission not found' });
+    }
+
+    res.json({ success: true, submission });
+  } catch (error) {
+    console.error('Update sahyog submission status error:', error);
+    res.status(500).json({ success: false, message: 'Failed to update submission status' });
+  }
+});
+
+router.delete('/sahyog-submissions/:id', adminAuth, async (req, res) => {
+  try {
+    await SahyogSubmission.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Submission deleted successfully' });
+  } catch (error) {
+    console.error('Delete sahyog submission error:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete submission' });
   }
 });
 
