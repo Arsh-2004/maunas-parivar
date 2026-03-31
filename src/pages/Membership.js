@@ -4,7 +4,7 @@ import { getTranslation } from '../translations';
 import { indianStates } from '../data/indianStates';
 import './Membership.css';
 
-const API_URL = '/api';
+const API_URL = process.env.REACT_APP_API_URL || '/api';
 
 const Membership = () => {
   const { language } = useLanguage();

@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useLocation } from 'react-router-dom';
+import { normalizeMediaUrl, formatLocation } from '../utils/mediaUrl';
 import './About.css';
+
+const API_URL = process.env.REACT_APP_API_URL || '/api';
 
 const About = () => {
   const { language } = useLanguage();
@@ -225,8 +228,7 @@ const About = () => {
       };
 
       // Try to fetch from API first
-      const apiUrl = '/api';
-      const response = await fetch(`${apiUrl}/admin/committee-members?committee=${committeeId}&page=about`);
+      const response = await fetch(`${API_URL}/admin/committee-members?committee=${committeeId}&page=about`);
       const data = await response.json();
 
       if (data.success && data.members && data.members.length > 0) {
@@ -338,7 +340,7 @@ const About = () => {
             </div>
             <div className="history-image">
               <div className="image-placeholder">
-                <img src="/assets/सदियों की विरासत.jpeg" alt="सदियों की विरासत" />
+                <img src={normalizeMediaUrl('/assets/सदियों की विरासत.jpeg')} alt="सदियों की विरासत" />
                 <p>{language === 'en' ? 'Centuries of Heritage' : 'सदियों की विरासत'}</p>
               </div>
             </div>
@@ -398,7 +400,7 @@ const About = () => {
           <div className="message-content">
             <div className="president-image">
               <img 
-                src="/assets/president-ravindra-kumar-singh.jpg" 
+                src={normalizeMediaUrl('/assets/president-ravindra-kumar-singh.jpg')} 
                 alt={language === 'en' ? 'Ravindra Kumar Singh' : 'रविंद्र कुमार सिंह'}
                 className="president-photo"
               />
@@ -538,7 +540,7 @@ const About = () => {
                                 <div key={member._id} className="committee-modal-card">
                                   {member.photoPath ? (
                                     <img
-                                      src={member.photoPath}
+                                      src={normalizeMediaUrl(member.photoPath)}
                                       alt={member.fullName}
                                       className="committee-modal-photo"
                                     />
@@ -546,9 +548,10 @@ const About = () => {
                                     <div className="committee-modal-photo-placeholder">👤</div>
                                   )}
                                   <h4>{member.fullName}</h4>
+                                  {member.designation && <p className="committee-modal-detail">{member.designation}</p>}
                                   <p className="committee-modal-position">{member.position || (language === 'en' ? 'Member' : 'सदस्य')}</p>
                                   {member.detail && <p className="committee-modal-detail">{member.detail}</p>}
-                                  <p className="committee-modal-location">📍 {member.city}, {member.state}</p>
+                                  <p className="committee-modal-location">📍 {formatLocation(member.city, member.state)}</p>
                                   {member.phone && <p className="committee-modal-phone">📱 {member.phone}</p>}
                                 </div>
                               ))}
@@ -562,7 +565,7 @@ const About = () => {
                           <div key={member._id} className="committee-modal-card">
                             {member.photoPath ? (
                               <img
-                                src={member.photoPath}
+                                src={normalizeMediaUrl(member.photoPath)}
                                 alt={member.fullName}
                                 className="committee-modal-photo"
                               />
@@ -570,9 +573,10 @@ const About = () => {
                               <div className="committee-modal-photo-placeholder">👤</div>
                             )}
                             <h4>{member.fullName}</h4>
+                            {member.designation && <p className="committee-modal-detail">{member.designation}</p>}
                             <p className="committee-modal-position">{member.position || (language === 'en' ? 'Member' : 'सदस्य')}</p>
                             {member.detail && <p className="committee-modal-detail">{member.detail}</p>}
-                            <p className="committee-modal-location">📍 {member.city}, {member.state}</p>
+                            <p className="committee-modal-location">📍 {formatLocation(member.city, member.state)}</p>
                             {member.phone && <p className="committee-modal-phone">📱 {member.phone}</p>}
                           </div>
                         ))}

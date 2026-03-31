@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { normalizeMediaUrl } from '../utils/mediaUrl';
 import './Gallery.css';
 
-const API_URL = '/api';
+const API_URL = process.env.REACT_APP_API_URL || '/api';
 
 const Gallery = () => {
   const { language } = useLanguage();
@@ -101,7 +102,7 @@ const Gallery = () => {
                   <div className="gallery-image">
                     {photo.imagePath ? (
                       <img 
-                        src={photo.imagePath} 
+                        src={normalizeMediaUrl(photo.imagePath)} 
                         alt={photo.title} 
                         loading="lazy"
                       />
@@ -129,7 +130,7 @@ const Gallery = () => {
             <button className="lightbox-close" onClick={closeLightbox}>×</button>
             <div className="lightbox-img-wrap">
               <img 
-                src={selectedPhoto.imagePath} 
+                src={normalizeMediaUrl(selectedPhoto.imagePath)} 
                 alt={selectedPhoto.title} 
               />
             </div>

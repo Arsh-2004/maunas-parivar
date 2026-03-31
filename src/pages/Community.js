@@ -2,9 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { getTranslation } from '../translations';
+import { normalizeMediaUrl, formatLocation } from '../utils/mediaUrl';
 import './Community.css';
 
-const API_URL = '/api';
+const API_URL = process.env.REACT_APP_API_URL || '/api';
+const SAHYOG_QR_IMAGE = process.env.REACT_APP_SAHYOG_QR_IMAGE || '/assets/phonepe-qr.png';
+
+const resolveQrImageSrc = (rawPath) => {
+  if (!rawPath || typeof rawPath !== 'string') {
+    return '/assets/phonepe-qr.png';
+  }
+
+  const trimmed = rawPath.trim();
+  if (!trimmed) {
+    return '/assets/phonepe-qr.png';
+  }
+
+  if (/^(https?:)?\/\//i.test(trimmed) || /^data:image\//i.test(trimmed)) {
+    return trimmed;
+  }
+
+  return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+};
 
 const Community = () => {
   const { language } = useLanguage();
@@ -21,6 +40,16 @@ const Community = () => {
   const BIO_LIMIT = 25;
   const [selectedMember, setSelectedMember] = useState(null);
   const [donors, setDonors] = useState([]);
+  const [sahyogForm, setSahyogForm] = useState({
+    fullName: '',
+    contactNumber: '',
+    email: '',
+    amount: '',
+    message: '',
+    paymentScreenshot: null
+  });
+  const [sahyogSubmitting, setSahyogSubmitting] = useState(false);
+  const [sahyogStatus, setSahyogStatus] = useState(null);
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -71,6 +100,74 @@ const Community = () => {
       console.error('Error fetching members:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSahyogSubmit = async (e) => {
+    e.preventDefault();
+    setSahyogStatus(null);
+
+    if (!sahyogForm.paymentScreenshot) {
+      setSahyogStatus({
+        type: 'error',
+        msg: language === 'en' ? 'Please upload payment screenshot.' : 'कृपया भुगतान स्क्रीनशॉट अपलोड करें।'
+      });
+      return;
+    }
+
+    try {
+      setSahyogSubmitting(true);
+      const formData = new FormData();
+      formData.append('fullName', sahyogForm.fullName);
+      formData.append('contactNumber', sahyogForm.contactNumber);
+      formData.append('email', sahyogForm.email);
+      formData.append('amount', sahyogForm.amount);
+      formData.append('message', sahyogForm.message);
+      formData.append('paymentScreenshot', sahyogForm.paymentScreenshot);
+
+      const response = await fetch(`${API_URL}/users/sahyog-submissions`, {
+        method: 'POST',
+        body: formData
+      });
+
+      let data = null;
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const raw = await response.text();
+        data = { success: false, message: raw || `Request failed with status ${response.status}` };
+      }
+
+      if (response.ok && data.success) {
+        setSahyogStatus({
+          type: 'success',
+          msg: language === 'en'
+            ? 'Your sahyog details were submitted. Our team will verify soon.'
+            : 'आपका सहयोग विवरण सफलतापूर्वक भेज दिया गया है। हमारी टीम शीघ्र सत्यापित करेगी।'
+        });
+        setSahyogForm({
+          fullName: '',
+          contactNumber: '',
+          email: '',
+          amount: '',
+          message: '',
+          paymentScreenshot: null
+        });
+      } else {
+        setSahyogStatus({
+          type: 'error',
+          msg: data.message || (language === 'en' ? `Submission failed (${response.status}).` : `जमा करना विफल रहा (${response.status})।`)
+        });
+      }
+    } catch (error) {
+      console.error('Sahyog submit error:', error);
+      setSahyogStatus({
+        type: 'error',
+        msg: language === 'en' ? 'Network error. Please try again.' : 'नेटवर्क त्रुटि। कृपया पुनः प्रयास करें।'
+      });
+    } finally {
+      setSahyogSubmitting(false);
     }
   };
 
@@ -235,7 +332,7 @@ const Community = () => {
                     <div key={member._id} className="panel-member-card">
                       <div className="panel-member-photo-wrap">
                         {member.photoPath ? (
-                          <img src={member.photoPath} alt={member.fullName} className="panel-member-photo" />
+                          <img src={normalizeMediaUrl(member.photoPath)} alt={member.fullName} className="panel-member-photo" />
                         ) : (
                           <div className="panel-member-photo-placeholder">👤</div>
                         )}
@@ -243,7 +340,7 @@ const Community = () => {
                       <div className="panel-member-info">
                         <h4>{member.fullName}</h4>
                         <p className="panel-member-designation">🏛️ {prakosths.find(p => p.id === member.prakosth)?.title || member.prakosth}</p>
-                        <p className="panel-member-location">📍 {member.city}, {member.state}</p>
+                        <p className="panel-member-location">📍 {formatLocation(member.city, member.state)}</p>
                         {member.occupation && (
                           <p className="panel-member-occupation">💼 {member.occupation.slice(0, BIO_LIMIT)}{member.occupation.length > BIO_LIMIT ? '...' : ''}</p>
                         )}
@@ -308,7 +405,7 @@ const Community = () => {
                       <div className="panel-member-upadhi-icon">{getUpadhiIcon(member.honoraryTitle)}</div>
                       <div className="panel-member-photo-wrap">
                         {member.photoPath ? (
-                          <img src={member.photoPath} alt={member.fullName} className="panel-member-photo" />
+                          <img src={normalizeMediaUrl(member.photoPath)} alt={member.fullName} className="panel-member-photo" />
                         ) : (
                           <div className="panel-member-photo-placeholder">👤</div>
                         )}
@@ -316,7 +413,7 @@ const Community = () => {
                       <div className="panel-member-info">
                         <h4>{member.fullName}</h4>
                         <p className="panel-member-designation upadhi-title-badge">{member.honoraryTitle}</p>
-                        <p className="panel-member-location">📍 {member.city}, {member.state}</p>
+                        <p className="panel-member-location">📍 {formatLocation(member.city, member.state)}</p>
                         {member.occupation && (
                           <p className="panel-member-occupation">
                             💼 {expandedBios[member._id + '_occ']
@@ -366,7 +463,7 @@ const Community = () => {
                 >
                   {member.photoPath ? (
                     <img 
-                      src={member.photoPath} 
+                      src={normalizeMediaUrl(member.photoPath)} 
                       alt={member.fullName}
                       className="member-photo"
                     />
@@ -384,7 +481,7 @@ const Community = () => {
                   
                   <div className="member-info">
                     <h3>{member.fullName}</h3>
-                    <p className="member-city">📍 {member.city}, {member.state}</p>
+                    <p className="member-city">📍 {formatLocation(member.city, member.state)}</p>
                     <p className="member-occupation">💼 {member.occupation}</p>
                     {member.education && (
                       <p className="member-education">🎓 {member.education}</p>
@@ -407,9 +504,115 @@ const Community = () => {
       <section className="sahyogi-section">
         <div className="container">
           <div className="section-header">
-            <h2>{language === 'en' ? 'Sahyogi Sadashya' : 'सहयोगी सदस्य'}</h2>
+            <h2>{language === 'en' ? 'Contribute' : 'सहयोग करें'}</h2>
             <div className="underline"></div>
-            <p className="section-subheading">
+          </div>
+
+          <div className="sahyog-message-block">
+            <p>
+              {language === 'en'
+                ? 'Your contribution directly supports community welfare, educational activities, and heritage preservation initiatives run by Maunas Kshatriya Parivar.'
+                : 'आपका सहयोग सीधे समुदाय सेवा, शैक्षिक कार्यों और मौनस क्षत्रिय परिवार की धरोहर संरक्षण पहलों को मजबूत करता है।'}
+            </p>
+            <p>
+              {language === 'en'
+                ? 'No contribution is small. With your support, we can organize better social programs, assist needy families, and expand our cultural mission with transparency and dedication.'
+                : 'कोई भी सहयोग छोटा नहीं होता। आपके समर्थन से हम सामाजिक कार्यक्रमों को और बेहतर बना सकते हैं, जरूरतमंद परिवारों तक सहायता पहुंचा सकते हैं और अपनी सांस्कृतिक जिम्मेदारी को पारदर्शिता के साथ आगे बढ़ा सकते हैं।'}
+            </p>
+          </div>
+
+          <div className="sahyog-contribution-wrap">
+            <div className="sahyog-qr-card">
+              <h3>{language === 'en' ? 'Scan & Pay (PhonePe)' : 'स्कैन करें और भुगतान करें (PhonePe)'}</h3>
+              <img
+                src={resolveQrImageSrc(SAHYOG_QR_IMAGE)}
+                alt={language === 'en' ? 'PhonePe QR Code' : 'PhonePe QR कोड'}
+                className="sahyog-qr-image"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  const fallback = e.currentTarget.nextElementSibling;
+                  if (fallback) fallback.style.display = 'block';
+                }}
+              />
+              <p className="sahyog-qr-fallback" style={{ display: 'none' }}>
+                {language === 'en'
+                  ? 'QR image not found. Place your QR at /public/assets/phonepe-qr.png'
+                  : 'QR छवि नहीं मिली। कृपया QR फाइल /public/assets/phonepe-qr.png पर रखें'}
+              </p>
+              <p className="sahyog-note">
+                {language === 'en'
+                  ? 'After payment, fill the form and upload screenshot.'
+                  : 'भुगतान के बाद फॉर्म भरें और स्क्रीनशॉट अपलोड करें।'}
+              </p>
+            </div>
+
+            <div className="sahyog-form-card">
+              <h3>{language === 'en' ? 'Submit Payment Details' : 'भुगतान विवरण जमा करें'}</h3>
+              <form onSubmit={handleSahyogSubmit} className="sahyog-form">
+                <input
+                  type="text"
+                  placeholder={language === 'en' ? 'Full Name *' : 'पूरा नाम *'}
+                  value={sahyogForm.fullName}
+                  onChange={(e) => setSahyogForm({ ...sahyogForm, fullName: e.target.value })}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder={language === 'en' ? 'Contact Number *' : 'संपर्क नंबर *'}
+                  value={sahyogForm.contactNumber}
+                  onChange={(e) => setSahyogForm({ ...sahyogForm, contactNumber: e.target.value })}
+                  required
+                />
+                <input
+                  type="email"
+                  placeholder={language === 'en' ? 'Email (optional)' : 'ईमेल (वैकल्पिक)'}
+                  value={sahyogForm.email}
+                  onChange={(e) => setSahyogForm({ ...sahyogForm, email: e.target.value })}
+                />
+                <input
+                  type="number"
+                  placeholder={language === 'en' ? 'Amount (optional)' : 'राशि (वैकल्पिक)'}
+                  min="1"
+                  value={sahyogForm.amount}
+                  onChange={(e) => setSahyogForm({ ...sahyogForm, amount: e.target.value })}
+                />
+                <textarea
+                  placeholder={language === 'en' ? 'Message (optional)' : 'संदेश (वैकल्पिक)'}
+                  rows={3}
+                  value={sahyogForm.message}
+                  onChange={(e) => setSahyogForm({ ...sahyogForm, message: e.target.value })}
+                />
+                <label className="sahyog-upload-label">
+                  {language === 'en' ? 'Payment Screenshot *' : 'भुगतान स्क्रीनशॉट *'}
+                </label>
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/jpg"
+                  onChange={(e) => setSahyogForm({ ...sahyogForm, paymentScreenshot: e.target.files?.[0] || null })}
+                  required
+                />
+                {sahyogForm.paymentScreenshot && (
+                  <p className="sahyog-file-name">{sahyogForm.paymentScreenshot.name}</p>
+                )}
+                <button type="submit" className="sahyog-submit-btn" disabled={sahyogSubmitting}>
+                  {sahyogSubmitting
+                    ? (language === 'en' ? 'Submitting...' : 'सहयोग भेजा जा रहा है...')
+                    : (language === 'en' ? 'Contribute Now' : 'सहयोग करें')}
+                </button>
+                {sahyogStatus && (
+                  <p className={`sahyog-form-status ${sahyogStatus.type}`}>
+                    {sahyogStatus.msg}
+                  </p>
+                )}
+              </form>
+            </div>
+          </div>
+
+          <div className="sahyogi-members-block">
+            <h3 className="sahyogi-members-title">
+              {language === 'en' ? 'Sahyogi Sadashya' : 'सहयोगी सदस्य'}
+            </h3>
+            <p className="sahyogi-subtitle">
               {language === 'en'
                 ? 'Honourable donors who have generously supported the Maunas Kshatriya Parivar'
                 : 'वे सम्माननीय सदस्य जिन्होंने मौनस क्षत्रिय परिवार को उदारतापूर्वक सहयोग दिया'}
@@ -425,7 +628,7 @@ const Community = () => {
                   <div className="sahyogi-image">
                     {donor.photoPath ? (
                       <img
-                        src={donor.photoPath}
+                        src={normalizeMediaUrl(donor.photoPath)}
                         alt={donor.fullName}
                         className="sahyogi-photo"
                         onError={(e) => {
@@ -441,7 +644,7 @@ const Community = () => {
                   </div>
                   <h3 className="sahyogi-name">{donor.fullName}</h3>
                   {(donor.city || donor.state) && (
-                    <p className="sahyogi-location">{[donor.city, donor.state].filter(Boolean).join(', ')}</p>
+                    <p className="sahyogi-location">{formatLocation(donor.city, donor.state)}</p>
                   )}
                   {donor.donationPurpose && (
                     <p className="sahyogi-purpose">🌸 {donor.donationPurpose}</p>
@@ -465,7 +668,7 @@ const Community = () => {
             <div className="member-detail-body">
               <div className="member-detail-photo-col">
                 {selectedMember.photoPath ? (
-                  <img src={selectedMember.photoPath} alt={selectedMember.fullName} className="member-detail-photo" />
+                  <img src={normalizeMediaUrl(selectedMember.photoPath)} alt={selectedMember.fullName} className="member-detail-photo" />
                 ) : (
                   <div className="member-detail-photo-placeholder">👤</div>
                 )}
@@ -475,7 +678,7 @@ const Community = () => {
                 {selectedMember.prakosthTitle && (
                   <p className="member-detail-prakosth">🏛️ {selectedMember.prakosthTitle}</p>
                 )}
-                <p className="member-detail-location">📍 {selectedMember.city}, {selectedMember.state}</p>
+                <p className="member-detail-location">📍 {formatLocation(selectedMember.city, selectedMember.state)}</p>
                 {selectedMember.occupation && (
                   <div className="member-detail-row">
                     <span className="member-detail-label">💼 {language === 'en' ? 'Qualification' : 'योग्यता'}</span>

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { getTranslation } from '../translations';
+import { normalizeMediaUrl } from '../utils/mediaUrl';
 import './Events.css';
 
-const API_URL = '/api';
+const API_URL = process.env.REACT_APP_API_URL || '/api';
 
 const Events = () => {
   const { language } = useLanguage();
@@ -69,7 +70,7 @@ const Events = () => {
                   <div key={event._id} className="event-card upcoming">
                     <div className="event-img-wrap">
                       {event.imagePath ? (
-                        <img src={event.imagePath} alt={event.title} className="event-photo" />
+                        <img src={normalizeMediaUrl(event.imagePath)} alt={event.title} className="event-photo" />
                       ) : (
                         <div className="event-photo-placeholder">🎉</div>
                       )}
@@ -101,7 +102,7 @@ const Events = () => {
                   <div key={event._id} className="event-card past">
                     <div className="event-img-wrap">
                       {event.imagePath ? (
-                        <img src={event.imagePath} alt={event.title} className="event-photo" />
+                        <img src={normalizeMediaUrl(event.imagePath)} alt={event.title} className="event-photo" />
                       ) : (
                         <div className="event-photo-placeholder">📅</div>
                       )}

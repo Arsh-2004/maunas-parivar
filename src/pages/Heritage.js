@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { normalizeMediaUrl } from '../utils/mediaUrl';
 import './Heritage.css';
 
-const API_URL = '/api';
+const API_URL = process.env.REACT_APP_API_URL || '/api';
 
 const Heritage = () => {
   const { language } = useLanguage();
@@ -27,12 +28,12 @@ const Heritage = () => {
         <div className="container">
           <div className="heritage-hero-inner">
             <div className="heritage-hero-portrait">
-              <img
+              {/* <img
                 src="/assets/महाराजा राम सिंह मौनस.png"
                 alt="महाराजा राम सिंह मौनस"
                 className="heritage-maharaja-image"
                 loading="lazy"
-              />
+              /> */}
             </div>
             <div className="heritage-hero-text">
               <h1 className="heritage-hero-title">
@@ -74,7 +75,7 @@ const Heritage = () => {
                   </div>
                   <div className="heritage-about-image">
                     <div className="image-placeholder">
-                      <img src={post.imagePath} alt={post.titleHi} />
+                      <img src={normalizeMediaUrl(post.imagePath)} alt={post.titleHi} />
                       {post.imageCaption && <p>{post.imageCaption}</p>}
                     </div>
                   </div>

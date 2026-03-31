@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import './NonMembers.css';
 
-const API_URL = '/api';
+const API_URL = process.env.REACT_APP_API_URL || '/api';
 
 const emptyForm = {
   fullName: '', place: '', age: '',
@@ -227,7 +227,7 @@ const NonMembers = () => {
               <p style={{ fontSize: '1rem', color: '#555', marginBottom: 24, lineHeight: 1.6 }}>
                 {language === 'en'
                   ? 'Only registered members can add non-member records. Please log in or create an account to continue.'
-                  : 'केवल पंजीकृत सदस्य ही गैर-सदस्य रिकॉर्ड जोड़ सकते हैं। कृपया जारी रखने के लिए लॉगिन करें या खाता बनाएं।'}
+                  : 'केवल पंजीकृत सदस्य ही अन्य-सदस्य रिकॉर्ड जोड़ सकते हैं। कृपया जारी रखने के लिए लॉगिन करें या खाता बनाएं।'}
               </p>
               <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <button
@@ -254,7 +254,7 @@ const NonMembers = () => {
         <div className="nm-overlay" onClick={() => setShowModal(false)}>
           <div className="nm-modal" onClick={e => e.stopPropagation()}>
             <div className="nm-modal-header">
-              <h3>👥 {language === 'en' ? 'Add Non-Member Record' : 'गैर-सदस्य रिकॉर्ड जोड़ें'}</h3>
+              <h3>👥 {language === 'en' ? 'Add Non-Member Record' : 'अन्य सदस्य रिकॉर्ड जोड़ें'}</h3>
               <button className="nm-modal-close" onClick={() => { setShowModal(false); setFormData(emptyForm); setShowOptional(false); setMessage({ type: '', text: '' }); }}>✕</button>
             </div>
             <div className="nm-modal-body">

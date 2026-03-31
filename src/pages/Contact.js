@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { getTranslation } from '../translations';
 import './Contact.css';
 
-const API_URL = '/api';
+const API_URL = process.env.REACT_APP_API_URL || '/api';
 
 const Contact = () => {
   const { language } = useLanguage();
@@ -184,7 +184,7 @@ const Contact = () => {
                     <path d="M0 5.457v.727l12 9 12-9v-.727c0-.666-.404-1.235-.982-1.491L12 10.91 1.982 3.966A1.636 1.636 0 0 0 0 5.457z"/>
                   </svg>
     </a>
-    <a href="https://facebook.com" 
+    <a href="https://www.facebook.com/share/1Cga4q88Kf/" 
        target="_blank" 
        rel="noopener noreferrer" 
        className="social-icon facebook"
@@ -202,7 +202,7 @@ const Contact = () => {
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
       </svg>
     </a>
-    <a href="https://instagram.com" 
+    <a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.instagram.com%2Fkshatriya.maunaspariwar%3Ffbclid%3DIwZXh0bgNhZW0CMTAAYnJpZBExQjg2NFNUZTA0QzVEZHdKdnNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR5AL95QG_DmZSme1Zu0V81Tmss7jo80NVtdwqZw5J-KPt-LciLChCpxUrgfQg_aem_xu09SrLL3XtUPFHfYEf2nA&h=AT69s4wwiIsaho9wMvjC9vc56KppS6M3_vvJSRFyInOJDTa5jaiVxpBCcx_N66DfL_rIG_TgkQW2_OtwxD0pVSUfUjpak6F_mAdajvrsOri_2EnUgnpwXf6z2ei7iyJ2rPqx" 
        target="_blank" 
        rel="noopener noreferrer" 
        className="social-icon instagram"

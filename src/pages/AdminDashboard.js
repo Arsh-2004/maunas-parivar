@@ -4,7 +4,8 @@ import { useLanguage } from '../context/LanguageContext';
 import MembershipCertificate from '../components/MembershipCertificate';
 import './AdminDashboard.css';
 
-const API_URL = '/api';
+const API_URL = process.env.REACT_APP_API_URL || '/api';
+const ASSET_BASE_URL = process.env.REACT_APP_ASSET_BASE_URL || '';
 
 const AdminDashboard = () => {
   const { language } = useLanguage();
@@ -29,6 +30,7 @@ const AdminDashboard = () => {
   const [nmSearch, setNmSearch] = useState('');
   const [galleryForm, setGalleryForm] = useState({ title: '', description: '', category: 'general', image: null });
   const [donors, setDonors] = useState([]);
+  const [sahyogSubmissions, setSahyogSubmissions] = useState([]);
   const [donorForm, setDonorForm] = useState({ fullName: '', city: '', state: '', donationAmount: '', donationPurpose: '', message: '', photo: null });
   const [showUserModal, setShowUserModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -90,6 +92,27 @@ const AdminDashboard = () => {
   const [sortOrder, setSortOrder] = useState('desc');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const normalizeMediaUrl = useCallback((rawPath) => {
+    if (!rawPath || typeof rawPath !== 'string') return '';
+
+    const trimmed = rawPath.trim();
+    if (!trimmed) return '';
+
+    if (/^data:image\//i.test(trimmed)) return trimmed;
+    if (/^(https?:)?\/\//i.test(trimmed)) return encodeURI(trimmed);
+
+    const normalizedPath = trimmed.startsWith('/')
+      ? trimmed
+      : `/assets/${trimmed.replace(/^\/+/, '')}`;
+
+    if (normalizedPath.startsWith('/assets/') && ASSET_BASE_URL) {
+      const base = ASSET_BASE_URL.replace(/\/+$/, '');
+      return encodeURI(`${base}${normalizedPath}`);
+    }
+
+    return encodeURI(normalizedPath);
+  }, []);
+
   // Admin login
   const handleAdminLogin = async (e) => {
     e.preventDefault();
@@ -110,13 +133,17 @@ const AdminDashboard = () => {
         fetchUsers();
         fetchStats();
         fetchGallery();
-        fetchOathAgreements();
-        fetchContacts();
+        fetchOathAgreements(password);
+        fetchContacts(password);
+        fetchSahyogSubmissions(password);
         fetchNonMembers();
         fetchDonors();
         fetchCommunityMembers();
         fetchCommitteeMembersData();
         fetchHeritageData();
+        setError('');
+        setPassword('');
+      } else {
         setError(language === 'en' ? 'Invalid admin password' : 'गलत व्यवस्थापक पासवर्ड');
       }
     } catch (err) {
@@ -125,11 +152,21 @@ const AdminDashboard = () => {
   };
 
   // Fetch oath agreements
-  const fetchOathAgreements = useCallback(async () => {
+  const fetchOathAgreements = useCallback(async (passwordOverride) => {
+    const resolvedPassword = passwordOverride || localStorage.getItem('adminPassword') || adminPassword;
+    if (!resolvedPassword) return;
+
     try {
       const response = await fetch(`${API_URL}/admin/oath-agreements`, {
-        headers: { 'x-admin-password': adminPassword }
+        headers: { 'x-admin-password': resolvedPassword }
       });
+      if (response.status === 401) {
+        setOathAgreements([]);
+        return;
+      }
+      if (!response.ok) {
+        throw new Error(`Failed to fetch oath agreements: ${response.status}`);
+      }
       const data = await response.json();
       if (data.success) {
         setOathAgreements(data.agreements);
@@ -140,18 +177,57 @@ const AdminDashboard = () => {
   }, [adminPassword]);
 
   // Fetch contact messages
-  const fetchContacts = useCallback(async () => {
+  const fetchContacts = useCallback(async (passwordOverride) => {
+    const resolvedPassword = passwordOverride || localStorage.getItem('adminPassword') || adminPassword;
+    if (!resolvedPassword) return;
+
     try {
-      const storedPassword = localStorage.getItem('adminPassword');
       const response = await fetch(`${API_URL}/admin/contacts`, {
-        headers: { 'x-admin-password': storedPassword || adminPassword }
+        headers: { 'x-admin-password': resolvedPassword }
       });
+      if (response.status === 401) {
+        localStorage.removeItem('adminPassword');
+        setIsLoggedIn(false);
+        setAdminPassword('');
+        setContacts([]);
+        return;
+      }
+      if (!response.ok) {
+        throw new Error(`Failed to fetch contacts: ${response.status}`);
+      }
       const data = await response.json();
       if (data.success) {
         setContacts(data.contacts);
       }
     } catch (err) {
       console.error('Error fetching contacts:', err);
+    }
+  }, [adminPassword]);
+
+  const fetchSahyogSubmissions = useCallback(async (passwordOverride) => {
+    const resolvedPassword = passwordOverride || localStorage.getItem('adminPassword') || adminPassword;
+    if (!resolvedPassword) return;
+
+    try {
+      const response = await fetch(`${API_URL}/admin/sahyog-submissions`, {
+        headers: { 'x-admin-password': resolvedPassword }
+      });
+
+      if (response.status === 401) {
+        setSahyogSubmissions([]);
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch sahyog submissions: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        setSahyogSubmissions(data.submissions || []);
+      }
+    } catch (err) {
+      console.error('Error fetching sahyog submissions:', err);
     }
   }, [adminPassword]);
 
@@ -167,22 +243,51 @@ const AdminDashboard = () => {
 
   // Check stored admin session
   useEffect(() => {
-    const storedPassword = localStorage.getItem('adminPassword');
-    if (storedPassword) {
-      setAdminPassword(storedPassword);
-      setIsLoggedIn(true);
-      fetchUsers();
-      fetchStats();
-      fetchGallery();
-      fetchOathAgreements();
-      fetchContacts();
-      fetchNonMembers();
-      fetchDonors();
-      fetchCommunityMembers();
-      fetchCommitteeMembersData();
-      fetchHeritageData();
+    const restoreAdminSession = async () => {
+      const storedPassword = localStorage.getItem('adminPassword');
+      if (!storedPassword) return;
+
+      try {
+        const response = await fetch(`${API_URL}/admin/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: storedPassword }),
+        });
+
+        const data = await response.json();
+        if (!data.success) {
+          localStorage.removeItem('adminPassword');
+          setIsLoggedIn(false);
+          setAdminPassword('');
+          return;
+        }
+
+        setAdminPassword(storedPassword);
+        setIsLoggedIn(true);
+        fetchUsers();
+        fetchStats();
+        fetchGallery();
+        fetchOathAgreements(storedPassword);
+        fetchContacts(storedPassword);
+        fetchSahyogSubmissions(storedPassword);
+        fetchNonMembers();
+        fetchDonors();
+        fetchCommunityMembers();
+        fetchCommitteeMembersData();
+        fetchHeritageData();
+      } catch (err) {
+        console.error('Error restoring admin session:', err);
+      }
+    };
+
+    restoreAdminSession();
+  }, [fetchOathAgreements, fetchContacts, fetchSahyogSubmissions, fetchNonMembers]);
+
+  useEffect(() => {
+    if (isLoggedIn && activeTab === 'sahyogSubmissions') {
+      fetchSahyogSubmissions();
     }
-  }, [fetchOathAgreements, fetchContacts, fetchNonMembers]);
+  }, [isLoggedIn, activeTab, fetchSahyogSubmissions]);
 
   // Fetch users
   const fetchUsers = async (searchTerm = '') => {
@@ -566,6 +671,41 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleSahyogStatusUpdate = async (id, status) => {
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      const response = await fetch(`${API_URL}/admin/sahyog-submissions/${id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': pwd,
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        fetchSahyogSubmissions();
+      }
+    } catch (err) {
+      console.error('Error updating sahyog submission status:', err);
+    }
+  };
+
+  const handleDeleteSahyogSubmission = async (id) => {
+    if (!window.confirm(language === 'en' ? 'Delete this submission?' : 'क्या इस प्रविष्टि को हटाना है?')) return;
+    try {
+      const pwd = localStorage.getItem('adminPassword') || adminPassword;
+      await fetch(`${API_URL}/admin/sahyog-submissions/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-admin-password': pwd },
+      });
+      fetchSahyogSubmissions();
+    } catch (err) {
+      console.error('Error deleting sahyog submission:', err);
+    }
+  };
+
   const handleGallerySubmit = async (e) => {
     e.preventDefault();
     
@@ -909,6 +1049,20 @@ const AdminDashboard = () => {
           )}
         </button>
         <button
+          className={activeTab === 'sahyogSubmissions' ? 'active' : ''}
+          onClick={() => {
+            setActiveTab('sahyogSubmissions');
+            fetchSahyogSubmissions();
+          }}
+        >
+          {language === 'en' ? 'Sahyog Requests' : 'सहयोग अनुरोध'}
+          {sahyogSubmissions.filter((s) => s.status === 'pending').length > 0 && (
+            <span style={{ background: '#c0392b', color: '#fff', borderRadius: '50%', padding: '2px 7px', marginLeft: '6px', fontSize: '12px' }}>
+              {sahyogSubmissions.filter((s) => s.status === 'pending').length}
+            </span>
+          )}
+        </button>
+        <button
           className={activeTab === 'nonmembers' ? 'active' : ''}
           onClick={() => setActiveTab('nonmembers')}
         >
@@ -1198,7 +1352,7 @@ const AdminDashboard = () => {
                       gap: '12px'
                     }}>
                       {member.photoPath
-                        ? <img src={member.photoPath} alt={member.name} style={{ width: '52px', height: '52px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #90caf9', flexShrink: 0 }} />
+                        ? <img src={normalizeMediaUrl(member.photoPath)} alt={member.name} style={{ width: '52px', height: '52px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #90caf9', flexShrink: 0 }} />
                         : <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: '#e3f2fd', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>👤</div>
                       }
                       <div style={{ flex: 1 }}>
@@ -1297,7 +1451,7 @@ const AdminDashboard = () => {
                   </div>
                   <div className="detail-row">
                     <span className="detail-label">{language === 'en' ? 'ID Proof:' : 'पहचान प्रमाण:'}</span>
-                    <a href={selectedUser.idProofPath} target="_blank" rel="noreferrer" className="pdf-link">
+                    <a href={normalizeMediaUrl(selectedUser.idProofPath)} target="_blank" rel="noreferrer" className="pdf-link">
                       PDF {language === 'en' ? 'View' : 'देखें'} 📄
                     </a>
                   </div>
@@ -1493,7 +1647,7 @@ const AdminDashboard = () => {
             <div className="gallery-grid">
               {[...gallery].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((photo, idx, arr) => (
                 <div key={photo._id} className="gallery-card">
-                  <img src={photo.imagePath} alt={photo.title} />
+                  <img src={normalizeMediaUrl(photo.imagePath)} alt={photo.title} />
                   <div className="gallery-info">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
                       <span style={{ background: '#e3f2fd', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '11px', color: '#1565c0', flexShrink: 0 }}>{idx + 1}</span>
@@ -1606,6 +1760,128 @@ const AdminDashboard = () => {
         </div>
       )}
 
+      {activeTab === 'sahyogSubmissions' && (
+        <div className="oath-agreements-section">
+          <h2>{language === 'en' ? '💳 Sahyog Payment Requests' : '💳 सहयोग भुगतान अनुरोध'}</h2>
+          <div style={{ marginBottom: '12px' }}>
+            <button
+              className="approve-btn"
+              style={{ padding: '6px 12px', fontSize: '12px' }}
+              onClick={() => fetchSahyogSubmissions()}
+            >
+              {language === 'en' ? '↻ Refresh Requests' : '↻ अनुरोध रीफ़्रेश करें'}
+            </button>
+          </div>
+          <div className="stats-grid">
+            <div className="stat-card total-card">
+              <div className="stat-number">{sahyogSubmissions.length}</div>
+              <div className="stat-label">{language === 'en' ? 'Total Requests' : 'कुल अनुरोध'}</div>
+            </div>
+            <div className="stat-card pending-card">
+              <div className="stat-number">{sahyogSubmissions.filter((s) => s.status === 'pending').length}</div>
+              <div className="stat-label">{language === 'en' ? 'Pending' : 'लंबित'}</div>
+            </div>
+          </div>
+
+          {sahyogSubmissions.length === 0 ? (
+            <p className="no-data">{language === 'en' ? 'No sahyog requests yet' : 'अभी तक कोई सहयोग अनुरोध नहीं'}</p>
+          ) : (
+            <div className="members-table-container">
+              <table className="members-table">
+                <thead>
+                  <tr>
+                    <th>{language === 'en' ? 'Name' : 'नाम'}</th>
+                    <th>{language === 'en' ? 'Contact' : 'संपर्क'}</th>
+                    <th>{language === 'en' ? 'Amount' : 'राशि'}</th>
+                    <th>{language === 'en' ? 'Screenshot' : 'स्क्रीनशॉट'}</th>
+                    <th>{language === 'en' ? 'Date' : 'दिनांक'}</th>
+                    <th>{language === 'en' ? 'Status' : 'स्थिति'}</th>
+                    <th>{language === 'en' ? 'Actions' : 'कार्यवाही'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sahyogSubmissions.map((submission) => (
+                    <tr key={submission._id} style={{ background: submission.status === 'pending' ? '#fff8f0' : 'transparent' }}>
+                      <td>
+                        <strong>{submission.fullName}</strong>
+                        {submission.email && <div style={{ fontSize: '12px', color: '#666' }}>{submission.email}</div>}
+                      </td>
+                      <td>{submission.contactNumber}</td>
+                      <td>{submission.amount ? `₹${Number(submission.amount).toLocaleString('en-IN')}` : '-'}</td>
+                      <td>
+                        {submission.screenshotPath ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-start' }}>
+                            <a href={normalizeMediaUrl(submission.screenshotPath)} target="_blank" rel="noreferrer">
+                              {language === 'en' ? 'View Full' : 'पूरा देखें'}
+                            </a>
+                            <img
+                              src={normalizeMediaUrl(submission.screenshotPath)}
+                              alt={language === 'en' ? 'Payment Screenshot' : 'भुगतान स्क्रीनशॉट'}
+                              style={{ width: '96px', height: '96px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }}
+                            />
+                          </div>
+                        ) : (
+                          <span style={{ color: '#999' }}>{language === 'en' ? 'Not Uploaded' : 'अपलोड नहीं'}</span>
+                        )}
+                      </td>
+                      <td>{new Date(submission.submittedAt).toLocaleDateString('en-IN')}</td>
+                      <td>
+                        <span style={{
+                          fontWeight: 700,
+                          color: submission.status === 'verified' ? '#1f8b4c' : submission.status === 'rejected' ? '#c0392b' : '#e07b39'
+                        }}>
+                          {submission.status === 'verified'
+                            ? (language === 'en' ? 'Verified' : 'सत्यापित')
+                            : submission.status === 'rejected'
+                              ? (language === 'en' ? 'Rejected' : 'अस्वीकृत')
+                              : (language === 'en' ? 'Pending' : 'लंबित')}
+                        </span>
+                      </td>
+                      <td style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        {submission.status !== 'verified' && (
+                          <button
+                            className="approve-btn"
+                            style={{ padding: '4px 10px', fontSize: '12px' }}
+                            onClick={() => handleSahyogStatusUpdate(submission._id, 'verified')}
+                          >
+                            {language === 'en' ? 'Verify' : 'सत्यापित'}
+                          </button>
+                        )}
+                        {submission.status !== 'rejected' && (
+                          <button
+                            className="reject-btn"
+                            style={{ padding: '4px 10px', fontSize: '12px' }}
+                            onClick={() => handleSahyogStatusUpdate(submission._id, 'rejected')}
+                          >
+                            {language === 'en' ? 'Reject' : 'अस्वीकृत'}
+                          </button>
+                        )}
+                        {submission.status !== 'pending' && (
+                          <button
+                            className="pending-btn"
+                            style={{ padding: '4px 10px', fontSize: '12px' }}
+                            onClick={() => handleSahyogStatusUpdate(submission._id, 'pending')}
+                          >
+                            {language === 'en' ? 'Set Pending' : 'लंबित करें'}
+                          </button>
+                        )}
+                        <button
+                          className="delete-btn"
+                          style={{ padding: '4px 10px', fontSize: '12px' }}
+                          onClick={() => handleDeleteSahyogSubmission(submission._id)}
+                        >
+                          {language === 'en' ? 'Delete' : 'हटाएं'}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
       {activeTab === 'nonmembers' && (
         <div className="oath-agreements-section">
           <h2>{language === 'en' ? '👥 Non-Members Directory' : '👥 अन्य सदस्य डायरेक्टरी'}</h2>
@@ -1668,7 +1944,7 @@ const AdminDashboard = () => {
                     <tr key={r._id}>
                       <td>
                         {r.photoPath
-                          ? <img src={r.photoPath} alt={r.fullName} style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
+                          ? <img src={normalizeMediaUrl(r.photoPath)} alt={r.fullName} style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
                           : <span style={{ fontSize: '1.6rem' }}>👤</span>}
                       </td>
                       <td><strong>{r.fullName}</strong></td>
@@ -1801,7 +2077,7 @@ const AdminDashboard = () => {
               ) : [...donors].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((donor, idx, arr) => (
                 <div key={donor._id} className="gallery-card">
                   {donor.photoPath
-                    ? <img src={donor.photoPath} alt={donor.fullName} style={{ objectFit: 'cover' }} />
+                    ? <img src={normalizeMediaUrl(donor.photoPath)} alt={donor.fullName} style={{ objectFit: 'cover' }} />
                     : <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', background: '#fff5ef' }}>🙏</div>
                   }
                   <div className="gallery-info">
@@ -1838,7 +2114,7 @@ const AdminDashboard = () => {
             <h2>👤 {viewNmRecord.fullName}</h2>
             {viewNmRecord.photoPath && (
               <div style={{ textAlign: 'center', marginBottom: 16 }}>
-                <img src={viewNmRecord.photoPath} alt={viewNmRecord.fullName}
+                <img src={normalizeMediaUrl(viewNmRecord.photoPath)} alt={viewNmRecord.fullName}
                   style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', border: '3px solid #ffe0d4' }} />
               </div>
             )}
@@ -1959,12 +2235,12 @@ const AdminDashboard = () => {
                     <label>{language === 'en' ? 'Photo:' : 'फोटो:'}</label>
                     <div className="photo-preview">
                       <img 
-                        src={selectedUser.photoPath} 
+                        src={normalizeMediaUrl(selectedUser.photoPath)} 
                         alt={selectedUser.fullName} 
                         className="user-photo-thumbnail"
                       />
                       <a 
-                        href={selectedUser.photoPath} 
+                        href={normalizeMediaUrl(selectedUser.photoPath)} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="view-photo-btn"
@@ -1978,7 +2254,7 @@ const AdminDashboard = () => {
                 {selectedUser.idProofPath && (
                   <div className="document-item">
                     <label>{language === 'en' ? 'ID Proof:' : 'पहचान प्रमाण:'}</label>
-                    <a href={selectedUser.idProofPath} target="_blank" rel="noopener noreferrer">
+                    <a href={normalizeMediaUrl(selectedUser.idProofPath)} target="_blank" rel="noopener noreferrer">
                       {language === 'en' ? 'View ID Proof' : 'पहचान प्रमाण देखें'}
                     </a>
                   </div>
@@ -1987,7 +2263,7 @@ const AdminDashboard = () => {
                 {selectedUser.addressProofPath && (
                   <div className="document-item">
                     <label>{language === 'en' ? 'Address Proof:' : 'पता प्रमाण:'}</label>
-                    <a href={selectedUser.addressProofPath} target="_blank" rel="noopener noreferrer">
+                    <a href={normalizeMediaUrl(selectedUser.addressProofPath)} target="_blank" rel="noopener noreferrer">
                       {language === 'en' ? 'View Address Proof' : 'पता प्रमाण देखें'}
                     </a>
                   </div>
@@ -1996,7 +2272,7 @@ const AdminDashboard = () => {
                 {selectedUser.donationDocumentPath && (
                   <div className="document-item">
                     <label>{language === 'en' ? 'Donation Document:' : 'सहयोग दस्तावेज़:'}</label>
-                    <a href={selectedUser.donationDocumentPath} target="_blank" rel="noopener noreferrer">
+                    <a href={normalizeMediaUrl(selectedUser.donationDocumentPath)} target="_blank" rel="noopener noreferrer">
                       {language === 'en' ? 'View Donation Document' : 'सहयोग दस्तावेज़ देखें'}
                     </a>
                   </div>
@@ -2213,7 +2489,7 @@ const AdminDashboard = () => {
               ) : [...communityMembers.filter(m => m.honoraryTitle && (!upadhiSearch || m.fullName.toLowerCase().includes(upadhiSearch.toLowerCase()) || (m.honoraryTitle && m.honoraryTitle.toLowerCase().includes(upadhiSearch.toLowerCase())) || (m.city && m.city.toLowerCase().includes(upadhiSearch.toLowerCase()))))].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((member, idx, arr) => (
                 <div key={member._id} className="gallery-card">
                   {member.photoPath
-                    ? <img src={member.photoPath} alt={member.fullName} style={{ objectFit: 'cover' }} />
+                    ? <img src={normalizeMediaUrl(member.photoPath)} alt={member.fullName} style={{ objectFit: 'cover' }} />
                     : <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', background: '#fff9e6' }}>🏆</div>
                   }
                   <div className="gallery-info">
@@ -2257,7 +2533,7 @@ const AdminDashboard = () => {
               ) : [...communityMembers.filter(m => m.prakosth && (!prakosthSearch || m.fullName.toLowerCase().includes(prakosthSearch.toLowerCase()) || (m.prakosth && m.prakosth.toLowerCase().includes(prakosthSearch.toLowerCase())) || (m.city && m.city.toLowerCase().includes(prakosthSearch.toLowerCase()))))].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((member, idx, arr) => (
                 <div key={member._id} className="gallery-card">
                   {member.photoPath
-                    ? <img src={member.photoPath} alt={member.fullName} style={{ objectFit: 'cover' }} />
+                    ? <img src={normalizeMediaUrl(member.photoPath)} alt={member.fullName} style={{ objectFit: 'cover' }} />
                     : <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', background: '#fff5ef' }}>🏛️</div>
                   }
                   <div className="gallery-info">
@@ -2421,7 +2697,7 @@ const AdminDashboard = () => {
                         .map((member, idx, filteredArr) => (
                         <div key={member._id} className="gallery-card">
                           {member.photoPath
-                            ? <img src={member.photoPath} alt={member.fullName} style={{ objectFit: 'cover' }} />
+                            ? <img src={normalizeMediaUrl(member.photoPath)} alt={member.fullName} style={{ objectFit: 'cover' }} />
                             : <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', background: '#f0f4ff' }}>👤</div>
                           }
                           <div className="gallery-info">
@@ -2547,7 +2823,7 @@ const AdminDashboard = () => {
                           </div>
                           {/* Photo */}
                           {post.imagePath
-                            ? <img src={post.imagePath} alt={post.titleHi} style={{ width: '80px', height: '60px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} />
+                            ? <img src={normalizeMediaUrl(post.imagePath)} alt={post.titleHi} style={{ width: '80px', height: '60px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} />
                             : <div style={{ width: '80px', height: '60px', borderRadius: '8px', background: '#f5f0e8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', flexShrink: 0 }}>🏛️</div>
                           }
                           {/* Info */}
@@ -2753,7 +3029,7 @@ const AdminDashboard = () => {
                 value={editHeritageForm.imageCaption || ''} onChange={e => setEditHeritageForm({ ...editHeritageForm, imageCaption: e.target.value })}
                 style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #ddd' }} />
               {editingHeritage.imagePath && (
-                <img src={editingHeritage.imagePath} alt="current" style={{ width: '100%', maxHeight: '160px', objectFit: 'cover', borderRadius: '8px' }} />
+                <img src={normalizeMediaUrl(editingHeritage.imagePath)} alt="current" style={{ width: '100%', maxHeight: '160px', objectFit: 'cover', borderRadius: '8px' }} />
               )}
               <div>
                 <label style={{ fontWeight: '600', fontSize: '13px' }}>{language === 'en' ? 'Replace Photo (optional):' : 'फोटो बदलें (वैकल्पिक):'}</label>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { normalizeMediaUrl, uniqueTextParts } from '../utils/mediaUrl';
 import './Home.css';
 
 const STATIC_TEAM = [
@@ -16,6 +17,8 @@ const STATIC_TEAM = [
   { _id: 's10', fullName: 'Shri Ashish Singh Ji', fullNameHi: 'श्री आशीष सिंह जी', city: 'Bhadohi', cityHi: 'भदोही', photoPath: '/assets/ashishsingh.jpeg', designation: '' },
 ];
 
+const API_URL = process.env.REACT_APP_API_URL || '/api';
+
 const Home = () => {
   const { language } = useLanguage();
   const [homeTeamMembers, setHomeTeamMembers] = useState(null);
@@ -23,8 +26,7 @@ const Home = () => {
   useEffect(() => {
     const fetchHomeTeam = async () => {
       try {
-        const apiUrl = '/api';
-        const res = await fetch(`${apiUrl}/admin/committee-members?committee=prabandhan&page=home`);
+        const res = await fetch(`${API_URL}/admin/committee-members?committee=prabandhan&page=home`);
         const data = await res.json();
         if (data.success && data.members && data.members.length > 0) {
           setHomeTeamMembers(data.members);
@@ -49,7 +51,7 @@ const Home = () => {
             <div className="hero-content">
               <div className="hero-emblem">
                 <img
-                  src="/assets/ram.png"
+                  src={normalizeMediaUrl('/assets/ram.png')}
                   alt="भगवान श्री राम"
                   className="hero-emblem-image"
                   loading="lazy"
@@ -93,7 +95,7 @@ const Home = () => {
             </div>
             <div className="about-image">
               <div className="image-placeholder">
-                <img src="/assets/विरासत और परंपरा.jpeg" alt="विरासत और परंपरा" />
+                <img src={normalizeMediaUrl('/assets/विरासत और परंपरा.jpeg')} alt="विरासत और परंपरा" />
                 <p>{language === 'en' ? 'Heritage and Tradition' : 'विरासत और परंपरा'}</p>
               </div>
             </div>
@@ -111,7 +113,7 @@ const Home = () => {
           <div className="activities-grid">
             <div className="activity-card">
               <div className="activity-image">
-                <img src="/assets/img_1.jpeg" alt="Community Gathering" className="activity-img" />
+                <img src={normalizeMediaUrl('/assets/img_1.jpeg')} alt="Community Gathering" className="activity-img" />
               </div>
               <div className="activity-content">
                 <h3>{language === 'en' ? 'Community Gathering' : 'सामुदायिक समारोह'}</h3>
@@ -121,7 +123,7 @@ const Home = () => {
             </div>
             <div className="activity-card">
               <div className="activity-image">
-                <img src="/assets/img_2.jpeg" alt="Award Distribution" className="activity-img" />
+                <img src={normalizeMediaUrl('/assets/img_2.jpeg')} alt="Award Distribution" className="activity-img" />
               </div>
               <div className="activity-content">
                 <h3>{language === 'en' ? 'Award Distribution' : 'मेधावी सम्मान'}</h3>
@@ -131,7 +133,7 @@ const Home = () => {
             </div>
             <div className="activity-card">
               <div className="activity-image">
-                <img src="/assets/img_3.jpeg" alt="Our Programs" className="activity-img" />
+                <img src={normalizeMediaUrl('/assets/img_3.jpeg')} alt="Our Programs" className="activity-img" />
               </div>
               <div className="activity-content">
                 <h3>{language === 'en' ? 'Our programs' : 'हमारे कार्यक्रम'}</h3>
@@ -181,8 +183,8 @@ const Home = () => {
               const city = language === 'en'
                 ? (member.city || member.cityHi || '')
                 : (member.cityHi || member.city || '');
-              const photo = member.photoPath || '';
-              const label = [member.designation, member.position, city].filter(Boolean).join(' · ');
+              const photo = normalizeMediaUrl(member.photoPath || '');
+              const label = uniqueTextParts(member.designation, member.position, city).join(' · ');
               return (
                 <div className="team-card" key={member._id}>
                   <div className="team-image">
