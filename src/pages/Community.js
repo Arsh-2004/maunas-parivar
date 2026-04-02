@@ -511,13 +511,13 @@ const Community = () => {
           <div className="sahyog-message-block">
             <p>
               {language === 'en'
-                ? 'Your contribution directly supports community welfare, educational activities, and heritage preservation initiatives run by Maunas Kshatriya Parivar.'
-                : 'आपका सहयोग सीधे समुदाय सेवा, शैक्षिक कार्यों और मौनस क्षत्रिय परिवार की धरोहर संरक्षण पहलों को मजबूत करता है।'}
+                ? 'Your support plays an important role in social service, education and preserving the heritage of the Maunas Kshatriya family.'
+                : 'आपका सहयोग समाज सेवा, शिक्षा और मौनस क्षत्रिय परिवार की धरोहर को संभालने में महत्वपूर्ण भूमिका निभाता है।'}
             </p>
             <p>
               {language === 'en'
-                ? 'No contribution is small. With your support, we can organize better social programs, assist needy families, and expand our cultural mission with transparency and dedication.'
-                : 'कोई भी सहयोग छोटा नहीं होता। आपके समर्थन से हम सामाजिक कार्यक्रमों को और बेहतर बना सकते हैं, जरूरतमंद परिवारों तक सहायता पहुंचा सकते हैं और अपनी सांस्कृतिक जिम्मेदारी को पारदर्शिता के साथ आगे बढ़ा सकते हैं।'}
+                ? 'No contribution is too small; your support inspires us to do even better. With your help, we can reach families in need and fulfill our cultural responsibilities with honesty and transparency.'
+                : 'कोई भी सहयोग छोटा नहीं होता; आपका साथ हमें और बेहतर कार्य करने की प्रेरणा देता है। आपके समर्थन से हम जरूरतमंद परिवारों तक सहायता पहुँचा सकते हैं और अपनी सांस्कृतिक जिम्मेदारियों को ईमानदारी व पारदर्शिता के साथ आगे बढ़ा सकते हैं।'}
             </p>
           </div>
 
